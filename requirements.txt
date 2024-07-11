@@ -1,0 +1,4 @@
+Flask
+replit
+werkzeug
+openai

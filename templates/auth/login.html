@@ -1,0 +1,20 @@
+{% extends "base/base.html" %}
+
+{% block title %}Vitaj!{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="login-container">
+        <h1>Vítajte</h1>
+        <p>Prosím, zadaj svoj 5-číselný kód na pokračovanie.<br>Ak máš nejaké problémy s prihlásením, kontaktuj svojho manažéra.</p>
+        <form id="loginForm" action="{{ url_for('auth.auth_login') }}" method="post">
+            <div class="pin-inputs">
+                {% for i in range(1, 6) %}
+                <input type="text" maxlength="1" name="pin{{ i }}" required>
+                {% endfor %}
+            </div>
+            <button type="submit">Pokračovať</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

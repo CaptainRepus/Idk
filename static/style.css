@@ -1,0 +1,189 @@
+/* General Styles */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212; /* Dark background color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Login Container */
+.login-container {
+    width: 90%;
+    max-width: 400px;
+    background-color: #1f1f1f; /* Slightly lighter dark background for container */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-container h1 {
+    color: white;
+    text-align: center;
+}
+
+.login-container p {
+    font-size: 14px;
+    color: #bbb; /* Lighter grey for paragraph text */
+    margin-bottom: 20px;
+}
+
+.pin-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.pin-inputs input {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+}
+
+.pin-inputs input:focus {
+    border-color: #FF5733; /* Orange border color on focus */
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #FF0000; /* Red background for button */
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #cc0000; /* Darker red for button on hover */
+}
+
+/* Chat Container */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    max-width: 400px;
+    height: 80%;
+    background-color: #1f1f1f; /* Slightly lighter dark background for container */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+/* General Styles */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212; /* Dark background color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Chat Container */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    max-width: 400px;
+    height: 80%;
+    background-color: #1f1f1f; /* Slightly lighter dark background for container */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+/* Chat Messages */
+.chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    border-bottom: 1px solid #333;
+    color: white; /* Ensure the text color is visible */
+    max-height: calc(100% - 60px); /* Adjust to leave space for input container */
+}
+
+/* Message Input Container */
+.message-input-container {
+    display: flex;
+    padding: 10px;
+    background-color: #1f1f1f;
+}
+
+#user-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    background-color: #262626; /* Darker input background */
+    color: white;
+    display: none;
+}
+
+#send-button {
+    padding: 10px 20px;
+    background-color: #FF0000; /* Red background for button */
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    display: none;
+}
+
+#send-button:hover {
+    background-color: #cc0000; /* Darker red for button on hover */
+}
+
+#next-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #FF0000; /* Red background for button */
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#next-button:hover {
+    background-color: #cc0000; /* Darker red for button on hover */
+}
+
+/* Message Styles */
+.message {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 70%;
+}
+
+.message.received {
+    background-color: #444;
+    color: white;
+    align-self: flex-start;
+}
+
+.message.sent {
+    background-color: #FF5733;
+    color: white;
+    align-self: flex-end;
+}
+
+/* Image Message */
+.message img {
+    width: 100%;
+    border-radius: 5px;
+    margin-top: 10px;
+}

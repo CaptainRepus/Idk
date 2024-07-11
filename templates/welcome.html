@@ -1,0 +1,22 @@
+{% extends "base/base.html" %}
+
+{% block title %}Vitajte{% endblock %}
+
+{% block content %}
+  <h2>Vitajte v Chat aplikácii</h2>
+  <a href="{{ url_for('auth.auth_login') }}">Prihlásenie</a> |
+  <a href="{{ url_for('auth.auth_register') }}">Registrácia</a>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const username = localStorage.getItem('username');
+
+    if (isLoggedIn === 'true' a username) {
+        window.location.href = '/chat/index';
+    }
+});
+</script>
+{% endblock %}
