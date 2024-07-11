@@ -1,10 +1,15 @@
-import os
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
 import openai
+import os
+import random
+import logging
+from models import User
 
-# Initialize OpenAI API key from environment variable directly in the index.py
-my_secret = os.environ['Functu3000']
-openai.api_key = my_secret
+# Initialize OpenAI API key directly
+openai.api_key = "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"
+
+# Configure logging to stderr
+logging.basicConfig(level=logging.DEBUG)
 
 chat_blueprint = Blueprint('chat', __name__)
 
@@ -14,21 +19,24 @@ def index():
         return render_template('chat/index.html', username=session['username'])
     return redirect(url_for('auth.login'))
 
-@chat_blueprint.route('/send_message', methods=['POST'])
-def send_message():
-    user_message = request.json.get('message', '')
-
+@chat_blueprint.route('/get_story', methods=['POST'])
+def get_story():
     try:
-        # Use OpenAI API to generate response
+        # Retrieve a random username from the database
+        user = User.query.order_by(db.func.random()).first()
+        random_name = user.username if user else "Alex"  # Default name if no user found
+        
+        # Generate a sales industry story using OpenAI
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are a motivational speaker."},
-                {"role": "user", "content": f"Generate a motivational message for: {user_message}"}
+                {"role": "system", "content": "You are a creative writer."},
+                {"role": "user", "content": f"Write a short sales industry story featuring {random_name}."}
             ],
-            max_tokens=100
+            max_tokens=250
         )
-        ai_message = response.choices[0].message.get('content', '').strip()
-        return jsonify({"message": ai_message})
+        ai_story = response.choices[0].message['content'].strip()
+        return jsonify({"story": ai_story})
     except Exception as e:
+        logging.error(f"Error in get_story: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
