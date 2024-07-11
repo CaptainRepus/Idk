@@ -1,7 +1,10 @@
+import os
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
 import openai
 
 chat_blueprint = Blueprint('chat', __name__)
+my_secret = os.environ['Functu3000']
+openai.api_key = my_secret
 
 @chat_blueprint.route('/index')
 def index():
