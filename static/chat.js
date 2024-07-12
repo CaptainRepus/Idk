@@ -2,21 +2,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatBox = document.getElementById('chat-box');
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
-    const nextButton = document.createElement('button'); // Create the Next button
-
-    nextButton.id = 'next-button';
-    nextButton.textContent = 'Next';
-    nextButton.style.display = 'none'; // Initially hidden
-
-    document.querySelector('.message-input-container').appendChild(nextButton);
+    const nextButton = document.getElementById('next-button');
 
     const steps = [
         { type: 'welcome', content: `Welcome, {{ session['username'] }}! Click "Next" to continue.` },
         { type: 'api', content: 'Motivational quote' },
-        { type: 'image', content: '<img src="/static/images/team_photo.jpg" alt="Team Photo">' },
+        { type: 'image', content: '/static/images/team_photo.jpg' },
         { type: 'level', content: `Your current level: {{ session['level'] }}, XP to next level: {{ 1000 - (session['report_count'] % 1000) }}. Click "Next" to continue.` },
         { type: 'api_story', content: 'Generate sales story' },
-        { type: 'final', content: 'Are you ready to conquer the day? <button id="start-day-button">Start the Day</button>' },
+        { type: 'final', content: 'Are you ready to conquer the day?' }
     ];
 
     let currentStep = 0;
@@ -87,13 +81,19 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchAIResponse(step.content);
         } else if (step.type === 'api_story') {
             fetchStory();
+        } else if (step.type === 'image') {
+            addMessage(`<img src="${step.content}" alt="Team Photo">`, 'image');
+            showNextButton();
+        } else if (step.type === 'final') {
+            addMessage(step.content, 'received');
+            nextButton.textContent = 'Start the day';
+            nextButton.onclick = () => {
+                addMessage('You can now start chatting', 'received');
+                showUserInput();
+            };
         } else {
             addMessage(step.content, 'received');
             showNextButton();
-            if (currentStep === steps.length) {
-                addMessage('You can now start chatting', 'received');
-                showUserInput();
-            }
         }
     };
 
@@ -106,8 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (message) {
             addMessage(message, 'sent');
             userInput.value = '';
-            // Replace the following line with the actual message handling functionality
-            // fetchAIResponse(message);
+            fetchAIResponse(message);
         }
     });
 

@@ -1,12 +1,13 @@
 {% extends "base/base.html" %}
-{% block title %}Chat s ChatGPT{% endblock %}
+{% block title %}Chat with ChatGPT{% endblock %}
 
 {% block content %}
 <div class="chat-container">
     <div id="chat-box" class="chat-messages"></div>
     <div class="message-input-container">
-        <input type="text" id="user-input" placeholder="Napíšte správu..." />
-        <button id="send-button">Odoslať</button>
+        <input type="text" id="user-input" placeholder="Write a message..." />
+        <button id="send-button">Send</button>
+        <button id="next-button">Next</button>
     </div>
 </div>
 {% endblock %}
