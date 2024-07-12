@@ -1,110 +1,25 @@
 {% extends "base/base.html" %}
 
-{% block title %}Registrácia{% endblock %}
+{% block title %}Register{% endblock %}
 
 {% block content %}
-  <div class="form-container">
-    <h2>Registrácia</h2>
+<div class="form-container">
+    <h2>Register</h2>
     <form id="registerForm" action="{{ url_for('auth.auth_register') }}" method="post">
-      <div class="form-group">
-        <label for="fullname">Celé meno:</label>
-        <input id="fullname" class="form-control" type="text" name="fullname" required>
-      </div>
-      <div class="form-group">
-        <label for="pin1">PIN:</label>
-        <div class="pin-inputs">
-          <input id="pin1" class="pin-input" type="text" maxlength="1" name="pin1" required>
-          <input id="pin2" class="pin-input" type="text" maxlength="1" name="pin2" required>
-          <input id="pin3" class="pin-input" type="text" maxlength="1" name="pin3" required>
-          <input id="pin4" class="pin-input" type="text" maxlength="1" name="pin4" required>
-          <input id="pin5" class="pin-input" type="text" maxlength="1" name="pin5" required>
+        <div class="form-group">
+            <label for="fullname">Full Name:</label>
+            <input id="fullname" class="form-control" type="text" name="fullname" required>
         </div>
-      </div>
-      <button type="submit">Registrovať</button>
+        <div class="form-group">
+            <label for="pin1">PIN:</label>
+            <div class="pin-inputs">
+                {% for i in range(1, 6) %}
+                <input id="pin{{ i }}" class="pin-input" type="text" maxlength="1" name="pin{{ i }}" required>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit">Register</button>
     </form>
-    <a href="{{ url_for('welcome') }}" class="back-to-home">Späť na hlavnú stránku</a>
-  </div>
-{% endblock %}
-
-{% block styles %}
-<style>
-  .form-container {
-    text-align: center;
-    margin-top: 50px;
-  }
-
-  .form-container h2 {
-    margin-bottom: 20px;
-  }
-
-  .form-group {
-    margin-bottom: 20px;
-  }
-
-  .pin-inputs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-
-  .pin-input {
-    width: 30px;
-    height: 30px;
-    margin: 0 5px;
-    text-align: center;
-    font-size: 24px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-
-  button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background-color: #45a049;
-  }
-
-  .back-to-home {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-  }
-
-  .back-to-home:hover {
-    background-color: #45a049;
-  }
-</style>
-{% endblock %}
-
-{% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const pins = document.querySelectorAll('.pin-input');
-    const registerForm = document.getElementById('registerForm');
-
-    pins.forEach((pin, index) => {
-        pin.addEventListener('input', () => {
-            if (pin.value.length === 1 && index < pins.length - 1) {
-                pins[index + 1].focus();
-            }
-        });
-
-        pin.addEventListener('keydown', (event) => {
-            if (event.key === 'Backspace' && pin.value.length === 0 && index > 0) {
-                pins[index - 1].focus();
-            }
-        });
-    });
-});
-</script>
+    <a href="{{ url_for('welcome') }}" class="back-to-home">Back to Home</a>
+</div>
 {% endblock %}

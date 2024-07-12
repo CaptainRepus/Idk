@@ -15,8 +15,8 @@ chat_blueprint = Blueprint('chat', __name__)
 @chat_blueprint.route('/index')
 def index():
     if 'username' in session:
-        username = session['fullname']
-        level = db.get(f"user_level:{username}", 1)
+        username = session['username']
+        level = session.get('level', 1)
         return render_template('chat/index.html', username=username, level=level)
     return redirect(url_for('auth.login'))
 

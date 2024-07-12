@@ -119,8 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (message) {
             addMessage(message, 'sent');
             userInput.value = '';
-            // Replace the following line with the actual message handling functionality
-            // fetchAIResponse(message);
+            fetchAIResponse(message);
         }
     });
 
