@@ -67,50 +67,30 @@ button:hover {
     background-color: #cc0000; /* Darker red for button on hover */
 }
 
-/* Chat Container */
+/* Chat container with fixed width and height */
 .chat-container {
     display: flex;
     flex-direction: column;
-    width: 90%;
-    max-width: 400px;
-    height: 90%;
-    max-height: 600px;
+    width: 600px; /* Set fixed width */
+    height: 800px; /* Set fixed height */
     background-color: #1f1f1f; /* Slightly lighter dark background for container */
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 10px;
 }
-
-/* Chat Container */
-.chat-container {
-    display: flex;
-    flex-direction: column;
-    width: 90%;
-    max-width: 400px;
-    height: 90%;
-    max-height: 600px;
-    background-color: #1f1f1f; /* Slightly lighter dark background for container */
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-}
-
-/* Chat Messages */
+/* Message area */
 .chat-messages {
     flex: 1;
-    padding: 10px;
+    padding: 20px;
     overflow-y: auto;
     border-bottom: 1px solid #333;
     color: white; /* Ensure the text color is visible */
 }
-
-/* Message Input Container */
+/* Input area */
 .message-input-container {
     display: flex;
-    padding: 10px;
+    padding: 20px;
     background-color: #1f1f1f;
 }
-
 #user-input {
     flex: 1;
     padding: 10px;
@@ -119,9 +99,8 @@ button:hover {
     border-radius: 4px 0 0 4px;
     background-color: #262626; /* Darker input background */
     color: white;
-    display: none;
+    display: none; /* Initially hidden for the steps flow */
 }
-
 #send-button, #next-button, #start-day-button {
     padding: 10px 20px;
     background-color: #FF0000; /* Red background for button */
@@ -130,57 +109,29 @@ button:hover {
     border-radius: 0 4px 4px 0;
     cursor: pointer;
 }
-
 #send-button:hover, #next-button:hover, #start-day-button:hover {
     background-color: #cc0000; /* Darker red for button on hover */
 }
-
 #next-button {
-    display: block;
+    display: none; /* Initially hidden */
 }
-
-/* Message Styles */
+/* Message styles */
 .message {
     margin: 10px 0;
     padding: 10px;
     border-radius: 5px;
-    max-width: 80%;
 }
-
 .message.received {
     background-color: #444;
     color: white;
     align-self: flex-start;
 }
-
 .message.sent {
     background-color: #FF5733;
     color: white;
     align-self: flex-end;
 }
-
 .message img {
     width: 100%;
     border-radius: 5px;
-}
-
-/* Media Queries for Mobile Responsiveness */
-@media (max-width: 768px) {
-    .chat-container {
-        width: 100%;
-        height: 100%;
-        max-width: none;
-        max-height: none;
-        border-radius: 0;
-        padding: 10px;
-    }
-
-    .message-input-container {
-        padding: 10px;
-    }
-
-    #send-button, #next-button, #start-day-button {
-        width: 100%;
-        border-radius: 4px;
-    }
 }

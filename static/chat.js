@@ -2,20 +2,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatBox = document.getElementById('chat-box');
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
-    const nextButton = document.getElementById('next-button');
-    const startDayButton = document.createElement('button'); // Create the Start the Day button
+    const nextButton = document.createElement('button'); // Create the Next button
 
-    startDayButton.id = 'start-day-button';
-    startDayButton.textContent = 'Start the day';
-    startDayButton.style.display = 'none'; // Initially hidden
+    nextButton.id = 'next-button';
+    nextButton.textContent = 'Next';
+    nextButton.style.display = 'none'; // Initially hidden
 
-    document.querySelector('.message-input-container').appendChild(startDayButton);
+    document.querySelector('.message-input-container').appendChild(nextButton);
 
     const steps = [
-        { type: 'welcome', content: `Welcome, {{ session['username'] }}! Click "Next" to continue.` },
+        { type: 'welcome', content: `Welcome, ${username}! Click "Next" to continue.` },
         { type: 'api', content: 'Motivational quote' },
-        { type: 'image', content: '/static/images/team_photo.jpg' },
-        { type: 'level', content: `Your current level: {{ session['level'] }}, XP to next level: {{ 1000 - (session['report_count'] % 1000) }}. Click "Next" to continue.` },
+        { type: 'image', content: '<img src="/static/images/team_photo.jpg" alt="Team Photo">' },
+        { type: 'level', content: `Your current level: ${userLevel}, XP to next level: 100.` },
         { type: 'api_story', content: 'Generate sales story' },
         { type: 'final', content: 'Are you ready to conquer the day?' }
     ];
@@ -35,16 +34,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/chat/send_message', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message }),
+                body: JSON.stringify({ message })
             });
             const data = await response.json();
             if (data.message) {
                 addMessage(data.message, 'received');
+                if (currentStep < steps.length - 1) showNextButton(); // Show Next button until the last step
+                else showStartDayButton(); // Show Start Day button at the last step
             } else if (data.error) {
                 addMessage('Error: ' + data.error, 'received');
+                showNextButton();
             }
         } catch (error) {
             addMessage('Error: ' + error.message, 'received');
+            showNextButton();
         }
     };
 
@@ -71,11 +74,22 @@ document.addEventListener('DOMContentLoaded', () => {
         nextButton.style.display = 'inline';
     };
 
+    const showStartDayButton = () => {
+        nextButton.style.display = 'none';
+        const startDayButton = document.createElement('button');
+        startDayButton.id = 'start-day-button';
+        startDayButton.textContent = 'Start the Day';
+        document.querySelector('.message-input-container').appendChild(startDayButton);
+        startDayButton.addEventListener('click', () => {
+            showUserInput();
+            startDayButton.remove(); // Remove Start the Day button
+        });
+    };
+
     const showUserInput = () => {
         userInput.style.display = 'inline';
         sendButton.style.display = 'inline';
-        nextButton.style.display = 'none';
-        startDayButton.style.display = 'none';
+        addMessage('You can now start chatting', 'received');
     };
 
     const handleNextStep = () => {
@@ -86,20 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchAIResponse(step.content);
         } else if (step.type === 'api_story') {
             fetchStory();
-        } else if (step.type === 'image') {
-            addMessage(`<img src="${step.content}" alt="Team Photo">`, 'image');
-            showNextButton();
-        } else if (step.type === 'final') {
-            addMessage(step.content, 'received');
-            nextButton.style.display = 'none';
-            startDayButton.style.display = 'inline';
-            startDayButton.onclick = () => {
-                addMessage('You can now start chatting', 'received');
-                showUserInput();
-            };
         } else {
             addMessage(step.content, 'received');
-            showNextButton();
+            if (currentStep < steps.length) {
+                showNextButton();
+            } else {
+                showStartDayButton();
+            }
         }
     };
 
@@ -112,7 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (message) {
             addMessage(message, 'sent');
             userInput.value = '';
-            fetchAIResponse(message);
+            // Replace the following line with the actual message handling functionality
+            // fetchAIResponse(message);
         }
     });
 

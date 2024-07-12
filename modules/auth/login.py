@@ -16,6 +16,7 @@ def auth_login():
         user_data = replit_db.get(pin)
         if user_data and check_password_hash(user_data['pin'], pin):
             session['username'] = pin
+            session['fullname'] = user_data.get('fullname', 'User')
             session['level'] = user_data.get('level', 1)
             return redirect(url_for('chat.index'))
         return 'Nesprávny PIN'
