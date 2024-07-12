@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     let currentStep = 0;
+    let startDayButtonDisplayed = false; // Flag to track if 'Start the Day' button has been displayed
 
     const addMessage = (content, type) => {
         const messageElem = document.createElement('div');
@@ -75,15 +76,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const showStartDayButton = () => {
-        nextButton.style.display = 'none';
-        const startDayButton = document.createElement('button');
-        startDayButton.id = 'start-day-button';
-        startDayButton.textContent = 'Start the Day';
-        document.querySelector('.message-input-container').appendChild(startDayButton);
-        startDayButton.addEventListener('click', () => {
-            showUserInput();
-            startDayButton.remove(); // Remove Start the Day button
-        });
+        // Check if the Start Day button has already been displayed
+        if (!startDayButtonDisplayed) {
+            startDayButtonDisplayed = true; // Mark flag as true
+            nextButton.style.display = 'none';
+            const startDayButton = document.createElement('button');
+            startDayButton.id = 'start-day-button';
+            startDayButton.textContent = 'Start the Day';
+            document.querySelector('.message-input-container').appendChild(startDayButton);
+            startDayButton.addEventListener('click', () => {
+                showUserInput();
+                startDayButton.remove(); // Remove Start the Day button
+            });
+        }
     };
 
     const showUserInput = () => {
