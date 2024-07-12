@@ -3,6 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
     const nextButton = document.getElementById('next-button');
+    const startDayButton = document.createElement('button'); // Create the Start the Day button
+
+    startDayButton.id = 'start-day-button';
+    startDayButton.textContent = 'Start the day';
+    startDayButton.style.display = 'none'; // Initially hidden
+
+    document.querySelector('.message-input-container').appendChild(startDayButton);
 
     const steps = [
         { type: 'welcome', content: `Welcome, {{ session['username'] }}! Click "Next" to continue.` },
@@ -33,14 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             if (data.message) {
                 addMessage(data.message, 'received');
-                showNextButton();
             } else if (data.error) {
                 addMessage('Error: ' + data.error, 'received');
-                showNextButton();
             }
         } catch (error) {
             addMessage('Error: ' + error.message, 'received');
-            showNextButton();
         }
     };
 
@@ -71,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         userInput.style.display = 'inline';
         sendButton.style.display = 'inline';
         nextButton.style.display = 'none';
+        startDayButton.style.display = 'none';
     };
 
     const handleNextStep = () => {
@@ -86,8 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
             showNextButton();
         } else if (step.type === 'final') {
             addMessage(step.content, 'received');
-            nextButton.textContent = 'Start the day';
-            nextButton.onclick = () => {
+            nextButton.style.display = 'none';
+            startDayButton.style.display = 'inline';
+            startDayButton.onclick = () => {
                 addMessage('You can now start chatting', 'received');
                 showUserInput();
             };

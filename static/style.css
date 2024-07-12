@@ -81,6 +81,20 @@ button:hover {
     padding: 10px;
 }
 
+/* Chat Container */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    max-width: 400px;
+    height: 90%;
+    max-height: 600px;
+    background-color: #1f1f1f; /* Slightly lighter dark background for container */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
 /* Chat Messages */
 .chat-messages {
     flex: 1;
@@ -115,7 +129,6 @@ button:hover {
     border: none;
     border-radius: 0 4px 4px 0;
     cursor: pointer;
-    display: none;
 }
 
 #send-button:hover, #next-button:hover, #start-day-button:hover {
