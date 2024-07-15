@@ -10,6 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelector(".message-input-container").appendChild(nextButton);
 
+  const openMenuButton = document.createElement("button"); // Create the Open Menu button
+  openMenuButton.id = "open-menu-button";
+  openMenuButton.textContent = "Open Menu";
+  openMenuButton.style.display = "none"; // Initially hidden
+  document.querySelector(".message-input-container").appendChild(openMenuButton);
+
   const steps = [
     {
       type: "welcome",
@@ -198,9 +204,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const initChatFlow = () => {
     if (lastWelcomeDate === currentDate) {
-      // If the welcome messages were shown today, show the welcome back message and action buttons
-      addMessage(`Welcome back, ${username}!`, "received");
-      showStartDayButton();
+      // If the welcome messages were shown today, show the Open Menu button for returning users
+      userInput.style.display = "none";
+      sendButton.style.display = "none";
+      addMessage(`Welcome back, ${username}! Click "Open Menu" to continue.`, "received");
+      openMenuButton.style.display = "inline";
     } else {
       // If the welcome messages were not shown today, proceed with the steps
       handleNextStep();
@@ -208,6 +216,12 @@ document.addEventListener("DOMContentLoaded", () => {
       fetch("/chat/update_welcome_date", { method: "POST" });
     }
   };
+
+  openMenuButton.addEventListener("click", () => {
+    // Display action buttons when "Open Menu" is clicked
+    displayActionButtons();
+    openMenuButton.style.display = "none"; // Hide the Open Menu button
+  });
 
   nextButton.addEventListener("click", () => {
     handleNextStep();

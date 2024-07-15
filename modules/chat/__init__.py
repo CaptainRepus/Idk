@@ -62,16 +62,15 @@ def update_welcome_date():
 @chat_blueprint.route('/send_message', methods=['POST'])
 def send_message():
     user_message = request.json.get('message')
-
     try:
         response = openai.ChatCompletion.create(model="gpt-3.5-turbo",
-                                                messages=[
-                                                    {
-                                                        "role": "user",
-                                                        "content": user_message
-                                                    },
-                                                ],
-                                                max_tokens=150)
+        messages=[
+                    {
+                    "role": "user",
+                    "content": user_message
+                    },
+                ],
+        max_tokens=150)
         ai_message = response.choices[0].message['content'].strip()
         return jsonify({"message": ai_message})
 
