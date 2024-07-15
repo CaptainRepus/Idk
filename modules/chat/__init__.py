@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, jsonify, session, redirec
 import openai
 from replit import db as replit_db
 import random
+from datetime import datetime
 
 chat_blueprint = Blueprint('chat', __name__)
 
@@ -45,8 +46,18 @@ def get_story():
 @chat_blueprint.route('/index')
 def index():
     if 'username' in session:
-        return render_template('chat/index.html', username=session['username'])
+        username = session['username']
+        level = replit_db.get('level', 1)
+        # Get the last welcome message date from the session if available
+        last_welcome_date = session.get('last_welcome_date', '')
+        return render_template('chat/index.html', username=username, level=level, last_welcome_date=last_welcome_date)
     return redirect(url_for('auth.login'))
+
+@chat_blueprint.route('/update_welcome_date', methods=['POST'])
+def update_welcome_date():
+    # Update the session with the current date as the last welcome date
+    session['last_welcome_date'] = datetime.now().strftime('%Y-%m-%d')
+    return jsonify({"message": "Welcome date updated"})
 
 @chat_blueprint.route('/send_message', methods=['POST'])
 def send_message():
