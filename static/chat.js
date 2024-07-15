@@ -146,6 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       actionButton.addEventListener("click", () => {
         if (btnData.text === "New report") {
+          addMessage("Okay, so we are going to create a new report. Check if it's a new or existing customer.", "received");
           // Show new buttons for "New customer" and "Old customer"
           displayNewCustomerOptions();
         } else {
