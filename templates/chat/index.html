@@ -2,6 +2,15 @@
 {% block title %}Chat with ChatGPT{% endblock %}
 
 {% block content %}
+<div class="nav-container">
+    <button id="back-button">← Back</button>
+    <div class="dropdown">
+        <button id="dropdown-button">⋮</button>
+        <div id="dropdown-content" class="dropdown-content">
+            <a href="#" id="logout-button">Logout</a>
+        </div>
+    </div>
+</div>
 <div class="chat-container">
     <div id="chat-box" class="chat-messages"></div>
     <div class="message-input-container">

@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const userInput = document.getElementById("user-input");
   const sendButton = document.getElementById("send-button");
   const nextButton = document.createElement("button"); // Create the Next button
+  const backButton = document.getElementById("back-button");
+  const dropdownButton = document.getElementById("dropdown-button");
+  const dropdownContent = document.getElementById("dropdown-content");
 
   nextButton.id = "next-button";
   nextButton.textContent = "Next";
@@ -246,4 +249,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize the chat flow based on the last welcome date
   initChatFlow();
+
+  // Dropdown menu handling
+  dropdownButton.addEventListener("click", () => {
+    dropdownContent.classList.toggle("show");
+  });
+
+  // Logout button handling
+  document.getElementById("logout-button").addEventListener("click", () => {
+    // You need to implement the backend route for logout if not already done.
+    fetch("/auth/logout", { method: "POST" })
+      .then(response => {
+        if (response.ok) {
+          window.location.href = "/auth/login";
+        } else {
+          alert("Logout failed!");
+        }
+      })
+      .catch(error => console.error("Error logging out:", error));
+  });
+
+  // Back button handling
+  backButton.addEventListener("click", () => {
+    // Clear the current buttons and display the basic action buttons
+    clearMessageContainer();
+    displayActionButtons();
+  });
 });
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('#dropdown-button')) {
+    const dropdowns = document.getElementsByClassName("dropdown-content");
+    for (let i = 0; i < dropdowns.length; i++) {
+      const openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
