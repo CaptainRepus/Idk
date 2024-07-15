@@ -12,13 +12,17 @@ logging.basicConfig(level=logging.DEBUG)
 
 chat_blueprint = Blueprint('chat', __name__)
 
+
 @chat_blueprint.route('/index')
 def index():
     if 'username' in session:
         username = session['username']
-        level = session.get('level', 1)
-        return render_template('chat/index.html', username=username, level=level)
+        level = db.get('level', 1)
+        return render_template('chat/index.html',
+                               username=username,
+                               level=level)
     return redirect(url_for('auth.login'))
+
 
 @chat_blueprint.route('/get_story', methods=['POST'])
 def get_story():
@@ -28,12 +32,16 @@ def get_story():
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a creative writer."},
-                {"role": "user", "content": f"Write a short sales industry story featuring {random_name}."}
-            ],
-            max_tokens=250
-        )
+            messages=[{
+                "role": "system",
+                "content": "You are a creative writer."
+            }, {
+                "role":
+                "user",
+                "content":
+                f"Write a short sales industry story featuring {random_name}."
+            }],
+            max_tokens=250)
         ai_story = response.choices[0].message['content'].strip()
         return jsonify({"story": ai_story})
     except Exception as e:
