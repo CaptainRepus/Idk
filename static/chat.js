@@ -117,16 +117,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 .querySelector(".message-input-container")
                 .appendChild(startDayButton);
             startDayButton.addEventListener("click", () => {
-                showUserInput();
+                displayActionButtons();
                 startDayButton.remove(); // Remove Start the Day button
             });
         }
     };
 
-    const showUserInput = () => {
-        userInput.style.display = "inline";
-        sendButton.style.display = "inline";
-        addMessage("You can now start chatting", "received");
+    const displayActionButtons = () => {
+        const buttonsData = [
+            { text: "New report", color: "#FF6666" },
+            { text: "Active reports", color: "#FF3333" },
+            { text: "Notifications", color: "#FF0000" },
+            { text: "Values", color: "#CC0000" },
+            { text: "Personal growth", color: "#990000" },
+            { text: "Help us improve", color: "#660000" },
+        ];
+
+        buttonsData.forEach(btnData => {
+            const actionButton = document.createElement("button");
+            actionButton.textContent = btnData.text;
+            actionButton.style.backgroundColor = btnData.color;
+            actionButton.className = "action-button"; // Add a class for consistent styling
+
+            document
+                .querySelector(".message-input-container")
+                .appendChild(actionButton);
+
+            actionButton.addEventListener("click", () => {
+                // Placeholder for future routing or actions
+                alert(`Action for ${btnData.text} button`);
+            });
+        });
     };
 
     const handleNextStep = () => {

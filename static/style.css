@@ -43,7 +43,7 @@ body, html {
     font-size: 20px;
     text-align: center;
     border: 2px solid #ccc;
-    border-radius: 4px;
+    border-radius: 8px;
     transition: border-color 0.3s;
 }
 
@@ -59,7 +59,7 @@ button {
     color: white;
     font-size: 16px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
 }
 
@@ -88,6 +88,7 @@ button:hover {
 /* Input area */
 .message-input-container {
     display: flex;
+    flex-wrap: wrap; /* Allow multiple lines for buttons */
     padding: 20px;
     background-color: #1f1f1f;
 }
@@ -96,7 +97,7 @@ button:hover {
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 4px 0 0 4px;
+    border-radius: 8px 0 0 8px;
     background-color: #262626; /* Darker input background */
     color: white;
     display: none; /* Initially hidden for the steps flow */
@@ -106,7 +107,7 @@ button:hover {
     background-color: #FF0000; /* Red background for button */
     color: white;
     border: none;
-    border-radius: 0 4px 4px 0;
+    border-radius: 8px;
     cursor: pointer;
 }
 #send-button:hover, #next-button:hover, #start-day-button:hover {
@@ -115,11 +116,26 @@ button:hover {
 #next-button {
     display: none; /* Initially hidden */
 }
+
+/* Action buttons */
+.message-input-container button.action-button {
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 8px; /* Add a larger border-radius */
+    margin: 5px;
+    cursor: pointer;
+}
+
+.message-input-container button.action-button:hover {
+    opacity: 0.9; /* Slightly dim the button on hover */
+}
+
 /* Message styles */
 .message {
     margin: 10px 0;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 8px;
 }
 .message.received {
     background-color: #444;
@@ -133,5 +149,5 @@ button:hover {
 }
 .message img {
     width: 100%;
-    border-radius: 5px;
+    border-radius: 8px;
 }
