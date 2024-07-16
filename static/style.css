@@ -8,11 +8,23 @@ body, html {
     justify-content: center;
     align-items: center;
 }
+.backbutton{
+    width: 15%;
+}
+/* General Button Style */
+button {
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 8px; /* Add a larger border-radius */
+    margin: 5px;
+    cursor: pointer;
+}
 
 /* Settings Container */
 .settings-container {
-    width: 90%;
-    max-width: 600px;
+    width: 600px; /* Set fixed width */
+    height: 800px; /* Set fixed height */
     background-color: #1f1f1f;
     padding: 20px;
     border-radius: 8px;
@@ -20,11 +32,36 @@ body, html {
     text-align: center;
     margin: auto;
 }
-
 .settings-container h2 {
     color: white;
+    margin-bottom: 20px; /* Add space between h2 and the content below */
 }
-
+.settings-container .toggle-container {
+    margin-bottom: 40px; /* Add space below the toggle container */
+}
+.settings-container .theme-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+.settings-container .theme-box {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.settings-container .theme-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
 .settings-container button {
     width: auto;
     padding: 12px;
@@ -36,11 +73,9 @@ body, html {
     cursor: pointer;
     margin-top: 20px;
 }
-
 .settings-container button:hover {
     background-color: #cc0000;
 }
-
 /* Toggle Switch */
 .switch {
     position: relative;
@@ -48,13 +83,11 @@ body, html {
     width: 60px;
     height: 34px;
 }
-
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
-
 .slider {
     position: absolute;
     cursor: pointer;
@@ -65,7 +98,6 @@ body, html {
     background-color: #ccc;
     transition: 0.4s;
 }
-
 .slider:before {
     position: absolute;
     content: "";
@@ -76,33 +108,58 @@ body, html {
     background-color: white;
     transition: 0.4s;
 }
-
 input:checked + .slider {
     background-color: #2196F3;
 }
-
 input:checked + .slider:before {
     transform: translateX(26px);
 }
-
 .slider.round {
     border-radius: 34px;
 }
-
 .slider.round:before {
     border-radius: 50%;
 }
-
+/* Theme Styles */
+body.theme-orange button {
+    background-color: #FFA500;
+}
+body.theme-blue button {
+    background-color: #2196F3;
+}
+body.theme-green button {
+    background-color: #4CAF50;
+}
+body.theme-red button {
+    background-color: #FF0000;
+}
+body.theme-purple button {
+    background-color: #800080;
+}
+/* Button Hover Styles for Themes */
+body.theme-orange button:hover {
+    background-color: #e59400;
+}
+body.theme-blue button:hover {
+    background-color: #1e88e5;
+}
+body.theme-green button:hover {
+    background-color: #43a047;
+}
+body.theme-red button:hover {
+    background-color: #e60000;
+}
+body.theme-purple button:hover {
+    background-color: #720072;
+}
 /* Dark Mode */
 body.dark-mode {
     background-color: #121212;
     color: white;
 }
-
 body.dark-mode .settings-container {
     background-color: #1f1f1f;
 }
-
 body.dark-mode input {
     background-color: #262626;
     color: white;

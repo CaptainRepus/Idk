@@ -121,8 +121,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize dark mode based on localStorage value
     const toggle = document.getElementById('dark-mode-toggle');
+    const themeBoxes = document.querySelectorAll('.theme-box');
+
+    const applyTheme = (theme) => {
+        document.body.className = ''; // Clear all classes
+        document.body.classList.add(theme);
+        localStorage.setItem('theme', theme);
+    };
+
+    // Initialize dark mode based on localStorage value
     if (toggle) {
         toggle.addEventListener('change', () => {
             document.body.classList.toggle('dark-mode', toggle.checked);
@@ -135,6 +143,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Initialize theme based on localStorage value
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    }
+
+    // Add event listeners to theme boxes
+    themeBoxes.forEach(box => {
+        box.addEventListener('click', () => {
+            applyTheme(box.id);
+        });
+    });
+
     // Back button navigation
     const backButton = document.getElementById('back-button');
     if (backButton) {
@@ -142,22 +163,4 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = "/chat/index";
         });
     }
-
-    // Logout button handling
-    const logoutButton = document.getElementById("logout-button");
-    if (logoutButton) {
-        logoutButton.addEventListener("click", () => {
-            fetch("/auth/logout", { method: "POST" })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = "/auth/login";
-                    } else {
-                        alert("Logout failed!");
-                    }
-                })
-                .catch(error => console.error("Error logging out:", error));
-        });
-    }
-
-    // Other existing DOMContentLoaded logic...
 });
