@@ -1,0 +1,23 @@
+{% extends "base/base.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <button id="back-button">← Back</button>
+
+    <div class="toggle-container">
+        <h2>Toggle Dark/Light Mode</h2>
+        <label class="switch">
+            <input type="checkbox" id="dark-mode-toggle">
+            <span class="slider round"></span>
+        </label>
+    </div>
+
+    <button id="logout-button">Logout</button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}

@@ -5,10 +5,7 @@
 <div class="nav-container">
     <button id="back-button">← Back</button>
     <div class="dropdown">
-        <button id="dropdown-button">⋮</button>
-        <div id="dropdown-content" class="dropdown-content">
-            <a href="#" id="logout-button">Logout</a>
-        </div>
+        <button id="dropdown-button">⋮</button> <!-- This button will navigate to settings -->
     </div>
 </div>
 <div class="chat-container">
@@ -19,9 +16,9 @@
     </div>
 </div>
 <script>
-    const username = "{{ username }}"; // Pass the username to JavaScript
-    const userLevel = "{{ level }}"; // Pass the user level to JavaScript
-    const lastWelcomeDate = "{{ last_welcome_date }}"; // Pass the last welcome date to JavaScript
+    const username = "{{ username }}"; 
+    const userLevel = "{{ level }}"; 
+    const lastWelcomeDate = "{{ last_welcome_date }}"; 
 </script>
 {% endblock %}
 

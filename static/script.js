@@ -120,3 +120,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize dark mode based on localStorage value
+    const toggle = document.getElementById('dark-mode-toggle');
+    if (toggle) {
+        toggle.addEventListener('change', () => {
+            document.body.classList.toggle('dark-mode', toggle.checked);
+            localStorage.setItem('dark-mode', toggle.checked);
+        });
+
+        if (localStorage.getItem('dark-mode') === 'true') {
+            document.body.classList.add('dark-mode');
+            toggle.checked = true;
+        }
+    }
+
+    // Back button navigation
+    const backButton = document.getElementById('back-button');
+    if (backButton) {
+        backButton.addEventListener('click', () => {
+            window.location.href = "/chat/index";
+        });
+    }
+
+    // Logout button handling
+    const logoutButton = document.getElementById("logout-button");
+    if (logoutButton) {
+        logoutButton.addEventListener("click", () => {
+            fetch("/auth/logout", { method: "POST" })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = "/auth/login";
+                    } else {
+                        alert("Logout failed!");
+                    }
+                })
+                .catch(error => console.error("Error logging out:", error));
+        });
+    }
+
+    // Other existing DOMContentLoaded logic...
+});

@@ -20,15 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelector(".message-input-container").appendChild(openMenuButton);
 
   const steps = [
-    {
-      type: "welcome",
-      content: `Welcome, ${username}! Click "Next" to continue.`,
-    },
+    { type: "welcome", content: `Welcome, ${username}! Click "Next" to continue.` },
     { type: "api", content: "Motivational quote" },
-    {
-      type: "image",
-      content: '<img src="/static/images/team_photo.jpg" alt="Team Photo">',
-    },
+    { type: "image", content: '<img src="/static/images/team_photo.jpg" alt="Team Photo">' },
     { type: "level", content: `Your level: ${userLevel}, XP to next level: 100.` },
     { type: "api_story", content: "Generate sales story" },
     { type: "final", content: "Are you ready to conquer the day?" },
@@ -250,9 +244,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize the chat flow based on the last welcome date
   initChatFlow();
 
-  // Dropdown menu handling
+  // Redirect to settings page on dropdown button click
   dropdownButton.addEventListener("click", () => {
-    dropdownContent.classList.toggle("show");
+    window.location.href = "/settings";
   });
 
   // Logout button handling
@@ -261,12 +255,12 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("/auth/logout", { method: "POST" })
       .then(response => {
         if (response.ok) {
-          window.location.href = "/auth/login";
+            window.location.href = "/auth/login";
         } else {
-          alert("Logout failed!");
+            alert("Logout failed!");
         }
-      })
-      .catch(error => console.error("Error logging out:", error));
+    })
+    .catch(error => console.error("Error logging out:", error));
   });
 
   // Back button handling
