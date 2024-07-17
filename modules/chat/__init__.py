@@ -30,12 +30,12 @@ def get_story():
             model="gpt-3.5-turbo",
             messages=[{
                 "role": "system",
-                "content": "You are a creative writer."
+                "content": "Si kreatívny spisovateľ."
             }, {
                 "role":
                 "user",
                 "content":
-                f"Write a very very short sales industry story featuring {random_name}."
+                f"Napíš veľmi krátky príbeh v slovenčine z oblasti predaja, v ktorom bude hrať {random_name}."
             }],
             max_tokens=250)
         ai_story = response.choices[0].message['content'].strip()

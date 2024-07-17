@@ -1,9 +1,9 @@
 {% extends "base/base.html" %}
-{% block title %}Chat with ChatGPT{% endblock %}
+{% block title %}PK Auto{% endblock %}
 
 {% block content %}
 <div class="nav-container">
-    <button id="back-button" class="backbutton">← Back</button>
+    <button id="back-button" class="backbutton">←</button>
     <div class="dropdown">
         <button id="dropdown-button">⋮</button> <!-- This button will navigate to settings -->
     </div>
@@ -11,8 +11,8 @@
 <div class="chat-container">
     <div id="chat-box" class="chat-messages"></div>
     <div class="message-input-container">
-        <input type="text" id="user-input" placeholder="Write a message..." />
-        <button id="send-button">Send</button>
+        <input type="text" id="user-input" placeholder="Tu napíšte svoju správu...">
+        <button id="send-button">Poslať</button>
     </div>
 </div>
 <script>

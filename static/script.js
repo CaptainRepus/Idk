@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
     const chatMessages = document.querySelector('.chat-messages');
+    const themeBoxes = document.querySelectorAll('.theme-box');
 
     function sendMessage() {
         const messageText = messageInput.value.trim();
@@ -70,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(data => {
                 if (data.includes('Invalid PIN')) {
-                    alert('Invalid PIN');
+                    alert('Nesprávny PIN');
                 } else if (data.includes('/welcome_user')) {
                     const params = new URLSearchParams(data.split('?')[1]);
                     const username = params.get('username');
@@ -90,47 +91,27 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('username');
         });
     }
-});
 
-document.addEventListener('DOMContentLoaded', () => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const username = localStorage.getItem('username');
-
-    if (isLoggedIn === 'true' && username) {
-        if (window.location.pathname === '/' || window.location.pathname === '/auth/login' || window.location.pathname === '/auth/register') {
-            window.location.href = '/chat/index';
-        }
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('loginForm');
-    const inputs = document.querySelectorAll('.pin-inputs input');
-    inputs.forEach((input, index) => {
-        input.addEventListener('input', () => {
-            if (input.value.length && index < inputs.length - 1) {
-                inputs[index + 1].focus();
-            }
-            if (input.value.length === 0 && index > 0) {
-                inputs[index - 1].focus();
-            }
-            if (Array.from(inputs).every(input => input.value.length === 1)) {
-                form.submit();
-            }
+    // Apply theme to homepage buttons
+    const applyThemeToButtons = (theme) => {
+        const buttons = document.querySelectorAll('.action-button');
+        buttons.forEach(button => {
+            button.className = 'action-button'; // Reset class to default
+            button.classList.add(`theme-${theme}`);
         });
-    });
-});
-document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.getElementById('dark-mode-toggle');
-    const themeBoxes = document.querySelectorAll('.theme-box');
+    };
 
+    // Update the applyTheme function
     const applyTheme = (theme) => {
         document.body.className = ''; // Clear all classes
         document.body.classList.add(theme);
         localStorage.setItem('theme', theme);
+        applyThemeToButtons(theme);  // Apply theme to homepage buttons
     };
 
     // Initialize dark mode based on localStorage value
+    const toggle = document.getElementById('dark-mode-toggle');
+
     if (toggle) {
         toggle.addEventListener('change', () => {
             document.body.classList.toggle('dark-mode', toggle.checked);
@@ -156,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Back button navigation
     const backButton = document.getElementById('back-button');
     if (backButton) {
         backButton.addEventListener('click', () => {

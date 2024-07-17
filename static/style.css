@@ -10,6 +10,7 @@ body, html {
 }
 .backbutton{
     width: 15%;
+    height: 50%;
 }
 /* General Button Style */
 button {
@@ -20,7 +21,25 @@ button {
     margin: 5px;
     cursor: pointer;
 }
+.action-button.theme-orange {
+    background-color: #FFA500;
+}
 
+.action-button.theme-blue {
+    background-color: #2196F3;
+}
+
+.action-button.theme-green {
+    background-color: #4CAF50;
+}
+
+.action-button.theme-red {
+    background-color: #FF0000;
+}
+
+.action-button.theme-purple {
+    background-color: #800080;
+}
 /* Settings Container */
 .settings-container {
     width: 600px; /* Set fixed width */
@@ -169,7 +188,6 @@ body.dark-mode input {
 .nav-container {
     width: 600px; /* Match the chat container width */
     background-color: #1f1f1f; /* Slightly lighter dark background for container */
-    padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;

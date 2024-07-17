@@ -2,37 +2,40 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatBox = document.getElementById("chat-box");
   const userInput = document.getElementById("user-input");
   const sendButton = document.getElementById("send-button");
-  const nextButton = document.createElement("button"); // Create the Next button
+  const nextButton = document.createElement("button");
   const backButton = document.getElementById("back-button");
   const dropdownButton = document.getElementById("dropdown-button");
   const dropdownContent = document.getElementById("dropdown-content");
 
   nextButton.id = "next-button";
   nextButton.textContent = "Next";
-  nextButton.style.display = "none"; // Initially hidden
-
+  nextButton.style.display = "none"; 
   document.querySelector(".message-input-container").appendChild(nextButton);
 
-  const openMenuButton = document.createElement("button"); // Create the Open Menu button
+  const openMenuButton = document.createElement("button");
   openMenuButton.id = "open-menu-button";
-  openMenuButton.textContent = "Open Menu";
-  openMenuButton.style.display = "none"; // Initially hidden
+  openMenuButton.textContent = "Otvoriť menu";
+  openMenuButton.style.display = "none";
   document.querySelector(".message-input-container").appendChild(openMenuButton);
 
   const steps = [
-    { type: "welcome", content: `Welcome, ${username}! Click "Next" to continue.` },
-    { type: "api", content: "Motivational quote" },
+    { type: "welcome", content: `Vitaj späť, ${username}! Klikni "Ďalej" pre tvoj motivačný impulz na dnešok:` },
+    { type: "api", content: "Motivácia dňa v slovenčine" },
     { type: "image", content: '<img src="/static/images/team_photo.jpg" alt="Team Photo">' },
-    { type: "level", content: `Your level: ${userLevel}, XP to next level: 100.` },
+    { type: "level", content: `Tvoj level: ${userLevel}, XP do ďalšieho levlu: 100.` },
     { type: "api_story", content: "Generate sales story" },
-    { type: "final", content: "Are you ready to conquer the day?" },
+    { type: "final", content: "Čo by si chcel dnes robiť?" },
   ];
-
-  const currentDate = new Date().toISOString().split("T")[0]; // Get the current date in YYYY-MM-DD format
-
+  
+  const currentDate = new Date().toISOString().split("T")[0]; 
   let currentStep = 0;
-  let startDayButtonDisplayed = false; // Flag to track if the 'Start the Day' button has been displayed
-  let loadingMessageElem; // Variable to hold the loading message element
+  let startDayButtonDisplayed = false; 
+  let loadingMessageElem; 
+
+  // Add the clearAllMessages function here
+  const clearAllMessages = () => {
+    chatBox.innerHTML = ''; // Clear all existing messages
+  };
 
   const addMessage = (content, type) => {
     const messageElem = document.createElement("div");
@@ -40,11 +43,11 @@ document.addEventListener("DOMContentLoaded", () => {
     messageElem.innerHTML = `<p>${content}</p>`;
     chatBox.appendChild(messageElem);
     chatBox.scrollTop = chatBox.scrollHeight;
-    return messageElem; // Return the created message element
+    return messageElem; 
   };
 
   const showLoadingMessage = () => {
-    loadingMessageElem = addMessage("AI generating motivation/story...", "loading");
+    loadingMessageElem = addMessage("AI generuje...", "Načítava...");
   };
 
   const hideLoadingMessage = () => {
@@ -66,8 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
       hideLoadingMessage();
       if (data.message) {
         addMessage(data.message, "received");
-        if (currentStep < steps.length - 1) showNextButton(); // Show Next button until the last step
-        else showStartDayButton(); // Show Start Day button at the last step
+        if (currentStep < steps.length - 1) showNextButton(); 
+        else showStartDayButton(); 
       } else if (data.error) {
         addMessage("Error: " + data.error, "received");
         showNextButton();
@@ -106,48 +109,46 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const showStartDayButton = () => {
-    // Check if the Start Day button has already been displayed
     if (!startDayButtonDisplayed) {
-      startDayButtonDisplayed = true; // Mark flag as true
+      startDayButtonDisplayed = true; 
       nextButton.style.display = "none";
       const startDayButton = document.createElement("button");
       startDayButton.id = "start-day-button";
-      startDayButton.textContent = "Start the Day";
+      startDayButton.textContent = "Začať deň";
       document.querySelector(".message-input-container").appendChild(startDayButton);
       startDayButton.addEventListener("click", () => {
+        clearAllMessages(); // Clear all previous messages
+        const finalMessage = "Si pripravený začať deň?";
+        addMessage(finalMessage, "received");
         displayActionButtons();
-        startDayButton.remove(); // Remove Start the Day button
+        startDayButton.remove(); 
       });
     }
   };
 
   const displayActionButtons = () => {
     const buttonsData = [
-      { text: "New report", color: "#FF6666" },
-      { text: "Active reports", color: "#FF3333" },
-      { text: "Notifications", color: "#FF0000" },
-      { text: "Values", color: "#CC0000" },
-      { text: "Personal growth", color: "#990000" },
-      { text: "Help us improve", color: "#660000" },
+      { text: "Nový report", color: "#FF6666" },
+      { text: "Aktívne reporty", color: "#FF3333" },
+      { text: "Oznámenia", color: "#FF0000" },
+      { text: "Hodnoty", color: "#CC0000" },
+      { text: "Osobný rozvoj", color: "#990000" },
+      { text: "Vylepšiť predaj", color: "#660000" },
     ];
 
-    clearMessageContainer(); // Clear existing buttons
+    clearMessageContainer();
 
     buttonsData.forEach((btnData) => {
       const actionButton = document.createElement("button");
       actionButton.textContent = btnData.text;
       actionButton.style.backgroundColor = btnData.color;
-      actionButton.className = "action-button"; // Add a class for consistent styling
-
+      actionButton.className = "action-button";
       document.querySelector(".message-input-container").appendChild(actionButton);
-
       actionButton.addEventListener("click", () => {
-        if (btnData.text === "New report") {
-          addMessage("Okay, so we are going to create a new report. Check if it's a new or existing customer.", "received");
-          // Show new buttons for "New customer" and "Old customer"
+        if (btnData.text === "Nový report") {
+          addMessage("Skvelé! Poďme začať s tvojim novým reportom. Chceš pridať report pre nového klienta alebo existujúceho klienta?", "received");
           displayNewCustomerOptions();
         } else {
-          // Placeholder for future routing or actions
           alert(`Action for ${btnData.text} button`);
         }
       });
@@ -156,22 +157,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const displayNewCustomerOptions = () => {
     const newCustomerOptions = [
-      { text: "New customer", color: "#FF6666" },
-      { text: "Old customer", color: "#FF3333" },
+      { text: "Nový zákazník", color: "#FF6666" },
+      { text: "Starý zákazník", color: "#FF3333" },
     ];
 
-    clearMessageContainer(); // Clear existing buttons
-
+    clearMessageContainer(); 
     newCustomerOptions.forEach((option) => {
       const optionButton = document.createElement("button");
       optionButton.textContent = option.text;
       optionButton.style.backgroundColor = option.color;
-      optionButton.className = "action-button"; // Add a class for consistent styling
+      optionButton.className = "action-button"; 
 
       document.querySelector(".message-input-container").appendChild(optionButton);
-
       optionButton.addEventListener("click", () => {
-        // Placeholder for future routing or actions
         alert(`Action for ${option.text} button`);
       });
     });
@@ -179,13 +177,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const clearMessageContainer = () => {
     const container = document.querySelector(".message-input-container");
-    container.innerHTML = ""; // Clear all existing content
+    container.innerHTML = ""; 
   };
 
   const handleNextStep = () => {
     const step = steps[currentStep];
     currentStep += 1;
-
     if (step.type === "api") {
       fetchAIResponse(step.content);
     } else if (step.type === "api_story") {
@@ -202,23 +199,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const initChatFlow = () => {
     if (lastWelcomeDate === currentDate) {
-      // If the welcome messages were shown today, show the Open Menu button for returning users
       userInput.style.display = "none";
       sendButton.style.display = "none";
-      addMessage(`Welcome back, ${username}! Click "Open Menu" to continue.`, "received");
+      addMessage(`Vítaj späť, ${username}! Klikni na "Otvoriť menu" pre pokračovanie`, "received");
       openMenuButton.style.display = "inline";
     } else {
-      // If the welcome messages were not shown today, proceed with the steps
       handleNextStep();
-      // Update the last welcome date on the server
       fetch("/chat/update_welcome_date", { method: "POST" });
     }
   };
 
   openMenuButton.addEventListener("click", () => {
-    // Display action buttons when "Open Menu" is clicked
     displayActionButtons();
-    openMenuButton.style.display = "none"; // Hide the Open Menu button
+    openMenuButton.style.display = "none";
   });
 
   nextButton.addEventListener("click", () => {
@@ -241,31 +234,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initialize the chat flow based on the last welcome date
   initChatFlow();
 
-  // Redirect to settings page on dropdown button click
   dropdownButton.addEventListener("click", () => {
     window.location.href = "/settings";
   });
 
-  // Logout button handling
   document.getElementById("logout-button").addEventListener("click", () => {
-    // You need to implement the backend route for logout if not already done.
     fetch("/auth/logout", { method: "POST" })
       .then(response => {
         if (response.ok) {
             window.location.href = "/auth/login";
         } else {
-            alert("Logout failed!");
+            alert("Odhlásenie zlyhalo!");
         }
     })
     .catch(error => console.error("Error logging out:", error));
   });
 
-  // Back button handling
   backButton.addEventListener("click", () => {
-    // Clear the current buttons and display the basic action buttons
     clearMessageContainer();
     displayActionButtons();
   });
