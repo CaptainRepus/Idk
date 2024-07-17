@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageText = messageInput.value.trim();
         if (messageText === '') return;
 
-        // Create div element for the message
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message', 'sent');
 
@@ -25,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages.appendChild(messageDiv);
 
         chatMessages.scrollTop = chatMessages.scrollHeight;
-
         messageInput.value = '';
     }
 
@@ -42,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Check if the user is already logged in
     if (localStorage.getItem('isLoggedIn') === 'true') {
         const username = localStorage.getItem('username');
         if (username && (window.location.pathname === '/login' || window.location.pathname === '/')) {
@@ -92,26 +89,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Apply theme to homepage buttons
-    const applyThemeToButtons = (theme) => {
+    const applyTheme = (theme) => {
+        document.body.className = '';
+        document.body.classList.add(theme);
+        localStorage.setItem('theme', theme);
+
+        // Update action buttons theme
         const buttons = document.querySelectorAll('.action-button');
         buttons.forEach(button => {
             button.className = 'action-button'; // Reset class to default
             button.classList.add(`theme-${theme}`);
         });
+
+        // Set theme class to localStorage
+        localStorage.setItem('themeClass', `theme-${theme}`);
     };
 
-    // Update the applyTheme function
-    const applyTheme = (theme) => {
-        document.body.className = ''; // Clear all classes
-        document.body.classList.add(theme);
-        localStorage.setItem('theme', theme);
-        applyThemeToButtons(theme);  // Apply theme to homepage buttons
-    };
-
-    // Initialize dark mode based on localStorage value
     const toggle = document.getElementById('dark-mode-toggle');
-
     if (toggle) {
         toggle.addEventListener('change', () => {
             document.body.classList.toggle('dark-mode', toggle.checked);
@@ -124,13 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initialize theme based on localStorage value
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
         applyTheme(savedTheme);
     }
 
-    // Add event listeners to theme boxes
     themeBoxes.forEach(box => {
         box.addEventListener('click', () => {
             applyTheme(box.id);

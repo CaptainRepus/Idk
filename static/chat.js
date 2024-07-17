@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let startDayButtonDisplayed = false; 
   let loadingMessageElem; 
 
-  // Add the clearAllMessages function here
   const clearAllMessages = () => {
     chatBox.innerHTML = ''; // Clear all existing messages
   };
@@ -52,53 +51,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const hideLoadingMessage = () => {
     if (loadingMessageElem) {
-      chatBox.removeChild(loadingMessageElem);
-      loadingMessageElem = null;
+        chatBox.removeChild(loadingMessageElem);
+        loadingMessageElem = null;
     }
   };
 
   const fetchAIResponse = async (message) => {
     showLoadingMessage();
     try {
-      const response = await fetch("/chat/send_message", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-      });
-      const data = await response.json();
-      hideLoadingMessage();
-      if (data.message) {
-        addMessage(data.message, "received");
-        if (currentStep < steps.length - 1) showNextButton(); 
-        else showStartDayButton(); 
-      } else if (data.error) {
-        addMessage("Error: " + data.error, "received");
-        showNextButton();
-      }
+        const response = await fetch("/chat/send_message", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message }),
+        });
+        const data = await response.json();
+        hideLoadingMessage();
+        if (data.message) {
+            addMessage(data.message, "received");
+            if (currentStep < steps.length - 1) showNextButton(); 
+            else showStartDayButton(); 
+        } else if (data.error) {
+            addMessage("Error: " + data.error, "received");
+            showNextButton();
+        }
     } catch (error) {
-      hideLoadingMessage();
-      addMessage("Error: " + error.message, "received");
-      showNextButton();
+        hideLoadingMessage();
+        addMessage("Error: " + error.message, "received");
+        showNextButton();
     }
   };
 
   const fetchStory = async () => {
     showLoadingMessage();
     try {
-      const response = await fetch("/chat/get_story", { method: "POST" });
-      const data = await response.json();
-      hideLoadingMessage();
-      if (data.story) {
-        addMessage(data.story, "received");
-        showNextButton();
-      } else if (data.error) {
-        addMessage("Error: " + data.error, "received");
-        showNextButton();
-      }
+        const response = await fetch("/chat/get_story", { method: "POST" });
+        const data = await response.json();
+        hideLoadingMessage();
+        if (data.story) {
+            addMessage(data.story, "received");
+            showNextButton();
+        } else if (data.error) {
+            addMessage("Error: " + data.error, "received");
+            showNextButton();
+        }
     } catch (error) {
-      hideLoadingMessage();
-      addMessage("Error: " + error.message, "received");
-      showNextButton();
+        hideLoadingMessage();
+        addMessage("Error: " + error.message, "received");
+        showNextButton();
     }
   };
 
@@ -110,68 +109,71 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const showStartDayButton = () => {
     if (!startDayButtonDisplayed) {
-      startDayButtonDisplayed = true; 
-      nextButton.style.display = "none";
-      const startDayButton = document.createElement("button");
-      startDayButton.id = "start-day-button";
-      startDayButton.textContent = "Začať deň";
-      document.querySelector(".message-input-container").appendChild(startDayButton);
-      startDayButton.addEventListener("click", () => {
-        clearAllMessages(); // Clear all previous messages
-        const finalMessage = "Si pripravený začať deň?";
-        addMessage(finalMessage, "received");
-        displayActionButtons();
-        startDayButton.remove(); 
-      });
+        startDayButtonDisplayed = true; 
+        nextButton.style.display = "none";
+        const startDayButton = document.createElement("button");
+        startDayButton.id = "start-day-button";
+        startDayButton.textContent = "Začať deň";
+        document.querySelector(".message-input-container").appendChild(startDayButton);
+        startDayButton.addEventListener("click", () => {
+            clearAllMessages(); // Clear all previous messages
+            const finalMessage = "Si pripravený začať deň?";
+            addMessage(finalMessage, "received");
+            displayActionButtons();
+            startDayButton.remove(); 
+        });
     }
   };
 
   const displayActionButtons = () => {
     const buttonsData = [
-      { text: "Nový report", color: "#FF6666" },
-      { text: "Aktívne reporty", color: "#FF3333" },
-      { text: "Oznámenia", color: "#FF0000" },
-      { text: "Hodnoty", color: "#CC0000" },
-      { text: "Osobný rozvoj", color: "#990000" },
-      { text: "Vylepšiť predaj", color: "#660000" },
+        "Nový report",
+        "Aktívne reporty",
+        "Oznámenia",
+        "Hodnoty",
+        "Osobný rozvoj",
+        "Vylepšiť predaj",
     ];
 
     clearMessageContainer();
 
-    buttonsData.forEach((btnData) => {
-      const actionButton = document.createElement("button");
-      actionButton.textContent = btnData.text;
-      actionButton.style.backgroundColor = btnData.color;
-      actionButton.className = "action-button";
-      document.querySelector(".message-input-container").appendChild(actionButton);
-      actionButton.addEventListener("click", () => {
-        if (btnData.text === "Nový report") {
-          addMessage("Skvelé! Poďme začať s tvojim novým reportom. Chceš pridať report pre nového klienta alebo existujúceho klienta?", "received");
-          displayNewCustomerOptions();
-        } else {
-          alert(`Action for ${btnData.text} button`);
-        }
-      });
+    const themeClass = localStorage.getItem('themeClass') || "theme-orange"; // Default theme
+
+    buttonsData.forEach((btnText) => {
+        const actionButton = document.createElement("button");
+        actionButton.textContent = btnText;
+        actionButton.className = `action-button ${themeClass}`;
+        document.querySelector(".message-input-container").appendChild(actionButton);
+        actionButton.addEventListener("click", () => {
+            if (btnText === "Nový report") {
+                addMessage("Skvelé! Poďme začať s tvojim novým reportom. Chceš pridať report pre nového klienta alebo existujúceho klienta?", "received");
+                displayNewCustomerOptions();
+            } else {
+                alert(`Action for ${btnText} button`);
+            }
+        });
     });
   };
 
   const displayNewCustomerOptions = () => {
     const newCustomerOptions = [
-      { text: "Nový zákazník", color: "#FF6666" },
-      { text: "Starý zákazník", color: "#FF3333" },
+        "Nový zákazník",
+        "Starý zákazník",
     ];
 
     clearMessageContainer(); 
-    newCustomerOptions.forEach((option) => {
-      const optionButton = document.createElement("button");
-      optionButton.textContent = option.text;
-      optionButton.style.backgroundColor = option.color;
-      optionButton.className = "action-button"; 
 
-      document.querySelector(".message-input-container").appendChild(optionButton);
-      optionButton.addEventListener("click", () => {
-        alert(`Action for ${option.text} button`);
-      });
+    const themeClass = localStorage.getItem('themeClass') || "theme-orange"; // Default theme
+
+    newCustomerOptions.forEach((optionText) => {
+        const optionButton = document.createElement("button");
+        optionButton.textContent = optionText;
+        optionButton.className = `action-button ${themeClass}`;
+
+        document.querySelector(".message-input-container").appendChild(optionButton);
+        optionButton.addEventListener("click", () => {
+            alert(`Action for ${optionText} button`);
+        });
     });
   };
 
@@ -184,28 +186,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const step = steps[currentStep];
     currentStep += 1;
     if (step.type === "api") {
-      fetchAIResponse(step.content);
+        fetchAIResponse(step.content);
     } else if (step.type === "api_story") {
-      fetchStory();
+        fetchStory();
     } else {
-      addMessage(step.content, "received");
-      if (currentStep < steps.length) {
-        showNextButton();
-      } else {
-        showStartDayButton();
-      }
+        addMessage(step.content, "received");
+        if (currentStep < steps.length) {
+            showNextButton();
+        } else {
+            showStartDayButton();
+        }
     }
   };
 
   const initChatFlow = () => {
     if (lastWelcomeDate === currentDate) {
-      userInput.style.display = "none";
-      sendButton.style.display = "none";
-      addMessage(`Vítaj späť, ${username}! Klikni na "Otvoriť menu" pre pokračovanie`, "received");
-      openMenuButton.style.display = "inline";
+        userInput.style.display = "none";
+        sendButton.style.display = "none";
+        addMessage(`Vítaj späť, ${username}! Klikni na "Otvoriť menu" pre pokračovanie`, "received");
+        openMenuButton.style.display = "inline";
     } else {
-      handleNextStep();
-      fetch("/chat/update_welcome_date", { method: "POST" });
+        handleNextStep();
+        fetch("/chat/update_welcome_date", { method: "POST" });
     }
   };
 
@@ -221,16 +223,16 @@ document.addEventListener("DOMContentLoaded", () => {
   sendButton.addEventListener("click", () => {
     const message = userInput.value.trim();
     if (message) {
-      addMessage(message, "sent");
-      userInput.value = "";
-      fetchAIResponse(message);
+        addMessage(message, "sent");
+        userInput.value = "";
+        fetchAIResponse(message);
     }
   });
 
   userInput.addEventListener("keypress", (event) => {
     if (event.key === "Enter") {
-      event.preventDefault();
-      sendButton.click();
+        event.preventDefault();
+        sendButton.click();
     }
   });
 
@@ -242,14 +244,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("logout-button").addEventListener("click", () => {
     fetch("/auth/logout", { method: "POST" })
-      .then(response => {
-        if (response.ok) {
-            window.location.href = "/auth/login";
-        } else {
-            alert("Odhlásenie zlyhalo!");
-        }
-    })
-    .catch(error => console.error("Error logging out:", error));
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "/auth/login";
+            } else {
+                alert("Odhlásenie zlyhalo!");
+            }
+        })
+        .catch(error => console.error("Error logging out:", error));
   });
 
   backButton.addEventListener("click", () => {
@@ -259,14 +261,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
-  if (!event.target.matches('#dropdown-button')) {
-    const dropdowns = document.getElementsByClassName("dropdown-content");
-    for (let i = 0; i < dropdowns.length; i++) {
-      const openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
+window.onclick = function (event) {
+    if (!event.target.matches('#dropdown-button')) {
+        const dropdowns = document.getElementsByClassName("dropdown-content");
+        for (let i = 0; i < dropdowns.length; i++) {
+            const openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
     }
-  }
 }
