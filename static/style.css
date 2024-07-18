@@ -81,14 +81,21 @@ button {
 }
 
 /* Chat message styles */
+.message-container {
+    display: flex;
+    align-items: flex-start;
+    margin: 10px 0;
+}
+
 .message {
     max-width: 60%;
-    margin: 10px;
     padding: 10px;
     border-radius: 10px;
     word-wrap: break-word;
     position: relative;
+    flex: 1;
 }
+
 .message.sent {
     background-color: #007bff;
     color: white;
@@ -105,6 +112,19 @@ button {
     position: absolute;
     bottom: -20px;
     right: 10px;
+}
+
+/* Style for the icon */
+.icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-right: 10px; /* Space between icon and message */
+    flex-shrink: 0; /* Prevent the icon from shrinking */
 }
 .action-button.theme-orange {
     background-color: #FFA500;

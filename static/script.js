@@ -90,37 +90,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const applyTheme = (theme) => {
-        document.body.className = '';
-        document.body.classList.add(theme);
-        localStorage.setItem('theme', theme);
+      document.body.className = '';
+      document.body.classList.add(theme);
+      localStorage.setItem('theme', theme);
 
-        // Update action buttons theme
-        const buttons = document.querySelectorAll('.action-button');
-        buttons.forEach(button => {
-            button.className = 'action-button'; // Reset class to default
-            button.classList.add(`theme-${theme}`);
-        });
+      // Update action buttons theme
+      const buttons = document.querySelectorAll('.action-button');
+      buttons.forEach(button => {
+        button.className = 'action-button'; // Reset class to default
+        button.classList.add(`theme-${theme}`);
+      });
 
-        // Set theme class to localStorage
-        localStorage.setItem('themeClass', `theme-${theme}`);
+      // Set theme class to localStorage
+      localStorage.setItem('themeClass', `theme-${theme}`);
+
+      // Set custom CSS properties for icon colors based on theme
+      const root = document.documentElement;
+      switch (theme) {
+        case 'theme-blue':
+          root.style.setProperty('--user-color', '#007bff');
+          root.style.setProperty('--ai-color', '#03a9f4');
+          break;
+        case 'theme-green':
+          root.style.setProperty('--user-color', '#4caf50');
+          root.style.setProperty('--ai-color', '#388e3c');
+          break;
+        case 'theme-red':
+          root.style.setProperty('--user-color', '#f44336');
+          root.style.setProperty('--ai-color', '#d32f2f');
+          break;
+        case 'theme-purple':
+          root.style.setProperty('--user-color', '#9c27b0');
+          root.style.setProperty('--ai-color', '#7b1fa2');
+          break;
+        default:
+          root.style.setProperty('--user-color', '#ff9800');
+          root.style.setProperty('--ai-color', '#f57c00');
+          break;
+      }
     };
 
     const toggle = document.getElementById('dark-mode-toggle');
     if (toggle) {
-        toggle.addEventListener('change', () => {
-            document.body.classList.toggle('dark-mode', toggle.checked);
-            localStorage.setItem('dark-mode', toggle.checked);
-        });
+      toggle.addEventListener('change', () => {
+        document.body.classList.toggle('dark-mode', toggle.checked);
+        localStorage.setItem('dark-mode', toggle.checked);
+      });
 
-        if (localStorage.getItem('dark-mode') === 'true') {
-            document.body.classList.add('dark-mode');
-            toggle.checked = true;
-        }
+      if (localStorage.getItem('dark-mode') === 'true') {
+        document.body.classList.add('dark-mode');
+        toggle.checked = true;
+      }
     }
 
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
-        applyTheme(savedTheme);
+      applyTheme(savedTheme);
     }
 
     themeBoxes.forEach(box => {
