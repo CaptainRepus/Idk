@@ -24,32 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let loadingMessageElem;
 
   const addMessage = (content, type) => {
-    const messageContainer = document.createElement("div");
-    messageContainer.className = "message-container";
-
-    const iconElem = document.createElement("div");
-    iconElem.className = `icon ${type}`;
-    if (type === "sent") {
-      iconElem.innerText = username.charAt(0).toUpperCase(); // Display the first letter of the username
-    } else {
-      iconElem.innerHTML = '<i class="fas fa-brain"></i>'; // Use FontAwesome brain icon for AI messages
-    }
-
     const messageElem = document.createElement("div");
     messageElem.className = `message ${type}`;
     messageElem.innerHTML = `<p>${content}</p>`;
-
-    if (type === "sent") {
-      messageContainer.appendChild(messageElem);
-      messageContainer.appendChild(iconElem);
-    } else {
-      messageContainer.appendChild(iconElem);
-      messageContainer.appendChild(messageElem);
-    }
-
-    chatBox.appendChild(messageContainer);
+    chatBox.appendChild(messageElem);
     chatBox.scrollTop = chatBox.scrollHeight;
-
     return messageElem;
   };
 
