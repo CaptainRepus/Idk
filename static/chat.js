@@ -29,14 +29,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const iconElem = document.createElement("div");
     iconElem.className = `icon ${type}`;
-    iconElem.innerHTML = type === "sent" ? '<i class="fas fa-user"></i>' : '<i class="fas fa-brain"></i>'; // Use FontAwesome icons
+    if (type === "sent") {
+      iconElem.innerText = username.charAt(0).toUpperCase(); // Display the first letter of the username
+    } else {
+      iconElem.innerHTML = '<i class="fas fa-brain"></i>'; // Use FontAwesome brain icon for AI messages
+    }
 
     const messageElem = document.createElement("div");
     messageElem.className = `message ${type}`;
     messageElem.innerHTML = `<p>${content}</p>`;
 
-    messageContainer.appendChild(iconElem);
-    messageContainer.appendChild(messageElem);
+    if (type === "sent") {
+      messageContainer.appendChild(messageElem);
+      messageContainer.appendChild(iconElem);
+    } else {
+      messageContainer.appendChild(iconElem);
+      messageContainer.appendChild(messageElem);
+    }
+
     chatBox.appendChild(messageContainer);
     chatBox.scrollTop = chatBox.scrollHeight;
 

@@ -8,43 +8,49 @@ body, html {
     justify-content: center;
     align-items: center;
 }
+
 .backbutton {
     width: 15%;
     height: 50%;
 }
+
 .nav-container .dropdown .fa-gear {
-    font-size: 24px; /* Zväčšenie veľkosti ikony */
-    color: white;    /* Nastavenie farby ikony na bielu */
-    margin-right: 10px; /* Posunutie ikony ďalej od kraja */
-    transition: color 0.3s ease, transform 0.3s ease; /* Prechodový efekt pre hladkú zmenu */
-    padding: 0.5rem; /* Zmena rozmeru odkazu */
+    font-size: 24px;
+    color: white;
+    margin-right: 10px;
+    transition: color 0.3s ease, transform 0.3s ease;
+    padding: 0.5rem;
 }
+
 .nav-container .dropdown .fa-gear:hover,
 .nav-container .dropdown .fa-gear:active {
-    color: #ffffff; /* Zmena farby pri hover */
-    transform: rotate(50deg); /* Rotácia pri hover */
+    color: #ffffff;
+    transform: rotate(50deg);
     background: #7a7a7a;
     border-radius: 50%;
     cursor: pointer;
 }
+
 /* General Button Style */
 button {
     padding: 10px 20px;
     color: white;
     border: none;
-    border-radius: 8px; /* Add a larger border-radius */
+    border-radius: 8px;
     margin: 5px;
     cursor: pointer;
 }
+
 /* New styles for action buttons with transition */
 .action-button {
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
-    transform: translateY(100%); /* Start off-screen */
-    opacity: 0; /* Make initially invisible */
+    transform: translateY(100%);
+    opacity: 0;
 }
+
 .action-button.visible {
-    transform: translateY(0); /* Move to visible position */
-    opacity: 1; /* Make visible */
+    transform: translateY(0);
+    opacity: 1;
 }
 
 /* Styles for modal */
@@ -59,6 +65,7 @@ button {
     overflow: auto;
     background-color: rgba(0,0,0,0.5);
 }
+
 .modal-content {
     background-color: #fff;
     margin: 10% auto;
@@ -67,17 +74,31 @@ button {
     width: 80%;
     border-radius: 8px;
 }
+
 .close-button {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
+
 .close-button:hover,
 .close-button:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
+}
+
+/* Chat container */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    width: 600px; /* Adjust as necessary */
+    height: 800px; /* Adjust as necessary */
+    background: url('/static/img/pattern.png'); /* Set the background image */
+    background-size: cover; /* Ensure the image covers the container */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Chat message styles */
@@ -99,13 +120,15 @@ button {
 .message.sent {
     background-color: #007bff;
     color: white;
-    margin-left: auto; /* Align to the right */
+    margin-left: auto;
 }
+
 .message.received {
     background-color: #f1f0f0;
     color: black;
-    margin-right: auto; /* Align to the left */
+    margin-right: auto;
 }
+
 .timestamp {
     font-size: 0.75rem;
     color: #333;
@@ -123,19 +146,47 @@ button {
     align-items: center;
     justify-content: center;
     color: white;
-    margin-right: 10px; /* Space between icon and message */
-    flex-shrink: 0; /* Prevent the icon from shrinking */
+    flex-shrink: 0;
 }
 
 .icon.sent {
     background-color: var(--user-color, #007bff);
+    margin-left: 10px;
 }
 
 .icon.received {
     background-color: var(--ai-color, #03a9f4);
+    margin-right: 10px;
 }
-.action-button.theme-orange {
-    background-color: #FFA500;
+
+/* Message arrow styles */
+.message.sent::after,
+.message.received::after {
+    content: "";
+    position: absolute;
+    border-width: 10px;
+    border-style: solid;
+}
+
+.message.sent::after {
+    border-color: transparent transparent transparent #007bff;
+    top: 10px;
+    right: -10px;
+}
+
+.message.received::after {
+    border-color: transparent #f1f0f0 transparent transparent;
+    top: 10px;
+    left: -10px;
+}
+
+/* Adjust icon position */
+.message-container .icon.sent {
+    order: 1;
+}
+
+.message-container .icon.received {
+    order: -1;
 }
 
 .action-button.theme-blue {
@@ -153,10 +204,11 @@ button {
 .action-button.theme-purple {
     background-color: #800080;
 }
+
 /* Settings Container */
 .settings-container {
-    width: 600px; /* Set fixed width */
-    height: 800px; /* Set fixed height */
+    width: 600px; /* Fixed width */
+    height: 800px; /* Fixed height */
     background-color: #1f1f1f;
     padding: 20px;
     border-radius: 8px;
@@ -164,19 +216,23 @@ button {
     text-align: center;
     margin: auto;
 }
+
 .settings-container h2 {
     color: white;
-    margin-bottom: 20px; /* Add space between h2 and the content below */
+    margin-bottom: 20px; /* Space below h2 */
 }
+
 .settings-container .toggle-container {
-    margin-bottom: 40px; /* Add space below the toggle container */
+    margin-bottom: 40px; /* Space below toggle container */
 }
+
 .settings-container .theme-selection {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
 }
+
 .settings-container .theme-box {
     width: 100px;
     height: 100px;
@@ -190,10 +246,12 @@ button {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s, box-shadow 0.3s;
 }
+
 .settings-container .theme-box:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
+
 .settings-container button {
     width: auto;
     padding: 12px;
@@ -205,9 +263,11 @@ button {
     cursor: pointer;
     margin-top: 20px;
 }
+
 .settings-container button:hover {
     background-color: #cc0000;
 }
+
 /* Toggle Switch */
 .switch {
     position: relative;
@@ -215,11 +275,13 @@ button {
     width: 60px;
     height: 34px;
 }
+
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
+
 .slider {
     position: absolute;
     cursor: pointer;
@@ -230,6 +292,7 @@ button {
     background-color: #ccc;
     transition: 0.4s;
 }
+
 .slider:before {
     position: absolute;
     content: "";
@@ -240,58 +303,75 @@ button {
     background-color: white;
     transition: 0.4s;
 }
+
 input:checked + .slider {
     background-color: #2196F3;
 }
+
 input:checked + .slider:before {
     transform: translateX(26px);
 }
+
 .slider.round {
     border-radius: 34px;
 }
+
 .slider.round:before {
     border-radius: 50%;
 }
+
 /* Theme Styles */
 body.theme-orange button {
     background-color: #FFA500;
 }
+
 body.theme-blue button {
     background-color: #2196F3;
 }
+
 body.theme-green button {
     background-color: #4CAF50;
 }
+
 body.theme-red button {
     background-color: #FF0000;
 }
+
 body.theme-purple button {
     background-color: #800080;
 }
+
 /* Button Hover Styles for Themes */
 body.theme-orange button:hover {
     background-color: #e59400;
 }
+
 body.theme-blue button:hover {
     background-color: #1e88e5;
 }
+
 body.theme-green button:hover {
     background-color: #43a047;
 }
+
 body.theme-red button:hover {
     background-color: #e60000;
 }
+
 body.theme-purple button:hover {
     background-color: #720072;
 }
+
 /* Dark Mode */
 body.dark-mode {
     background-color: #121212;
     color: white;
 }
+
 body.dark-mode .settings-container {
     background-color: #1f1f1f;
 }
+
 body.dark-mode input {
     background-color: #262626;
     color: white;
@@ -299,49 +379,56 @@ body.dark-mode input {
 
 /* Navigation Container */
 .nav-container {
-    width: 600px; /* Match the chat container width */
-    background-color: #1f1f1f; /* Slightly lighter dark background for container */
+    width: 600px; /* Match chat container width */
+    background-color: #1f1f1f; /* Slightly lighter dark background */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 8px 8px 0 0; /* Rounded top corners like chat container */
+    border-radius: 8px 8px 0 0; /* Rounded top corners */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative; /* Required to position the dropdown */
 }
+
 .nav-container button, .dropdown button {
-    padding: 10px 20px; /* Adjust padding to control button width */
-    background-color: transparent; /* Transparent background for nav buttons */
+    padding: 10px 20px; /* Adjust padding */
+    background-color: transparent; /* Transparent background */
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
 }
+
 .nav-container button:hover, .dropdown button:hover {
-    background-color: #333; /* Darker background for button on hover */
+    background-color: #333; /* Darker background on hover */
 }
+
 /* Dropdown menu */
 .dropdown {
-    position: relative; /* Required to position the dropdown content */
+    position: relative; /* Required to position dropdown content */
 }
+
 .dropdown-content {
     display: none;
     position: absolute;
     right: 0;
-    background-color: #1f1f1f; /* Match the chat container background */
+    background-color: #1f1f1f; /* Match chat container background */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     z-index: 1;
     overflow: hidden;
 }
+
 .dropdown-content a {
     color: white;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
+
 .dropdown-content a:hover {
     background-color: #333; /* Darker background on hover */
 }
+
 /* Show dropdown content */
 .dropdown .show {
     display: block;
@@ -351,7 +438,7 @@ body.dark-mode input {
 .login-container {
     width: 90%;
     max-width: 400px;
-    background-color: #1f1f1f; /* Slightly lighter dark background for container */
+    background-color: #1f1f1f; /* Slightly lighter dark background */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -393,7 +480,7 @@ body.dark-mode input {
 button {
     width: 100%;
     padding: 12px;
-    background-color: #FF0000; /* Red background for button */
+    background-color: #FF0000; /* Red background */
     color: white;
     font-size: 16px;
     border: none;
@@ -402,34 +489,36 @@ button {
 }
 
 button:hover {
-    background-color: #cc0000; /* Darker red for button on hover */
+    background-color: #cc0000; /* Darker red on hover */
 }
 
-/* Chat container with fixed width and height */
+/* Chat container */
 .chat-container {
     display: flex;
     flex-direction: column;
-    width: 600px; /* Set fixed width */
-    height: 800px; /* Set fixed height */
-    background-color: #1f1f1f; /* Slightly lighter dark background for container */
+    width: 600px; /* Fixed width */
+    height: 800px; /* Fixed height */
+    background-color: #1f1f1f; /* Slightly lighter dark background */
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 /* Message area */
 .chat-messages {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
     border-bottom: 1px solid #333;
-    color: white; /* Ensure the text color is visible */
+    color: white; /* Ensure text color is visible */
 }
+
 /* Input area */
 .message-input-container {
     display: flex;
     flex-wrap: wrap; /* Allow multiple lines for buttons */
     padding: 20px;
-    background-color: #1f1f1f;
 }
+
 #user-input {
     flex: 1;
     padding: 10px;
@@ -438,19 +527,22 @@ button:hover {
     border-radius: 8px 0 0 8px;
     background-color: #262626; /* Darker input background */
     color: white;
-    display: none; /* Initially hidden for the steps flow */
+    display: none; /* Initially hidden for steps flow */
 }
+
 #send-button, #next-button, #start-day-button {
     padding: 10px 20px;
-    background-color: #FF0000; /* Red background for button */
+    background-color: #FF0000; /* Red background */
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
 }
+
 #send-button:hover, #next-button:hover, #start-day-button:hover {
-    background-color: #cc0000; /* Darker red for button on hover */
+    background-color: #cc0000; /* Darker red on hover */
 }
+
 #next-button {
     display: none; /* Initially hidden */
 }
@@ -460,31 +552,16 @@ button:hover {
     padding: 10px 20px;
     color: white;
     border: none;
-    border-radius: 8px; /* Add a larger border-radius */
+    border-radius: 8px; /* Larger border-radius */
     margin: 5px;
     cursor: pointer;
 }
 
 .message-input-container button.action-button:hover {
-    opacity: 0.9; /* Slightly dim the button on hover */
+    opacity: 0.9; /* Slightly dim on hover */
 }
 
 /* Message styles */
-.message {
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 8px;
-}
-.message.received {
-    background-color: #444;
-    color: white;
-    align-self: flex-start;
-}
-.message.sent {
-    background-color: #FF5733;
-    color: white;
-    align-self: flex-end;
-}
 .message img {
     width: 100%;
     border-radius: 8px;
