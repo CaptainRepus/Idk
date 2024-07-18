@@ -1,3 +1,4 @@
+<!-- templates/settings.html -->
 {% extends "base/base.html" %}
 
 {% block title %}Settings{% endblock %}
@@ -5,7 +6,6 @@
 {% block content %}
 <div class="settings-container">
     <button id="back-button">← Vrátiť sa</button>
-
     <div class="toggle-container">
         <h2>Tmavý režim:</h2>
         <label class="switch">
@@ -15,7 +15,6 @@
     </div>
     <h2>Vyber si tému aplikácie:</h2>
     <div class="theme-selection">
-        
         <div class="theme-box" id="theme-orange" style="background-color: #FFA500;">Oranžová</div>
         <div class="theme-box" id="theme-blue" style="background-color: #2196F3;">Modrá</div>
         <div class="theme-box" id="theme-green" style="background-color: #4CAF50;">Zelená</div>
@@ -29,4 +28,5 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='chat.js') }}"></script>
 {% endblock %}

@@ -12,6 +12,21 @@ body, html {
     width: 15%;
     height: 50%;
 }
+.nav-container .dropdown .fa-gear {
+    font-size: 24px; /* Zväčšenie veľkosti ikony */
+    color: white;    /* Nastavenie farby ikony na bielu */
+    margin-right: 10px; /* Posunutie ikony ďalej od kraja */
+    transition: color 0.3s ease, transform 0.3s ease; /* Prechodový efekt pre hladkú zmenu */
+    padding: 0.5rem; /* Zmena rozmeru odkazu */
+}
+.nav-container .dropdown .fa-gear:hover,
+.nav-container .dropdown .fa-gear:active{
+    color: #ffffff; /* Zmena farby pri hover */
+    transform: rotate(50deg); /* Rotácia pri hover */
+    background: #7a7a7a;
+    border-radius: 50%;
+    cursor: pointer;
+}
 /* General Button Style */
 button {
     padding: 10px 20px;
@@ -20,6 +35,16 @@ button {
     border-radius: 8px; /* Add a larger border-radius */
     margin: 5px;
     cursor: pointer;
+}
+/* New styles for action buttons with transition */
+.action-button {
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+    transform: translateY(100%); /* Start off-screen */
+    opacity: 0; /* Make initially invisible */
+}
+.action-button.visible {
+    transform: translateY(0); /* Move to visible position */
+    opacity: 1; /* Make visible */
 }
 .action-button.theme-orange {
     background-color: #FFA500;

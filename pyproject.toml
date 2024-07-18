@@ -9,7 +9,7 @@ python = ">=3.10.0,<3.11"
 flask = "^3.0.0"
 sqlalchemy = "^1.4"
 flask-sqlalchemy = "^2.5"
-werkzeug = ">=2.1.0, <2.3.0"
+werkzeug = ">=3.0.0"
 openai = "^0.28"
 
 [tool.poetry.dev-dependencies]
