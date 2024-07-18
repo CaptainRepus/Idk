@@ -25,8 +25,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const addMessage = (content, type) => {
     const messageElem = document.createElement("div");
-    messageElem.className = `message ${type}`;
-    messageElem.innerHTML = `<p>${content}</p>`;
+    const iconElem = document.createElement("div");
+    const iconContent = type === 'received' ? '<i class="fa-solid fa-brain"></i>' : '<i class="fa-solid fa-user"></i>';
+
+    iconElem.className = `icon ${type}`;
+    iconElem.innerHTML = iconContent;
+
+    messageElem.className = `message-container ${type}`;
+    messageElem.innerHTML = `
+      <div class="message ${type}">
+        <p>${content}</p>
+      </div>
+    `;
+
+    messageElem.insertBefore(iconElem, messageElem.firstChild);
     chatBox.appendChild(messageElem);
     chatBox.scrollTop = chatBox.scrollHeight;
     return messageElem;
