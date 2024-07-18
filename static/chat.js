@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const userInput = document.getElementById("user-input");
   const sendButton = document.getElementById("send-button");
   const nextButton = document.createElement("button");
-  nextButton.id = "next-button";
   nextButton.textContent = "Next";
   nextButton.style.display = "none";
   document.querySelector(".message-input-container").appendChild(nextButton);

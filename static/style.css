@@ -101,34 +101,41 @@ button {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Chat message styles */
+/* Message container styles */
 .message-container {
-    display: flex;
-    align-items: flex-start;
-    margin: 10px 0;
+  display: flex;
+  align-items: flex-start;
+  margin: 10px 0;
 }
-
 .message {
-    max-width: 60%;
-    padding: 10px;
-    border-radius: 10px;
-    word-wrap: break-word;
-    position: relative;
-    flex: 1;
+  max-width: 60%;
+  padding: 10px;
+  border-radius: 10px;
+  word-wrap: break-word;
+  background-color: var(--message-bg-color, #f1f0f0);
+  color: var(--message-text-color, black);
+  position: relative;
+  margin-left: 10px; /* Space for the icon */
 }
-
 .message.sent {
-    background-color: #007bff;
-    color: white;
-    margin-left: auto;
+  background-color: var(--user-bg-color, #007bff);
+  color: white;
 }
-
 .message.received {
-    background-color: #f1f0f0;
-    color: black;
-    margin-right: auto;
+  background-color: var(--ai-bg-color, #f1f0f0);
+  color: black;
 }
 
+/* Message icon adjustment */
+.message-container .icon.sent {
+  order: 1;
+  margin-left: 10px; /* Adjust margin if needed */
+}
+.message-container .icon.received {
+  order: -1;
+  margin-left: 0;
+  margin-right: 10px; /* Adjust margin if needed */
+}
 .timestamp {
     font-size: 0.75rem;
     color: #333;
@@ -137,47 +144,66 @@ button {
     right: 10px;
 }
 
-/* Style for the icon */
+/* Icon styles */
 .icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    flex-shrink: 0;
-}
-
-.icon.sent {
-    background-color: var(--user-color, #007bff);
-    margin-left: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  color: white;
+  flex-shrink: 0;
 }
 
 .icon.received {
-    background-color: var(--ai-color, #03a9f4);
-    margin-right: 10px;
+  background-color: var(--ai-color, #03a9f4);
+}
+.icon.sent {
+  background-color: var(--user-color, #007bff);
+}
+.icon i {
+  font-size: 20px;
 }
 
-/* Message arrow styles */
-.message.sent::after,
-.message.received::after {
-    content: "";
-    position: absolute;
-    border-width: 10px;
-    border-style: solid;
+/* Message container styles */
+.message-container {
+  display: flex;
+  align-items: flex-start;
+  margin: 10px 0;
+  position: relative;
 }
 
-.message.sent::after {
-    border-color: transparent transparent transparent #007bff;
-    top: 10px;
-    right: -10px;
+/* Message styles */
+.message {
+  max-width: 60%;
+  padding: 10px;
+  border-radius: 10px;
+  word-wrap: break-word;
+  background-color: var(--message-bg-color, #f1f0f0);
+  color: var(--message-text-color, black);
+  position: relative;
+  flex: 1;
+}
+.message.sent {
+  background-color: var(--user-bg-color, #007bff);
+  color: white;
+}
+.message.received {
+  background-color: var(--ai-bg-color, #f1f0f0);
+  color: black;
 }
 
-.message.received::after {
-    border-color: transparent #f1f0f0 transparent transparent;
-    top: 10px;
-    left: -10px;
+/* Message icon adjustment */
+.message-container .icon.sent {
+  order: 1;
+  margin-left: 10px; /* Adjust margin if needed */
+}
+.message-container .icon.received {
+  order: -1;
+  margin-left: 0;
+  margin-right: 10px; /* Adjust margin if needed */
 }
 
 /* Adjust icon position */
