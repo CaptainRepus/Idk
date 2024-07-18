@@ -13,6 +13,14 @@
     <div class="message-input-container">
         <input type="text" id="user-input" placeholder="Tu napíšte svoju správu...">
         <button id="send-button">Poslať</button>
+        <button id="open-menu-button" style="display:none;">Otvoriť menu</button>
+    </div>
+</div>
+<div id="settings-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-settings-button" class="close-button">&times;</span>
+        <!-- Include the content of settings.html here -->
+        {% include 'settings.html' %}
     </div>
 </div>
 <script>

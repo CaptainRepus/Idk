@@ -8,7 +8,7 @@ body, html {
     justify-content: center;
     align-items: center;
 }
-.backbutton{
+.backbutton {
     width: 15%;
     height: 50%;
 }
@@ -20,7 +20,7 @@ body, html {
     padding: 0.5rem; /* Zmena rozmeru odkazu */
 }
 .nav-container .dropdown .fa-gear:hover,
-.nav-container .dropdown .fa-gear:active{
+.nav-container .dropdown .fa-gear:active {
     color: #ffffff; /* Zmena farby pri hover */
     transform: rotate(50deg); /* Rotácia pri hover */
     background: #7a7a7a;
@@ -45,6 +45,66 @@ button {
 .action-button.visible {
     transform: translateY(0); /* Move to visible position */
     opacity: 1; /* Make visible */
+}
+
+/* Styles for modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    border-radius: 8px;
+}
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Chat message styles */
+.message {
+    max-width: 60%;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    word-wrap: break-word;
+    position: relative;
+}
+.message.sent {
+    background-color: #007bff;
+    color: white;
+    margin-left: auto; /* Align to the right */
+}
+.message.received {
+    background-color: #f1f0f0;
+    color: black;
+    margin-right: auto; /* Align to the left */
+}
+.timestamp {
+    font-size: 0.75rem;
+    color: #333;
+    position: absolute;
+    bottom: -20px;
+    right: 10px;
 }
 .action-button.theme-orange {
     background-color: #FFA500;
