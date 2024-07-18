@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const iconElem = document.createElement("div");
     iconElem.className = `icon ${type}`;
-    iconElem.innerText = type === "sent" ? "You" : "AI"; // Display "AI" for received messages and "You" for sent messages
+    iconElem.innerHTML = type === "sent" ? '<i class="fas fa-user"></i>' : '<i class="fas fa-brain"></i>'; // Use FontAwesome icons
 
     const messageElem = document.createElement("div");
     messageElem.className = `message ${type}`;

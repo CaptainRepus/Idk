@@ -101,7 +101,6 @@ button {
     color: white;
     margin-left: auto; /* Align to the right */
 }
-
 .message.received {
     background-color: #f1f0f0;
     color: black;
