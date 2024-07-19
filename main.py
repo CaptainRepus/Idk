@@ -27,7 +27,7 @@ app.register_blueprint(improve_blueprint, url_prefix='/improve')
 @app.route('/')
 def welcome():
     if 'username' in session:
-        return redirect(url_for('chat.index'))  # Ensure /chat prefix is used
+        return redirect(url_for('chat.index'))
     return render_template('welcome.html')
 
 @app.route('/settings')

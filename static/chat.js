@@ -2,10 +2,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatBox = document.getElementById("chat-box");
   const userInput = document.getElementById("user-input");
   const sendButton = document.getElementById("send-button");
-  const nextButton = document.createElement("button");
-  nextButton.textContent = "Next";
-  nextButton.style.display = "none";
-  document.querySelector(".message-input-container").appendChild(nextButton);
+
+  // To keep track of added messages and avoid duplication
+  const addedMessages = new Set();
+
+  // Check if the button already exists
+  let nextButton = document.querySelector(".message-input-container #next-button");
+  if (!nextButton) {
+      nextButton = document.createElement("button");
+      nextButton.textContent = "Next";
+      nextButton.id = "next-button"; // Assign an ID to avoid duplications
+      nextButton.style.display = "none";
+      document.querySelector(".message-input-container").appendChild(nextButton);
+  }
+
   const settingsModal = document.getElementById("settings-modal");
   const closeSettingsButton = document.getElementById("close-settings-button");
   const dropdownButton = document.getElementById("dropdown-button");
@@ -23,24 +33,28 @@ document.addEventListener("DOMContentLoaded", () => {
   let loadingMessageElem;
 
   const addMessage = (content, type) => {
-    const messageElem = document.createElement("div");
-    const iconElem = document.createElement("div");
-    const iconContent = type === 'received' ? '<i class="fa-solid fa-brain"></i>' : '<i class="fa-solid fa-user"></i>';
+    if (!addedMessages.has(content)) {
+        const messageElem = document.createElement("div");
+        const iconElem = document.createElement("div");
+        const iconContent = type === 'received' ? '<i class="fa-solid fa-brain"></i>' : '<i class="fa-solid fa-user"></i>';
 
-    iconElem.className = `icon ${type}`;
-    iconElem.innerHTML = iconContent;
+        iconElem.className = `icon ${type}`;
+        iconElem.innerHTML = iconContent;
 
-    messageElem.className = `message-container ${type}`;
-    messageElem.innerHTML = `
-      <div class="message ${type}">
-        <p>${content}</p>
-      </div>
-    `;
+        messageElem.className = `message-container ${type}`;
+        messageElem.innerHTML = `
+        <div class="message ${type}">
+            <p>${content}</p>
+        </div>
+        `;
 
-    messageElem.insertBefore(iconElem, messageElem.firstChild);
-    chatBox.appendChild(messageElem);
-    chatBox.scrollTop = chatBox.scrollHeight;
-    return messageElem;
+        messageElem.insertBefore(iconElem, messageElem.firstChild);
+        chatBox.appendChild(messageElem);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        addedMessages.add(content); // Mark this message as added
+        return messageElem;
+    }
+    return null;
   };
 
   const addWelcomeBackMessage = (username) => {
@@ -195,18 +209,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const handleNextStep = () => {
     const step = steps[currentStep];
-    currentStep += 1;
-    if (step.type === "api") {
-      fetchAIResponse(step.content);
-    } else if (step.type === "api_story") {
-      fetchStory();
-    } else {
-      addMessage(step.content, "received");
-      saveMessage(step.content, "received");
-      if (currentStep < steps.length) {
-        showNextButton();
+    if (step && currentStep < steps.length) {
+      currentStep += 1;
+      if (step.type === "api") {
+        fetchAIResponse(step.content);
+      } else if (step.type === "api_story") {
+        fetchStory();
       } else {
-        showStartDayButton();
+        addMessage(step.content, "received");
+        saveMessage(step.content, "received");
+        if (currentStep < steps.length) {
+          showNextButton();
+        } else {
+          showStartDayButton();
+        }
       }
     }
   };
