@@ -99,6 +99,7 @@ button {
     background-size: cover; /* Ensure the image covers the container */
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-size: cover;
 }
 
 /* Message container styles */
