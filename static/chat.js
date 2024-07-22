@@ -3,18 +3,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const userInput = document.getElementById("user-input");
   const sendButton = document.getElementById("send-button");
 
+  // Initialize nextButton
+  let nextButton = document.createElement("button");
+  nextButton.textContent = "Next";
+  nextButton.id = "next-button";
+  nextButton.style.display = "none";
+  document.querySelector(".message-input-container").appendChild(nextButton);
+
   // To keep track of added messages and avoid duplication
   const addedMessages = new Set();
-
-  // Check if the button already exists
-  let nextButton = document.querySelector(".message-input-container #next-button");
-  if (!nextButton) {
-      nextButton = document.createElement("button");
-      nextButton.textContent = "Next";
-      nextButton.id = "next-button"; // Assign an ID to avoid duplications
-      nextButton.style.display = "none";
-      document.querySelector(".message-input-container").appendChild(nextButton);
-  }
 
   const settingsModal = document.getElementById("settings-modal");
   const closeSettingsButton = document.getElementById("close-settings-button");
@@ -22,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const steps = [
     { type: "welcome", content: `Vitaj späť, ${username}! Klikni "Ďalej" pre tvoj motivačný impulz na dnešok:` },
     { type: "api", content: "Motivácia dňa v slovenčine" },
-    { type: "image", content: '<img src="/static/images/team_photo.jpg" alt="Team Photo">' },
+    { type: "image", content: `<img src="/static/images/team_photo.jpg" alt="Team Photo">` },
     { type: "level", content: `Tvoj level: ${userLevel}, XP do ďalšieho levlu: 100.` },
     { type: "api_story", content: "Generate sales story" },
     { type: "final", content: "Čo by si chcel dnes robiť?" },
@@ -33,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let loadingMessageElem;
 
   const addMessage = (content, type) => {
-    if (!addedMessages.has(content)) {
+      if (!addedMessages.has(content)) {
         const messageElem = document.createElement("div");
         const iconElem = document.createElement("div");
         const iconContent = type === 'received' ? '<i class="fa-solid fa-brain"></i>' : '<i class="fa-solid fa-user"></i>';
@@ -43,18 +40,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         messageElem.className = `message-container ${type}`;
         messageElem.innerHTML = `
-        <div class="message ${type}">
+          <div class="message ${type}">
             <p>${content}</p>
-        </div>
+          </div>
         `;
 
-        messageElem.insertBefore(iconElem, messageElem.firstChild);
+        if(type === 'received'){
+          messageElem.insertBefore(iconElem, messageElem.firstChild);
+        }
+        else{
+          messageElem.appendChild(iconElem);
+        }
+
         chatBox.appendChild(messageElem);
         chatBox.scrollTop = chatBox.scrollHeight;
         addedMessages.add(content); // Mark this message as added
         return messageElem;
-    }
-    return null;
+      }
+      return null;
   };
 
   const addWelcomeBackMessage = (username) => {
@@ -111,8 +114,12 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch("/chat/send_message", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message
+        }),
       });
       const data = await response.json();
       hideLoadingMessage();
@@ -135,7 +142,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const fetchStory = async () => {
     showLoadingMessage();
     try {
-      const response = await fetch("/chat/get_story", { method: "POST" });
+      const response = await fetch("/chat/get_story", {
+        method: "POST"
+      });
       const data = await response.json();
       hideLoadingMessage();
       if (data.story) {
@@ -178,27 +187,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const displayActionButtons = () => {
     const buttonsData = [
-      "Nový report",
-      "Aktívne reporty",
-      "Oznámenia",
-      "Naše hodnoty",
-      "Osobný rozvoj",
-      "Vylepšiť predaj",
-      "Aký je môj level?"
+      { text: "Nový report", module: './main_functions/new_report.js' },
+      { text: "Aktívne reporty", module: './main_functions/active_reports.js' },
+      { text: "Oznámenia", module: './main_functions/notifications.js' },
+      { text: "Naše hodnoty", module: './main_functions/values.js' },
+      { text: "Osobný rozvoj", module: './main_functions/personal_growth.js' },
+      // Add more as necessary
     ];
 
     clearMessageContainer();
     const themeClass = localStorage.getItem('themeClass') || "theme-orange";
 
-    buttonsData.forEach((btnText, index) => {
+    buttonsData.forEach((btn, index) => {
       const actionButton = document.createElement("button");
-      actionButton.textContent = btnText;
+      actionButton.textContent = btn.text;
       actionButton.className = `action-button ${themeClass}`;
       document.querySelector(".message-input-container").appendChild(actionButton);
+
+      // Add event listener to load the module dynamically
+      actionButton.addEventListener('click', async () => {
+        if (btn.text === "Nový report") {
+          handleNewReportAction(chatBox);
+        } else {
+          console.error(`Handler for ${btn.text} not implemented`);
+        }
+      });
 
       setTimeout(() => {
         actionButton.classList.add('visible');
       }, index * 100);
+    });
+  };
+
+  const hideAllActionButtons = () => {
+    document.querySelectorAll(".action-button").forEach(button => {
+      button.remove();
     });
   };
 
@@ -234,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sendButton.style.display = "none";
       const openMenuButton = document.getElementById("open-menu-button");
       if (openMenuButton) {
-        openMenuButton.style.display = "inline"; 
+        openMenuButton.style.display = "inline";
         openMenuButton.addEventListener("click", () => {
           displayActionButtons();
           openMenuButton.style.display = "none";
@@ -243,7 +266,9 @@ document.addEventListener("DOMContentLoaded", () => {
       addMessage(`Vítaj späť, ${username}! Klikni na "Otvoriť menu" pre pokračovanie`, "received");
     } else {
       handleNextStep();
-      fetch("/chat/update_welcome_date", { method: "POST" });
+      fetch("/chat/update_welcome_date", {
+        method: "POST"
+      });
     }
   };
 
@@ -279,4 +304,54 @@ document.addEventListener("DOMContentLoaded", () => {
   loadMessages();
   addWelcomeBackMessage(username);
   initChatFlow();
+
+  function handleNewReportAction(chatBox) {
+    const messageContainer = document.querySelector(".message-input-container");
+
+    const addMessage = (content, type) => {
+      const messageElem = document.createElement("div");
+      const iconElem = document.createElement("div");
+      iconElem.className = `icon ${type}`;
+      iconElem.innerHTML = type === 'received' ? '<i class="fa-solid fa-brain"></i>' : '<i class="fa-solid fa-user"></i>';
+
+      messageElem.className = `message-container ${type}`;
+      messageElem.innerHTML = `
+        <div class="message ${type}">
+          <p>${content}</p>
+        </div>
+      `;
+
+      messageElem.insertBefore(iconElem, messageElem.firstChild);
+      chatBox.appendChild(messageElem);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    addMessage("Chcem pridať nový report", "sent");
+    setTimeout(() => {
+      addMessage("Skvelé! Poďme začať s vaším novým reportom. Chcete pridať report pre nového klienta alebo existujúceho klienta?", "received");
+
+      // Display new buttons
+      showClientTypeButtons();
+    }, 500);
+
+    const showClientTypeButtons = () => {
+      messageContainer.innerHTML = ""; // Clear existing action buttons
+
+      const newClientButton = document.createElement("button");
+      newClientButton.textContent = "Nový zákazník";
+      newClientButton.className = "action-button";
+      newClientButton.addEventListener('click', () => {
+        addMessage("Selected Nový zákazník", "sent");
+      });
+      messageContainer.appendChild(newClientButton);
+
+      const existingClientButton = document.createElement("button");
+      existingClientButton.textContent = "Existujúci zákazník";
+      existingClientButton.className = "action-button";
+      existingClientButton.addEventListener('click', () => {
+        addMessage("Selected Existujúci zákazník", "sent");
+      });
+      messageContainer.appendChild(existingClientButton);
+    };
+  }
 });
