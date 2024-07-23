@@ -98,7 +98,7 @@ button {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
+    height: 96vh;
     background: url('./img/pattern.png');
     background-size: cover;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -123,7 +123,7 @@ button {
   padding: 10px;
   border-radius: 10px;
   word-wrap: break-word;
-  background-color: var(--message-bg-color, #f1f0f0);
+  background-color: var(-.-message-bg-color, #f1f0f0);
   color: var(--message-text-color, black);
   position: relative;
   flex: 1;
@@ -134,9 +134,9 @@ button {
 .message.sent {
   background-color: var(--user-bg-color, #007bff);
   color: white;
-  margin-left: 43%; /* Align sent messages to the right */
-  text-align: right;
-  padding-right: 10px;
+  margin-left: 40%; /* Align sent messages to the right */
+  text-align: left;
+  padding-left: 10px;
 }
 .message.received {
   background-color: var(--ai-bg-color, #f1f0f0);
@@ -439,39 +439,55 @@ body.dark-mode input {
 
 /* Login Container */
 .login-container {
-    width: 90%;
-    max-width: 400px;
+    width: 100%;
     background-color: #1f1f1f; /* Slightly lighter dark background */
-    padding: 20px;
-    border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
+    height:100vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding-inline: 26px;
 }
 
 .login-container h1 {
     color: white;
     text-align: center;
+    margin: 0;
+    font-size:6rem;
 }
 
 .login-container p {
-    font-size: 14px;
+    font-size: 38px;
     color: #bbb; /* Lighter grey for paragraph text */
-    margin-bottom: 20px;
+    margin-bottom: 50px;
+    padding-inline: 5px;
+}
+.login-container button{
+    width: 100%;
+    padding: 34px;
+    background-color: #FF0000;
+    color: white;
+    font-size: 59px;
+    border: none;
+    border-radius: 34px;
+    cursor: pointer;
+    font-weight: 700;
 }
 
 .pin-inputs {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
 }
 
 .pin-inputs input {
-    width: 45px;
-    height: 45px;
-    font-size: 20px;
+    width: 16%;
+    height: 145px;
+    font-size: 90px;
     text-align: center;
     border: 2px solid #ccc;
-    border-radius: 8px;
+    border-radius: 27px;
     transition: border-color 0.3s;
 }
 

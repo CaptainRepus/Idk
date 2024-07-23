@@ -187,12 +187,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const displayActionButtons = () => {
     const buttonsData = [
-      { text: "Nový report", module: './main_functions/new_report.js' },
-      { text: "Aktívne reporty", module: './main_functions/active_reports.js' },
-      { text: "Oznámenia", module: './main_functions/notifications.js' },
-      { text: "Naše hodnoty", module: './main_functions/values.js' },
-      { text: "Osobný rozvoj", module: './main_functions/personal_growth.js' },
-      // Add more as necessary
+      { text: "Nový report" },
+      { text: "Aktívne reporty" },
+      { text: "Oznámenia" },
+      { text: "Naše hodnoty" },
+      { text: "Osobný rozvoj" },
+      { text: "Aký je môj level?" },
     ];
 
     clearMessageContainer();
@@ -304,8 +304,32 @@ document.addEventListener("DOMContentLoaded", () => {
   loadMessages();
   addWelcomeBackMessage(username);
   initChatFlow();
+  const showClientTypeButtons = () => {
+    const messageContainer = document.querySelector(".message-input-container");
 
-  function handleNewReportAction(chatBox) {
+    // Clear existing action buttons
+    messageContainer.innerHTML = "";
+
+    // Create "Nový zákazník" button
+    const newClientButton = document.createElement("button");
+    newClientButton.textContent = "Nový zákazník";
+    newClientButton.className = "action-button";
+    newClientButton.addEventListener('click', () => {
+      addMessage("Selected Nový zákazník", "sent");
+    });
+    messageContainer.appendChild(newClientButton);
+
+    // Create "Existujúci zákazník" button
+    const existingClientButton = document.createElement("button");
+    existingClientButton.textContent = "Existujúci zákazník";
+    existingClientButton.className = "action-button";
+    existingClientButton.addEventListener('click', () => {
+      addMessage("Selected Existujúci zákazník", "sent");
+    });
+    messageContainer.appendChild(existingClientButton);
+  };
+
+  const handleNewReportAction = (chatBox) => {
     const messageContainer = document.querySelector(".message-input-container");
 
     const addMessage = (content, type) => {
@@ -315,13 +339,19 @@ document.addEventListener("DOMContentLoaded", () => {
       iconElem.innerHTML = type === 'received' ? '<i class="fa-solid fa-brain"></i>' : '<i class="fa-solid fa-user"></i>';
 
       messageElem.className = `message-container ${type}`;
-      messageElem.innerHTML = `
+
+      const messageContent = `
         <div class="message ${type}">
           <p>${content}</p>
         </div>
       `;
 
-      messageElem.insertBefore(iconElem, messageElem.firstChild);
+      if (type === 'received') {
+        messageElem.innerHTML = `${iconElem.outerHTML} ${messageContent}`;
+      } else {
+        messageElem.innerHTML = `${messageContent} ${iconElem.outerHTML}`;
+      }
+
       chatBox.appendChild(messageElem);
       chatBox.scrollTop = chatBox.scrollHeight;
     };
@@ -333,25 +363,5 @@ document.addEventListener("DOMContentLoaded", () => {
       // Display new buttons
       showClientTypeButtons();
     }, 500);
-
-    const showClientTypeButtons = () => {
-      messageContainer.innerHTML = ""; // Clear existing action buttons
-
-      const newClientButton = document.createElement("button");
-      newClientButton.textContent = "Nový zákazník";
-      newClientButton.className = "action-button";
-      newClientButton.addEventListener('click', () => {
-        addMessage("Selected Nový zákazník", "sent");
-      });
-      messageContainer.appendChild(newClientButton);
-
-      const existingClientButton = document.createElement("button");
-      existingClientButton.textContent = "Existujúci zákazník";
-      existingClientButton.className = "action-button";
-      existingClientButton.addEventListener('click', () => {
-        addMessage("Selected Existujúci zákazník", "sent");
-      });
-      messageContainer.appendChild(existingClientButton);
-    };
-  }
+  };
 });
