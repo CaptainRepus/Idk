@@ -604,3 +604,37 @@ button:hover {
 .message-input-container .new-report-button {
     margin-top: -10px;  /* Adjust this value as needed to set the buttons higher */
 }
+.customer-name-input {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    height: 6vh;
+    font-size: 30px;
+}
+
+.submit-button {
+  width: 100%; /* Full width */
+  padding: 12px 20px;
+  margin: 8px 0;
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px; /* Increase font size */
+}
+
+.submit-button:hover {
+  background-color: #45a049;
+}
+
+/* Ensure the message-input-container does not overlap with the chat-box */
+.message-input-container {
+  position: relative; /* Positioned relative*/
+  z-index: 10; /* Bring it above other elements */
+  background: white; /* Background color to distinguish */
+}
+
+.chat-messages {
+  padding-bottom: 80px; /* To make space for input elements */
+}

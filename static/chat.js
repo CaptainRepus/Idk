@@ -322,7 +322,8 @@ document.addEventListener("DOMContentLoaded", () => {
     newClientButton.textContent = "Nový zákazník";
     newClientButton.className = "action-button new-report-button"; // Added specific class
     newClientButton.addEventListener('click', () => {
-      addMessage("Selected Nový zákazník", "sent");
+      addMessage("Chcem pridať nového zákazníka", "sent");
+      askForCustomerName();  // New function call added here
     });
     messageContainer.appendChild(newClientButton);
     animateButton(newClientButton, 100); // Animate after 100ms
@@ -336,6 +337,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     messageContainer.appendChild(existingClientButton);
     animateButton(existingClientButton, 200); // Animate after 200ms
+  };
+
+  const askForCustomerName = () => {
+      const messageContainer = document.querySelector(".message-input-container");
+
+      // Clear existing content
+      messageContainer.innerHTML = "";
+
+      // Ask for customer name
+      addMessage("Ako sa volá nový zákazník?", "received");
+
+      // Create text input for customer name
+      const nameInput = document.createElement("input");
+      nameInput.type = "text";
+      nameInput.placeholder = "Zadajte meno zákazníka";
+      nameInput.className = "customer-name-input";
+      messageContainer.appendChild(nameInput);
+
+      // Create submit button for customer name
+      const submitButton = document.createElement("button");
+      submitButton.textContent = "Odoslať";
+      submitButton.className = "submit-button";
+      messageContainer.appendChild(submitButton);
+
+      submitButton.addEventListener('click', () => {
+          const customerName = nameInput.value.trim();
+          if (customerName) {
+              addMessage(`Meno zákazníka: ${customerName}`, "sent");
+              // Process the customer name further here if needed
+          }
+      });
   };
 
   const handleNewReportAction = (chatBox) => {
