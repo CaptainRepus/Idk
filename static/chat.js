@@ -340,35 +340,81 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const askForCustomerName = () => {
-      const messageContainer = document.querySelector(".message-input-container");
+    const messageContainer = document.querySelector(".message-input-container");
 
-      // Clear existing content
-      messageContainer.innerHTML = "";
+    // Clear existing content
+    messageContainer.innerHTML = "";
 
-      // Ask for customer name
-      addMessage("Ako sa volá nový zákazník?", "received");
+    // Ask for customer name
+    addMessage("Ako sa volá nový zákazník?", "received");
 
-      // Create text input for customer name
-      const nameInput = document.createElement("input");
-      nameInput.type = "text";
-      nameInput.placeholder = "Zadajte meno zákazníka";
-      nameInput.className = "customer-name-input";
-      messageContainer.appendChild(nameInput);
+    // Create text input for customer name
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.placeholder = "Zadajte meno zákazníka";
+    nameInput.className = "customer-name-input";
+    messageContainer.appendChild(nameInput);
 
-      // Create submit button for customer name
-      const submitButton = document.createElement("button");
-      submitButton.textContent = "Odoslať";
-      submitButton.className = "submit-button";
-      messageContainer.appendChild(submitButton);
+    // Create submit button for customer name
+    const submitButton = document.createElement("button");
+    submitButton.textContent = "Odoslať";
+    submitButton.className = "submit-button";
+    messageContainer.appendChild(submitButton);
 
-      submitButton.addEventListener('click', () => {
-          const customerName = nameInput.value.trim();
-          if (customerName) {
-              addMessage(`Meno zákazníka: ${customerName}`, "sent");
-              // Process the customer name further here if needed
-          }
-      });
+    submitButton.addEventListener('click', () => {
+        const customerName = nameInput.value.trim();
+        if (customerName) {
+            addMessage(`Nový zákazník: ${customerName}`, "sent");
+            // Process the customer name further here if needed
+            askForCarBrand();  // Call the function to handle car brand selection
+        }
+    });
   };
+
+  const askForCarBrand = () => {
+    const messageContainer = document.querySelector(".message-input-container");
+
+    // Clear existing content
+    messageContainer.innerHTML = "";
+
+    // Ask for car brand
+    addMessage("Zaznačte, o ktorú značku auta mal klient záujem", "received");
+
+    // Helper function to create a button
+    const createButton = (text) => {
+        const button = document.createElement("button");
+        button.textContent = text;
+        button.className = "car-brand-button"; // Custom class for styling
+        button.addEventListener('click', () => {
+            addMessage(`Klient má záujem o ${text}`, "sent");
+            // Process the selected car brand further here if needed
+        });
+        messageContainer.appendChild(button);
+    };
+
+    // Create car brand buttons
+    ["Nissan", "Opel", "Toyota"].forEach((brand) => createButton(brand));
+  };
+
+  // CSS to ensure proper styling
+  const style = document.createElement('style');
+  style.innerHTML = `
+  .car-brand-button {
+    width: 100%; /* Full width */
+    padding: 12px 20px;
+    margin: 8px 0;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px; /* Increase font size */
+  }
+
+  .car-brand-button:hover {
+    background-color: #ff8080;
+  }
+  `;
+  document.head.appendChild(style);
 
   const handleNewReportAction = (chatBox) => {
     const messageContainer = document.querySelector(".message-input-container");
