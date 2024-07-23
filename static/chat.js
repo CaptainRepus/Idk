@@ -310,23 +310,32 @@ document.addEventListener("DOMContentLoaded", () => {
     // Clear existing action buttons
     messageContainer.innerHTML = "";
 
+    // Helper function to add animation
+    const animateButton = (button, delay) => {
+      setTimeout(() => {
+        button.classList.add('visible');
+      }, delay);
+    };
+
     // Create "Nový zákazník" button
     const newClientButton = document.createElement("button");
     newClientButton.textContent = "Nový zákazník";
-    newClientButton.className = "action-button";
+    newClientButton.className = "action-button new-report-button"; // Added specific class
     newClientButton.addEventListener('click', () => {
       addMessage("Selected Nový zákazník", "sent");
     });
     messageContainer.appendChild(newClientButton);
+    animateButton(newClientButton, 100); // Animate after 100ms
 
     // Create "Existujúci zákazník" button
     const existingClientButton = document.createElement("button");
     existingClientButton.textContent = "Existujúci zákazník";
-    existingClientButton.className = "action-button";
+    existingClientButton.className = "action-button new-report-button"; // Added specific class
     existingClientButton.addEventListener('click', () => {
       addMessage("Selected Existujúci zákazník", "sent");
     });
     messageContainer.appendChild(existingClientButton);
+    animateButton(existingClientButton, 200); // Animate after 200ms
   };
 
   const handleNewReportAction = (chatBox) => {

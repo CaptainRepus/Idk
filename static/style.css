@@ -56,7 +56,15 @@ button {
     transform: translateY(0);
     opacity: 1;
 }
-
+.new-report-button {
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+    transform: translateY(100%);
+    opacity: 0;
+}
+.new-report-button.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
 /* Styles for modal */
 .modal {
     display: none;
@@ -524,19 +532,26 @@ button:hover {
 /* Input area */
 .message-input-container {
     display: flex;
-    flex-wrap: wrap; /* Allow multiple lines for buttons */
-    padding: 20px;
+    flex-wrap: wrap; /* Allow multiple lines for buttons if needed */
+    position: fixed; /* Make the container fixed */
+    bottom: 0; /* Position it at the bottom */
+    left: 0;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    width: 100%; /* Span the full width */
 }
+
 .message-input-container button{
-        width: 100%;
-        padding: 35px;
-        background-color: #FF0000;
-        color: white;
-        font-size: 50px;
-        border: none;
-        border-radius: 40px;
-        font-weight: 700;
-        cursor: pointer;
+    width: 100%;
+    padding: 35px;
+    background-color: #FF0000;
+    color: white;
+    font-size: 50px;
+    border: none;
+    border-radius: 40px;
+    font-weight: 700;
+    cursor: pointer;
+    opacity:1;
 }
 
 #user-input {
@@ -573,7 +588,6 @@ button:hover {
     color: white;
     border: none;
     border-radius: 30px;
-    margin-bottom: 12px;
     cursor: pointer;
 }
 
@@ -585,4 +599,8 @@ button:hover {
 .message img {
     width: 100%;
     border-radius: 8px;
+}
+/* Additional styles specifically for the "New Report" buttons */
+.message-input-container .new-report-button {
+    margin-top: -10px;  /* Adjust this value as needed to set the buttons higher */
 }
