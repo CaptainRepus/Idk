@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!addedMessages.has(content)) {
         const messageElem = document.createElement("div");
         const iconElem = document.createElement("div");
-        const iconContent = type === 'received' ? '<i class="fa-solid fa-brain"></i>' : '<i class="fa-solid fa-user"></i>';
+        const iconContent = type === 'received' ? '<i class="fa-solid fa-brain-circuit"></i>' : '<i class="fa-solid fa-user"></i>';
 
         iconElem.className = `icon ${type}`;
         iconElem.innerHTML = iconContent;
@@ -415,7 +415,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }, "order-option-button");
       messageContainer.appendChild(pkAutoButton);
       messageContainer.appendChild(personalDealerButton);
-    } else if (meetingType === "Test Drive" || meetingType === "Vehicle Handover") {
+    } else if (meetingType === "Test Drive") {
+      askForCarBrand();
+    } else if (meetingType === "Vehicle Handover") {
       // For now, do nothing
       askForCarBrand();
     }
@@ -554,7 +556,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const messageElem = document.createElement("div");
       const iconElem = document.createElement("div");
       iconElem.className = `icon ${type}`;
-      iconElem.innerHTML = type === 'received' ? '<i class="fa-solid fa-brain"></i>' : '<i class="fa-solid fa-user"></i>';
+      iconElem.innerHTML = type === 'received' ? '<i class="fa-solid fa-brain-circuit"></i>' : '<i class="fa-solid fa-user"></i>';
 
       messageElem.className = `message-container ${type}`;
 
