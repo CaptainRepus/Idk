@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatBox = document.getElementById("chat-box");
   const userInput = document.getElementById("user-input");
   const sendButton = document.getElementById("send-button");
+  let reportData = {};
 
   // Initialize nextButton
   let nextButton = document.createElement("button");
@@ -185,6 +186,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const fetchReports = async () => {
+    try {
+      const response = await fetch('/chat/get_reports');
+      const data = await response.json();
+
+      if (data.reports) {
+        displayReports(data.reports);
+      } else {
+        addMessage("No reports found.", "received");
+      }
+    } catch (error) {
+      addMessage("Error fetching reports: " + error.message, "received");
+    }
+  };
+
+  const displayReports = (reports) => {
+    const messageContainer = document.querySelector(".message-input-container");
+
+    // Clear existing content
+    messageContainer.innerHTML = "";
+
+    reports.forEach(report => {
+      const reportBox = document.createElement("div");
+      reportBox.className = "report-box";
+      reportBox.innerHTML = `
+        <p><strong>Name:</strong> ${report.customerName}</p>
+        <p><strong>Meeting Type:</strong> ${report.meetingType}</p>
+        ${report.meetingDetail ? `<p><strong>Detail:</strong> ${report.meetingDetail}</p>` : ""}
+        ${report.orderLocation ? `<p><strong>Order Location:</strong> ${report.orderLocation}</p>` : ""}
+        ${report.financing ? `<p><strong>Financing:</strong> ${report.financing}</p>` : ""}
+        <p><strong>Car Brand:</strong> ${report.carBrand}</p>
+        <p><strong>Car Model:</strong> ${report.carModel}</p>
+      `;
+      messageContainer.appendChild(reportBox);
+    });
+  };
+  
   const displayActionButtons = () => {
     const buttonsData = [
       { text: "Nový report" },
@@ -208,6 +246,8 @@ document.addEventListener("DOMContentLoaded", () => {
       actionButton.addEventListener('click', async () => {
         if (btn.text === "Nový report") {
           handleNewReportAction(chatBox);
+        } else if (btn.text === "Aktívne reporty") {
+          fetchReports();
         } else {
           console.error(`Handler for ${btn.text} not implemented`);
         }
@@ -365,6 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const customerName = nameInput.value.trim();
       if (customerName) {
         addMessage(`Nový zákazník: ${customerName}`, "sent");
+        reportData.customerName = customerName;
         askForMeetingType(); // Call the function to handle meeting type selection
       }
     }, 'submit-button');
@@ -382,6 +423,7 @@ document.addEventListener("DOMContentLoaded", () => {
     meetingTypes.forEach(meetingType => {
       const button = createButton(meetingType, () => {
         addMessage(`Selected meeting type: ${meetingType}`, "sent");
+        reportData.meetingType = meetingType;
         handleMeetingTypeSelection(meetingType); // Handle the specific meeting type
       }, "meeting-type-button");
       messageContainer.appendChild(button);
@@ -395,10 +437,12 @@ document.addEventListener("DOMContentLoaded", () => {
       addMessage("Bol meeting online alebo offline?", "received");
       const onlineButton = createButton("Online meeting", () => {
         addMessage("Online meeting selected", "sent");
+        reportData.meetingDetail = "Online meeting";
         askForCarBrand();
       }, "meeting-option-button");
       const offlineButton = createButton("Offline meeting", () => {
         addMessage("Offline meeting selected", "sent");
+        reportData.meetingDetail = "Offline meeting";
         askForCarBrand();
       }, "meeting-option-button");
       messageContainer.appendChild(onlineButton);
@@ -407,10 +451,12 @@ document.addEventListener("DOMContentLoaded", () => {
       addMessage("V akom obchode bolo auto objednané?", "received");
       const presovButton = createButton("Prešov", () => {
         addMessage("Prešov selected", "sent");
+        reportData.orderLocation = "Prešov";
         askForCarBrand();
       }, "order-option-button");
       const popradButton = createButton("Poprad", () => {
         addMessage("Poprad selected", "sent");
+        reportData.orderLocation = "Poprad";
         askForCarBrand();
       }, "order-option-button");
       messageContainer.appendChild(presovButton);
@@ -422,10 +468,12 @@ document.addEventListener("DOMContentLoaded", () => {
       addMessage("Ako bolo alebo bude vozidlo financované?", "received");
       const fullAmountButton = createButton("Celá suma", () => {
         addMessage("Celá suma selected", "sent");
+        reportData.financing = "Celá suma";
         askForCarBrand();
       }, "financing-option-button");
       const leasingButton = createButton("Leasing", () => {
         addMessage("Leasing selected", "sent");
+        reportData.financing = "Leasing";
         askForCarBrand();
       }, "financing-option-button");
       messageContainer.appendChild(fullAmountButton);
@@ -447,6 +495,7 @@ document.addEventListener("DOMContentLoaded", () => {
     brands.forEach(({ brand, models }) => {
       const button = createButton(brand, () => {
         addMessage(`Klient má záujem o ${brand}`, "sent");
+        reportData.carBrand = brand;
         displayCarModels(brand, models);
       });
       messageContainer.appendChild(button);
@@ -462,10 +511,45 @@ document.addEventListener("DOMContentLoaded", () => {
     models.forEach((model) => {
       const button = createButton(model, () => {
         addMessage(`Vybraný model: ${model}`, "sent");
-        // Further processing can be handled here if needed
+        reportData.carModel = model;
+        finalizeReport();
       }, "car-model-button");
       messageContainer.appendChild(button);
     });
+  };
+  const finalizeReport = () => {
+    const messageContainer = document.querySelector(".message-input-container");
+    // Clear existing content
+    messageContainer.innerHTML = "";
+    // Create submit and cancel buttons
+    const submitButton = createButton("Odovzdať", submitReport, "submit-button");
+    const cancelButton = createButton("Zrušiť", cancelReport, "cancel-button");
+    messageContainer.appendChild(submitButton);
+    messageContainer.appendChild(cancelButton);
+  };
+  const submitReport = async () => {
+    try {
+      const response = await fetch('/chat/submit_report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reportData)
+      });
+      if (response.ok) {
+        addMessage("Report successfully submitted!", "received");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } else {
+        addMessage("Failed to submit report. Please try again.", "received");
+      }
+    } catch (error) {
+      addMessage("Error: " + error.message, "received");
+    }
+  };
+  const cancelReport = () => {
+    window.location.reload();
   };
   // CSS to ensure proper styling
   const style = document.createElement('style');
@@ -476,7 +560,8 @@ document.addEventListener("DOMContentLoaded", () => {
     .meeting-type-button,
     .meeting-option-button,
     .order-option-button,
-    .financing-option-button {
+    .financing-option-button,
+    .cancel-button {
       width: 100%; /* Full width */
       padding: 12px 20px;
       margin: 8px 0;
@@ -486,21 +571,40 @@ document.addEventListener("DOMContentLoaded", () => {
       cursor: pointer;
       font-size: 16px; /* Increase font size */
     }
+
     .car-brand-button:hover,
     .car-model-button:hover,
     .submit-button:hover,
     .meeting-type-button:hover,
     .meeting-option-button:hover,
     .order-option-button:hover,
-    .financing-option-button:hover {
+    .financing-option-button:hover,
+    .cancel-button:hover {
       background-color: #45a049;
     }
-    /* Ensure the message-input-container does not overlap with the chat-box */
+
+    .cancel-button {
+      background-color: #FF0000; /* Red for cancel button */
+    }
+
+    .cancel-button:hover {
+      background-color: #cc0000; /* Darker red on hover */
+    }
+
+    .report-box {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      background-color: #f9f9f9;
+    }
+
     .message-input-container {
-      position: relative; /* Positioned relative*/
+      position: relative; /* Positioned relative */
       z-index: 10; /* Bring it above other elements */
       background: white; /* Background color to distinguish */
     }
+
     .chat-messages {
       padding-bottom: 80px; /* To make space for input elements */
     }

@@ -43,6 +43,36 @@ def get_story():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@chat_blueprint.route('/submit_report', methods=['POST'])
+def submit_report():
+    report_data = request.json
+    customer_name = report_data.get("customerName")
+    if customer_name:
+        reports = replit_db.get(customer_name, [])
+        reports.append(report_data)
+        replit_db[customer_name] = reports
+        return jsonify({"message": "Report successfully submitted!"}), 200
+    return jsonify({"error": "Missing customer name"}), 400
+
+def observed_to_dict(obj):
+    """
+    Helper function to recursively convert objects to regular dict.
+    """
+    if hasattr(obj, 'items'):
+        return {k: observed_to_dict(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [observed_to_dict(i) for i in obj]
+    else:
+        return obj
+@chat_blueprint.route('/get_reports', methods=['GET'])
+def get_reports():
+    all_reports = []
+    for key in replit_db.keys():
+        customer_reports = replit_db[key]
+        for report in customer_reports:
+            all_reports.append(observed_to_dict(report))  # Convert to regular dict
+    return jsonify({"reports": all_reports})
+
 @chat_blueprint.route('/index')
 def index():
     if 'username' in session:
