@@ -365,45 +365,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const customerName = nameInput.value.trim();
       if (customerName) {
         addMessage(`Nový zákazník: ${customerName}`, "sent");
-        askForCarBrand(); // Call the function to handle car brand selection
+        askForMeetingType(); // Call the function to handle meeting type selection
       }
     }, 'submit-button');
     messageContainer.appendChild(submitButton);
-  };
-  const askForCarBrand = () => {
-    const messageContainer = document.querySelector(".message-input-container");
-    // Clear existing content
-    messageContainer.innerHTML = "";
-    // Ask for car brand
-    addMessage("Zaznačte, o ktorú značku auta mal klient záujem", "received");
-    // Create car brand buttons with corresponding model selection
-    const brands = [
-      { brand: "Nissan", models: ["model7", "model8", "model9"] },
-      { brand: "Opel", models: ["model4", "model5", "model6"] },
-      { brand: "Toyota", models: ["model1", "model2", "model3"] }
-    ];
-    brands.forEach(({ brand, models }) => {
-      const button = createButton(brand, () => {
-        addMessage(`Klient má záujem o ${brand}`, "sent");
-        displayCarModels(brand, models);
-      });
-      messageContainer.appendChild(button);
-    });
-  };
-  const displayCarModels = (brand, models) => {
-    const messageContainer = document.querySelector(".message-input-container");
-    // Clear existing content
-    messageContainer.innerHTML = "";  
-    // Ask to select a car model
-    addMessage("Teraz vyberte model auta", "received");
-    // Create car model buttons
-    models.forEach((model) => {
-      const button = createButton(model, () => {
-        addMessage(`Klient si vybral ${brand} ${model}`, "sent");
-        askForMeetingType(); // Call the function to choose meeting type
-      }, "car-model-button");
-      messageContainer.appendChild(button);
-    });
   };
   const askForMeetingType = () => {
     const messageContainer = document.querySelector(".message-input-container");
@@ -428,23 +393,67 @@ document.addEventListener("DOMContentLoaded", () => {
     messageContainer.innerHTML = "";
     if (meetingType === "Meeting") {
       addMessage("Bol meeting online alebo offline?", "received");
-
-      const onlineButton = createButton("Online meeting", () => addMessage("Online meeting selected", "sent"), "meeting-option-button");
-      const offlineButton = createButton("Offline meeting", () => addMessage("Offline meeting selected", "sent"), "meeting-option-button");
-
+      const onlineButton = createButton("Online meeting", () => {
+        addMessage("Online meeting selected", "sent");
+        askForCarBrand();
+      }, "meeting-option-button");
+      const offlineButton = createButton("Offline meeting", () => {
+        addMessage("Offline meeting selected", "sent");
+        askForCarBrand();
+      }, "meeting-option-button");
       messageContainer.appendChild(onlineButton);
       messageContainer.appendChild(offlineButton);
     } else if (meetingType === "Order") {
       addMessage("V akom obchode bolo auto objednané?", "received");
-
-      const pkAutoButton = createButton("PK Auto", () => addMessage("V predajni PK Auto", "sent"), "order-option-button");
-      const personalDealerButton = createButton("Osobný predajca", () => addMessage("V predajni u osobného predajcu", "sent"), "order-option-button");
-
+      const pkAutoButton = createButton("PK Auto", () => {
+        addMessage("PK Auto selected", "sent");
+        askForCarBrand();
+      }, "order-option-button");
+      const personalDealerButton = createButton("Osobný predajca", () => {
+        addMessage("Osobný predajca selected", "sent");
+        askForCarBrand();
+      }, "order-option-button");
       messageContainer.appendChild(pkAutoButton);
       messageContainer.appendChild(personalDealerButton);
     } else if (meetingType === "Test Drive" || meetingType === "Vehicle Handover") {
       // For now, do nothing
+      askForCarBrand();
     }
+  };
+  const askForCarBrand = () => {
+    const messageContainer = document.querySelector(".message-input-container");
+    // Clear existing content
+    messageContainer.innerHTML = "";
+    // Ask for car brand
+    addMessage("Zaznačte, o ktorú značku auta mal klient záujem", "received");
+    // Create car brand buttons with corresponding model selection
+    const brands = [
+      { brand: "Nissan", models: ["model7", "model8", "model9"] },
+      { brand: "Opel", models: ["model4", "model5", "model6"] },
+      { brand: "Toyota", models: ["model1", "model2", "model3"] }
+    ];
+    brands.forEach(({ brand, models }) => {
+      const button = createButton(brand, () => {
+        addMessage(`Klient má záujem o ${brand}`, "sent");
+        displayCarModels(brand, models);
+      });
+      messageContainer.appendChild(button);
+    });
+  };
+  const displayCarModels = (brand, models) => {
+    const messageContainer = document.querySelector(".message-input-container");
+    // Clear existing content
+    messageContainer.innerHTML = "";
+    // Ask to select a car model
+    addMessage("Teraz vyberte model auta", "received");
+    // Create car model buttons
+    models.forEach((model) => {
+      const button = createButton(model, () => {
+        addMessage(`Vybraný model: ${model}`, "sent");
+        // Further processing can be handled here if needed
+      }, "car-model-button");
+      messageContainer.appendChild(button);
+    });
   };
   // CSS to ensure proper styling
   const style = document.createElement('style');
