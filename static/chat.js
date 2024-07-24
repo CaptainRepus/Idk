@@ -339,118 +339,148 @@ document.addEventListener("DOMContentLoaded", () => {
     animateButton(existingClientButton, 200); // Animate after 200ms
   };
 
+  // Add createButton function at the top
+  function createButton(text, callback, className = 'car-brand-button') {
+    const button = document.createElement("button");
+    button.textContent = text;
+    button.className = className;
+    button.addEventListener('click', callback);
+    return button;
+  }
+
   const askForCustomerName = () => {
     const messageContainer = document.querySelector(".message-input-container");
-
     // Clear existing content
     messageContainer.innerHTML = "";
-
     // Ask for customer name
     addMessage("Ako sa volá nový zákazník?", "received");
-
     // Create text input for customer name
     const nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.placeholder = "Zadajte meno zákazníka";
     nameInput.className = "customer-name-input";
     messageContainer.appendChild(nameInput);
-
     // Create submit button for customer name
-    const submitButton = document.createElement("button");
-    submitButton.textContent = "Odoslať";
-    submitButton.className = "submit-button";
+    const submitButton = createButton('Odoslať', () => {
+      const customerName = nameInput.value.trim();
+      if (customerName) {
+        addMessage(`Nový zákazník: ${customerName}`, "sent");
+        askForCarBrand(); // Call the function to handle car brand selection
+      }
+    }, 'submit-button');
     messageContainer.appendChild(submitButton);
-
-    submitButton.addEventListener('click', () => {
-        const customerName = nameInput.value.trim();
-        if (customerName) {
-            addMessage(`Nový zákazník: ${customerName}`, "sent");
-            askForCarBrand();  // Call the function to handle car brand selection
-        }
-    });
   };
-
   const askForCarBrand = () => {
     const messageContainer = document.querySelector(".message-input-container");
-
     // Clear existing content
     messageContainer.innerHTML = "";
-
     // Ask for car brand
     addMessage("Zaznačte, o ktorú značku auta mal klient záujem", "received");
-
-    // Helper function to create a button
-    const createButton = (text, callback) => {
-        const button = document.createElement("button");
-        button.textContent = text;
-        button.className = "car-brand-button"; // Custom class for styling
-        button.addEventListener('click', callback);
-        messageContainer.appendChild(button);
-    };
-
     // Create car brand buttons with corresponding model selection
-    createButton("Nissan", () => displayCarModels("Nissan", ["model7", "model8", "model9"]));
-    createButton("Opel", () => displayCarModels("Opel", ["model4", "model5", "model6"]));
-    createButton("Toyota", () => displayCarModels("Toyota", ["model1", "model2", "model3"]));
+    const brands = [
+      { brand: "Nissan", models: ["model7", "model8", "model9"] },
+      { brand: "Opel", models: ["model4", "model5", "model6"] },
+      { brand: "Toyota", models: ["model1", "model2", "model3"] }
+    ];
+    brands.forEach(({ brand, models }) => {
+      const button = createButton(brand, () => {
+        addMessage(`Klient má záujem o ${brand}`, "sent");
+        displayCarModels(brand, models);
+      });
+      messageContainer.appendChild(button);
+    });
   };
-
   const displayCarModels = (brand, models) => {
     const messageContainer = document.querySelector(".message-input-container");
-
     // Clear existing content
-    messageContainer.innerHTML = "";
-
+    messageContainer.innerHTML = "";  
     // Ask to select a car model
     addMessage("Teraz vyberte model auta", "received");
-
-    // Helper function to create a button for car models
-    const createButton = (text) => {
-        const button = document.createElement("button");
-        button.textContent = text;
-        button.className = "car-model-button"; // Custom class for styling
-        button.addEventListener('click', () => {
-            addMessage(`Vybraný model: ${text}`, "sent");
-            // Process the selected car model further here if needed
-        });
-        messageContainer.appendChild(button);
-    };
-
     // Create car model buttons
-    models.forEach((model) => createButton(model));
+    models.forEach((model) => {
+      const button = createButton(model, () => {
+        addMessage(`Klient si vybral ${brand} ${model}`, "sent");
+        askForMeetingType(); // Call the function to choose meeting type
+      }, "car-model-button");
+      messageContainer.appendChild(button);
+    });
   };
+  const askForMeetingType = () => {
+    const messageContainer = document.querySelector(".message-input-container");
+    // Clear existing content
+    messageContainer.innerHTML = "";
+    // Ask for meeting type
+    addMessage("O aký druh strenutia sa jednalo?", "received");
+    // Define meeting types
+    const meetingTypes = ["Meeting", "Test Drive", "Order", "Vehicle Handover"];
+    // Create meeting type buttons
+    meetingTypes.forEach(meetingType => {
+      const button = createButton(meetingType, () => {
+        addMessage(`Selected meeting type: ${meetingType}`, "sent");
+        handleMeetingTypeSelection(meetingType); // Handle the specific meeting type
+      }, "meeting-type-button");
+      messageContainer.appendChild(button);
+    });
+  };
+  const handleMeetingTypeSelection = (meetingType) => {
+    const messageContainer = document.querySelector(".message-input-container");
+    // Clear existing content
+    messageContainer.innerHTML = "";
+    if (meetingType === "Meeting") {
+      addMessage("Bol meeting online alebo offline?", "received");
 
+      const onlineButton = createButton("Online meeting", () => addMessage("Online meeting selected", "sent"), "meeting-option-button");
+      const offlineButton = createButton("Offline meeting", () => addMessage("Offline meeting selected", "sent"), "meeting-option-button");
+
+      messageContainer.appendChild(onlineButton);
+      messageContainer.appendChild(offlineButton);
+    } else if (meetingType === "Order") {
+      addMessage("V akom obchode bolo auto objednané?", "received");
+
+      const pkAutoButton = createButton("PK Auto", () => addMessage("V predajni PK Auto", "sent"), "order-option-button");
+      const personalDealerButton = createButton("Osobný predajca", () => addMessage("V predajni u osobného predajcu", "sent"), "order-option-button");
+
+      messageContainer.appendChild(pkAutoButton);
+      messageContainer.appendChild(personalDealerButton);
+    } else if (meetingType === "Test Drive" || meetingType === "Vehicle Handover") {
+      // For now, do nothing
+    }
+  };
   // CSS to ensure proper styling
   const style = document.createElement('style');
   style.innerHTML = `
-  .car-brand-button,
-  .car-model-button,
-  .submit-button {
-    width: 100%; /* Full width */
-    padding: 12px 20px;
-    margin: 8px 0;
-    background-color: #4CAF50; /* Green */
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px; /* Increase font size */
-  }
-
-  .car-brand-button:hover,
-  .car-model-button:hover,
-  .submit-button:hover {
-    background-color: #45a049;
-  }
-
-  /* Ensure the message-input-container does not overlap with the chat-box */
-  .message-input-container {
-    position: relative; /* Positioned relative*/
-    z-index: 10; /* Bring it above other elements */
-    background: white; /* Background color to distinguish */
-  }
-
-  .chat-messages {
-    padding-bottom: 80px; /* To make space for input elements */
-  }
+    .car-brand-button,
+    .car-model-button,
+    .submit-button,
+    .meeting-type-button,
+    .meeting-option-button,
+    .order-option-button {
+      width: 100%; /* Full width */
+      padding: 12px 20px;
+      margin: 8px 0;
+      background-color: #4CAF50; /* Green */
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px; /* Increase font size */
+    }
+    .car-brand-button:hover,
+    .car-model-button:hover,
+    .submit-button:hover,
+    .meeting-type-button:hover,
+    .meeting-option-button:hover,
+    .order-option-button:hover {
+      background-color: #45a049;
+    }
+    /* Ensure the message-input-container does not overlap with the chat-box */
+    .message-input-container {
+      position: relative; /* Positioned relative*/
+      z-index: 10; /* Bring it above other elements */
+      background: white; /* Background color to distinguish */
+    }
+    .chat-messages {
+      padding-bottom: 80px; /* To make space for input elements */
+    }
   `;
   document.head.appendChild(style);
 
