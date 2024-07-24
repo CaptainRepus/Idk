@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { text: "Nový report" },
       { text: "Aktívne reporty" },
       { text: "Oznámenia" },
-      { text: "Naše hodnoty" },
+      { text: "Aké sú naše hodnoty?" },
       { text: "Osobný rozvoj" },
       { text: "Aký je môj level?" },
     ];
