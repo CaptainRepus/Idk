@@ -365,7 +365,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const customerName = nameInput.value.trim();
         if (customerName) {
             addMessage(`Nový zákazník: ${customerName}`, "sent");
-            // Process the customer name further here if needed
             askForCarBrand();  // Call the function to handle car brand selection
         }
     });
@@ -381,23 +380,116 @@ document.addEventListener("DOMContentLoaded", () => {
     addMessage("Zaznačte, o ktorú značku auta mal klient záujem", "received");
 
     // Helper function to create a button
-    const createButton = (text) => {
+    const createButton = (text, callback) => {
         const button = document.createElement("button");
         button.textContent = text;
         button.className = "car-brand-button"; // Custom class for styling
+        button.addEventListener('click', callback);
+        messageContainer.appendChild(button);
+    };
+
+    // Create car brand buttons with corresponding model selection
+    createButton("Nissan", () => displayCarModels("Nissan", ["model7", "model8", "model9"]));
+    createButton("Opel", () => displayCarModels("Opel", ["model4", "model5", "model6"]));
+    createButton("Toyota", () => displayCarModels("Toyota", ["model1", "model2", "model3"]));
+  };
+
+  const displayCarModels = (brand, models) => {
+    const messageContainer = document.querySelector(".message-input-container");
+
+    // Clear existing content
+    messageContainer.innerHTML = "";
+
+    // Ask to select a car model
+    addMessage("Teraz vyberte model auta", "received");
+
+    // Helper function to create a button for car models
+    const createButton = (text) => {
+        const button = document.createElement("button");
+        button.textContent = text;
+        button.className = "car-model-button"; // Custom class for styling
         button.addEventListener('click', () => {
-            addMessage(`Klient má záujem o ${text}`, "sent");
-            // Process the selected car brand further here if needed
+            addMessage(`Vybraný model: ${text}`, "sent");
+            // Process the selected car model further here if needed
         });
         messageContainer.appendChild(button);
     };
 
-    // Create car brand buttons
-    ["Nissan", "Opel", "Toyota"].forEach((brand) => createButton(brand));
+    // Create car model buttons
+    models.forEach((model) => createButton(model));
   };
 
   // CSS to ensure proper styling
   const style = document.createElement('style');
+  style.innerHTML = `
+  .car-brand-button,
+  .car-model-button,
+  .submit-button {
+    width: 100%; /* Full width */
+    padding: 12px 20px;
+    margin: 8px 0;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px; /* Increase font size */
+  }
+
+  .car-brand-button:hover,
+  .car-model-button:hover,
+  .submit-button:hover {
+    background-color: #45a049;
+  }
+
+  /* Ensure the message-input-container does not overlap with the chat-box */
+  .message-input-container {
+    position: relative; /* Positioned relative*/
+    z-index: 10; /* Bring it above other elements */
+    background: white; /* Background color to distinguish */
+  }
+
+  .chat-messages {
+    padding-bottom: 80px; /* To make space for input elements */
+  }
+  `;
+  document.head.appendChild(style);
+
+  // CSS to ensure proper styling
+  style.innerHTML = `
+  .car-brand-button,
+  .car-model-button,
+  .submit-button {
+    width: 100%; /* Full width */
+    padding: 12px 20px;
+    margin: 8px 0;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px; /* Increase font size */
+  }
+
+  .car-brand-button:hover,
+  .car-model-button:hover,
+  .submit-button:hover {
+    background-color: #45a049;
+  }
+
+  /* Ensure the message-input-container does not overlap with the chat-box */
+  .message-input-container {
+    position: relative; /* Positioned relative*/
+    z-index: 10; /* Bring it above other elements */
+    background: white; /* Background color to distinguish */
+  }
+
+  .chat-messages {
+    padding-bottom: 80px; /* To make space for input elements */
+  }
+  `;
+  document.head.appendChild(style);
+
+
+  // CSS to ensure proper styling
   style.innerHTML = `
   .car-brand-button {
     width: 100%; /* Full width */
