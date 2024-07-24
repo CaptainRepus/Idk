@@ -416,6 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
       messageContainer.appendChild(pkAutoButton);
       messageContainer.appendChild(personalDealerButton);
     } else if (meetingType === "Test Drive") {
+      addMessage("Vyberte značku a model auta pre skúšobnú jazdu.", "received");
       askForCarBrand();
     } else if (meetingType === "Vehicle Handover") {
       // For now, do nothing
