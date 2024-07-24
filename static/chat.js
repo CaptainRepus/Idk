@@ -364,7 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const submitButton = createButton('Odoslať', () => {
       const customerName = nameInput.value.trim();
       if (customerName) {
-        addMessage(`Meno zákazníka je ${customerName}`, "sent");
+        addMessage(`Nový zákazník: ${customerName}`, "sent");
         askForMeetingType(); // Call the function to handle meeting type selection
       }
     }, 'submit-button');
@@ -394,23 +394,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (meetingType === "Meeting") {
       addMessage("Bol meeting online alebo offline?", "received");
       const onlineButton = createButton("Online meeting", () => {
-        addMessage("Jednalo sa o online meeting", "sent");
+        addMessage("Online meeting selected", "sent");
         askForCarBrand();
       }, "meeting-option-button");
       const offlineButton = createButton("Offline meeting", () => {
-        addMessage("Jednalo sa o offline meeting", "sent");
+        addMessage("Offline meeting selected", "sent");
         askForCarBrand();
       }, "meeting-option-button");
       messageContainer.appendChild(onlineButton);
       messageContainer.appendChild(offlineButton);
     } else if (meetingType === "Order") {
-      addMessage("V ktorej predajni bolo auto objednané?", "received");
+      addMessage("V akom obchode bolo auto objednané?", "received");
       const presovButton = createButton("Prešov", () => {
-        addMessage("Auto bolo objednané v Prešove", "sent");
+        addMessage("Prešov selected", "sent");
         askForCarBrand();
       }, "order-option-button");
       const popradButton = createButton("Poprad", () => {
-        addMessage("Auto bolo objednané v Poprade", "sent");
+        addMessage("Poprad selected", "sent");
         askForCarBrand();
       }, "order-option-button");
       messageContainer.appendChild(presovButton);
@@ -419,8 +419,17 @@ document.addEventListener("DOMContentLoaded", () => {
       addMessage("Vyberte značku a model auta pre skúšobnú jazdu.", "received");
       askForCarBrand();
     } else if (meetingType === "Vehicle Handover") {
-      // For now, do nothing
-      askForCarBrand();
+      addMessage("Ako bolo alebo bude vozidlo financované?", "received");
+      const fullAmountButton = createButton("Celá suma", () => {
+        addMessage("Celá suma selected", "sent");
+        askForCarBrand();
+      }, "financing-option-button");
+      const leasingButton = createButton("Leasing", () => {
+        addMessage("Leasing selected", "sent");
+        askForCarBrand();
+      }, "financing-option-button");
+      messageContainer.appendChild(fullAmountButton);
+      messageContainer.appendChild(leasingButton);
     }
   };
   const askForCarBrand = () => {
@@ -452,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Create car model buttons
     models.forEach((model) => {
       const button = createButton(model, () => {
-        addMessage(`Klient si vybral ${brand} ${model}`, "sent");
+        addMessage(`Vybraný model: ${model}`, "sent");
         // Further processing can be handled here if needed
       }, "car-model-button");
       messageContainer.appendChild(button);
@@ -466,7 +475,8 @@ document.addEventListener("DOMContentLoaded", () => {
     .submit-button,
     .meeting-type-button,
     .meeting-option-button,
-    .order-option-button {
+    .order-option-button,
+    .financing-option-button {
       width: 100%; /* Full width */
       padding: 12px 20px;
       margin: 8px 0;
@@ -481,7 +491,8 @@ document.addEventListener("DOMContentLoaded", () => {
     .submit-button:hover,
     .meeting-type-button:hover,
     .meeting-option-button:hover,
-    .order-option-button:hover {
+    .order-option-button:hover,
+    .financing-option-button:hover {
       background-color: #45a049;
     }
     /* Ensure the message-input-container does not overlap with the chat-box */
