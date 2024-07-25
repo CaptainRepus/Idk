@@ -386,13 +386,13 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Add createButton function at the top
-  function createButton(text, callback, className = 'car-brand-button') {
+  const createButton = (text, callback, className = 'car-brand-button') => {
     const button = document.createElement("button");
     button.textContent = text;
     button.className = className;
     button.addEventListener('click', callback);
     return button;
-  }
+  };
 
   const askForCustomerName = () => {
     const messageContainer = document.querySelector(".message-input-container");
@@ -525,14 +525,18 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   const finalizeReport = () => {
     const messageContainer = document.querySelector(".message-input-container");
+
     // Clear existing content
     messageContainer.innerHTML = "";
+
     // Create submit and cancel buttons
     const submitButton = createButton("Odovzdať", submitReport, "submit-button");
     const cancelButton = createButton("Zrušiť", cancelReport, "cancel-button");
+
     messageContainer.appendChild(submitButton);
     messageContainer.appendChild(cancelButton);
   };
+  
   const submitReport = async () => {
     try {
       const response = await fetch('/chat/submit_report', {
@@ -542,10 +546,12 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         body: JSON.stringify(reportData)
       });
+
       if (response.ok) {
         addMessage("Report successfully submitted!", "received");
+        // Show the two new buttons only after the report is successfully submitted
         setTimeout(() => {
-          window.location.reload();
+          showPostSubmissionOptions();
         }, 2000);
       } else {
         addMessage("Failed to submit report. Please try again.", "received");
@@ -554,6 +560,32 @@ document.addEventListener("DOMContentLoaded", () => {
       addMessage("Error: " + error.message, "received");
     }
   };
+
+  const showPostSubmissionOptions = () => {
+    const messageContainer = document.querySelector(".message-input-container");
+
+    // Clear existing content
+    messageContainer.innerHTML = "";
+
+    // Add the question
+    addMessage("Dokončil si všetky reporty na dnes?", "received");
+
+    // Create the first button "To sú všetky reporty na dnes"
+    const allReportsDoneButton = createButton("To sú všetky reporty na dnes", () => {
+      addMessage("To sú všetky reporty na dnes", "sent");
+      // For now, do nothing
+    }, "post-report-button");
+
+    // Create the second button "Ešte budem pridávať"
+    const addMoreReportsButton = createButton("Ešte budem pridávať", () => {
+      addMessage("Ešte budem pridávať", "sent");
+      window.location.href = "/"; // Redirect to homepage
+    }, "post-report-button");
+
+    messageContainer.appendChild(allReportsDoneButton);
+    messageContainer.appendChild(addMoreReportsButton);
+  };
+  
   const cancelReport = () => {
     window.location.reload();
   };
