@@ -113,6 +113,21 @@ button {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.customer-button {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.customer-button:hover {
+  background-color: #45a049;
+}
+
 /* Message container styles */
 .message-container {
   display: flex;

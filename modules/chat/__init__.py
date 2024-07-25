@@ -48,9 +48,14 @@ def submit_report():
     report_data = request.json
     customer_name = report_data.get("customerName")
     if customer_name:
-        reports = replit_db.get(customer_name, [])
-        reports.append(report_data)
-        replit_db[customer_name] = reports
+        existing_reports = replit_db.get(customer_name, [])
+
+        # Ensure existing_reports is a list
+        if not isinstance(existing_reports, list):
+            existing_reports = list(observed_to_dict(existing_reports))
+
+        existing_reports.append(report_data)
+        replit_db[customer_name] = existing_reports
         return jsonify({"message": "Report successfully submitted!"}), 200
     return jsonify({"error": "Missing customer name"}), 400
 
@@ -64,6 +69,7 @@ def observed_to_dict(obj):
         return [observed_to_dict(i) for i in obj]
     else:
         return obj
+        
 @chat_blueprint.route('/get_reports', methods=['GET'])
 def get_reports():
     all_reports = []

@@ -344,6 +344,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadMessages();
   addWelcomeBackMessage(username);
   initChatFlow();
+  // Update showClientTypeButtons to include Existing Customer handler
   const showClientTypeButtons = () => {
     const messageContainer = document.querySelector(".message-input-container");
 
@@ -360,10 +361,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Create "Nový zákazník" button
     const newClientButton = document.createElement("button");
     newClientButton.textContent = "Nový zákazník";
-    newClientButton.className = "action-button new-report-button"; // Added specific class
+    newClientButton.className = "action-button new-report-button";
     newClientButton.addEventListener('click', () => {
       addMessage("Chcem pridať nového zákazníka", "sent");
-      askForCustomerName();  // New function call added here
+      askForCustomerName();
     });
     messageContainer.appendChild(newClientButton);
     animateButton(newClientButton, 100); // Animate after 100ms
@@ -371,9 +372,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Create "Existujúci zákazník" button
     const existingClientButton = document.createElement("button");
     existingClientButton.textContent = "Existujúci zákazník";
-    existingClientButton.className = "action-button new-report-button"; // Added specific class
+    existingClientButton.className = "action-button new-report-button";
     existingClientButton.addEventListener('click', () => {
       addMessage("Selected Existujúci zákazník", "sent");
+      fetchExistingCustomers();  // Fetch and display existing customers
     });
     messageContainer.appendChild(existingClientButton);
     animateButton(existingClientButton, 200); // Animate after 200ms
@@ -611,6 +613,53 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
   document.head.appendChild(style);
 
+  // Function to handle fetching existing customers
+  const fetchExistingCustomers = async () => {
+    try {
+      const response = await fetch('/chat/get_reports');
+      const data = await response.json();
+
+      if (data.reports) {
+        // Extract unique customer names from reports
+        const customerNames = [...new Set(data.reports.map(report => report.customerName))];
+        displayCustomerButtons(customerNames);
+      } else {
+        addMessage("No existing customers found.", "received");
+      }
+    } catch (error) {
+      addMessage("Error fetching customers: " + error.message, "received");
+    }
+  };
+
+  // Function to display customer buttons
+  const displayCustomerButtons = (customerNames) => {
+    const messageContainer = document.querySelector(".message-input-container");
+
+    // Clear existing content
+    messageContainer.innerHTML = "";
+
+    // Helper function to add animation
+    const animateButton = (button, delay) => {
+      setTimeout(() => {
+        button.classList.add('visible');
+      }, delay);
+    };
+
+    // Create customer name buttons
+    customerNames.forEach((name, index) => {
+      const customerButton = document.createElement("button");
+      customerButton.textContent = name;
+      customerButton.className = "action-button customer-button";
+      customerButton.addEventListener('click', () => {
+        addMessage(`Selected customer: ${name}`, "sent");
+        reportData.customerName = name;
+        askForMeetingType();  // Proceed to next step
+      });
+      messageContainer.appendChild(customerButton);
+      animateButton(customerButton, index * 100); // Stagger animations
+    });
+  };
+
   // CSS to ensure proper styling
   style.innerHTML = `
   .car-brand-button,
@@ -665,6 +714,7 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
   document.head.appendChild(style);
 
+  // Ensure the updated showClientTypeButtons method is used in the handleNewReportAction where necessary
   const handleNewReportAction = (chatBox) => {
     const messageContainer = document.querySelector(".message-input-container");
 
@@ -695,9 +745,7 @@ document.addEventListener("DOMContentLoaded", () => {
     addMessage("Chcem pridať nový report", "sent");
     setTimeout(() => {
       addMessage("Skvelé! Poďme začať s vaším novým reportom. Chcete pridať report pre nového klienta alebo existujúceho klienta?", "received");
-
-      // Display new buttons
-      showClientTypeButtons();
+      showClientTypeButtons();  // Show client type options
     }, 500);
   };
 });
