@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json();
 
       if (data.reports) {
-        displayReports(data.reports);
+        displayReportsAsMessages(data.reports);
       } else {
         addMessage("No reports found.", "received");
       }
@@ -201,25 +201,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const displayReports = (reports) => {
-    const messageContainer = document.querySelector(".message-input-container");
-
-    // Clear existing content
-    messageContainer.innerHTML = "";
-
+  const displayReportsAsMessages = (reports) => {
     reports.forEach(report => {
-      const reportBox = document.createElement("div");
-      reportBox.className = "report-box";
-      reportBox.innerHTML = `
-        <p><strong>Name:</strong> ${report.customerName}</p>
-        <p><strong>Meeting Type:</strong> ${report.meetingType}</p>
-        ${report.meetingDetail ? `<p><strong>Detail:</strong> ${report.meetingDetail}</p>` : ""}
-        ${report.orderLocation ? `<p><strong>Order Location:</strong> ${report.orderLocation}</p>` : ""}
-        ${report.financing ? `<p><strong>Financing:</strong> ${report.financing}</p>` : ""}
-        <p><strong>Car Brand:</strong> ${report.carBrand}</p>
-        <p><strong>Car Model:</strong> ${report.carModel}</p>
+      const reportMessage = `
+        <strong>Name:</strong> ${report.customerName}<br>
+        <strong>Meeting Type:</strong> ${report.meetingType}<br>
+        ${report.meetingDetail ? `<strong>Detail:</strong> ${report.meetingDetail}<br>` : ""}
+        ${report.orderLocation ? `<strong>Order Location:</strong> ${report.orderLocation}<br>` : ""}
+        ${report.financing ? `<strong>Financing:</strong> ${report.financing}<br>` : ""}
+        <strong>Car Brand:</strong> ${report.carBrand}<br>
+        <strong>Car Model:</strong> ${report.carModel}
       `;
-      messageContainer.appendChild(reportBox);
+      addMessage(reportMessage, "received");
     });
   };
   
@@ -375,10 +368,21 @@ document.addEventListener("DOMContentLoaded", () => {
     existingClientButton.className = "action-button new-report-button";
     existingClientButton.addEventListener('click', () => {
       addMessage("Selected Existujúci zákazník", "sent");
-      fetchExistingCustomers();  // Fetch and display existing customers
+      fetchExistingCustomers(); // Fetch and display existing customers
     });
     messageContainer.appendChild(existingClientButton);
     animateButton(existingClientButton, 200); // Animate after 200ms
+
+    // Create "Aktívne reporty" button
+    const activeReportsButton = document.createElement("button");
+    activeReportsButton.textContent = "Aktívne reporty";
+    activeReportsButton.className = "action-button report-button";
+    activeReportsButton.addEventListener('click', () => {
+      addMessage("Selected Aktívne reporty", "sent");
+      fetchReports(); // Fetch and display active reports
+    });
+    messageContainer.appendChild(activeReportsButton);
+    animateButton(activeReportsButton, 300); // Animate after 300ms
   };
 
   // Add createButton function at the top
