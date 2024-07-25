@@ -259,8 +259,8 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const clearMessageContainer = () => {
-    const container = document.querySelector(".message-input-container");
-    container.innerHTML = "";
+    const messageContainer = document.querySelector(".message-input-container");
+    messageContainer.innerHTML = ""; // Clear existing content
   };
 
   const handleNextStep = () => {
@@ -394,6 +394,54 @@ document.addEventListener("DOMContentLoaded", () => {
     return button;
   };
 
+  const displayAllReports = async () => {
+    try {
+      const response = await fetch('/chat/get_today_reports', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const reports = await response.json();
+        const messageContainer = document.querySelector(".message-input-container");
+
+        // Clear existing content
+        clearMessageContainer();
+
+        // Display reports
+        reports.forEach(report => {
+          const reportDiv = document.createElement('div');
+          reportDiv.classList.add('report-item');
+          reportDiv.innerText = report.content;
+          messageContainer.appendChild(reportDiv);
+        });
+
+        // Display the confirmation message as an app message
+        addMessage("Naozaj chcete odovzdať všetky reporty? Po odovzdaní už nemôžete pridať report na dnešok", "received");
+
+        const confirmSubmitButton = createButton("Odovzdať", () => {
+          // Confirm submission logic here
+          addMessage("Odovzdať", "sent");
+          // For now, do nothing
+        }, "post-confirm-button");
+
+        const cancelSubmitButton = createButton("Zrušiť", () => {
+          addMessage("Zrušiť", "sent");
+          window.location.href = "/"; // Redirect to homepage
+        }, "post-confirm-button");
+
+        messageContainer.appendChild(confirmSubmitButton);
+        messageContainer.appendChild(cancelSubmitButton);
+      } else {
+        addMessage("Failed to fetch today's reports.", "received");
+      }
+    } catch (error) {
+      addMessage("Error: " + error.message, "received");
+    }
+  };
+
   const askForCustomerName = () => {
     const messageContainer = document.querySelector(".message-input-container");
     // Clear existing content
@@ -524,66 +572,41 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
   const finalizeReport = () => {
-    const messageContainer = document.querySelector(".message-input-container");
-
-    // Clear existing content
-    messageContainer.innerHTML = "";
+    clearMessageContainer(); // Clear the message container
 
     // Create submit and cancel buttons
     const submitButton = createButton("Odovzdať", submitReport, "submit-button");
-    const cancelButton = createButton("Zrušiť", cancelReport, "cancel-button");
+    const cancelButton = createButton("Zrušiť", () => {
+      window.location.href = "/"; // Redirect to homepage
+    }, "cancel-button");
 
+    const messageContainer = document.querySelector(".message-input-container");
     messageContainer.appendChild(submitButton);
     messageContainer.appendChild(cancelButton);
   };
 
-  const displayAllReports = async () => {
-    // Logic to fetch and display all reports for today's date
-    // Example implementation:
-    try {
-      const response = await fetch('/chat/get_today_reports', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+  const showPostSubmissionOptions = () => {
+    clearMessageContainer(); // Clear the message container
 
-      if (response.ok) {
-        const reports = await response.json();
-        const messageContainer = document.querySelector(".message-input-container");
+    // Add the question
+    addMessage("Dokončil si všetky reporty na dnes?", "received");
 
-        // Clear existing content
-        messageContainer.innerHTML = "";
+    // Create the first button "To sú všetky reporty na dnes"
+    const allReportsDoneButton = createButton("To sú všetky reporty na dnes", () => {
+      clearMessageContainer(); // Clear the message container before displaying reports
+      addMessage("To sú všetky reporty na dnes", "sent");
+      displayAllReports();
+    }, "post-report-button");
 
-        reports.forEach(report => {
-          const reportDiv = document.createElement('div');
-          reportDiv.classList.add('report-item');
-          reportDiv.innerText = report.content; // Assuming 'content' is a field in the report
-          messageContainer.appendChild(reportDiv);
-        });
+    // Create the second button "Ešte budem pridávať"
+    const addMoreReportsButton = createButton("Ešte budem pridávať", () => {
+      addMessage("Ešte budem pridávať", "sent");
+      window.location.href = "/"; // Redirect to homepage
+    }, "post-report-button");
 
-        // Proceed with the confirmation options
-        addMessage("Naozaj chcete odovzdať všetky reporty? Po odovzdaní už nemôžete pridať report na dnešok", "received");
-
-        const confirmSubmitButton = createButton("Odovzdať", () => {
-          addMessage("Odovzdať", "sent");
-          // For now, do nothing
-        }, "post-confirm-button");
-
-        const cancelSubmitButton = createButton("Zrušiť", () => {
-          addMessage("Zrušiť", "sent");
-          // Redirect to homepage and save the already submitted report
-          window.location.href = "/";
-        }, "post-confirm-button");
-
-        messageContainer.appendChild(confirmSubmitButton);
-        messageContainer.appendChild(cancelSubmitButton);
-      } else {
-        addMessage("Failed to fetch today's reports.", "received");
-      }
-    } catch (error) {
-      addMessage("Error: " + error.message, "received");
-    }
+    const messageContainer = document.querySelector(".message-input-container");
+    messageContainer.appendChild(allReportsDoneButton);
+    messageContainer.appendChild(addMoreReportsButton);
   };
   
   const submitReport = async () => {
@@ -610,44 +633,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const showPostSubmissionOptions = () => {
-    const messageContainer = document.querySelector(".message-input-container");
-
-    // Clear existing content
-    messageContainer.innerHTML = "";
-
-    // Add the question
-    addMessage("Dokončil si všetky reporty na dnes?", "received");
-
-    // Create the first button "To sú všetky reporty na dnes"
-    const allReportsDoneButton = createButton("To sú všetky reporty na dnes", () => {
-      addMessage("Naozaj chcete odovzdať všetky reporty? Po odovzdaní už nemôžete pridať report na dnešok", "sent");
-
-      // Add two new buttons for confirmation
-      const confirmSubmitButton = createButton("Odovzdať", () => {
-        addMessage("Naozaj chcete odovzdať všetky reporty? Po odovzdaní už nemôžete pridať report na dnešok", "sent");
-        // For now, do nothing
-      }, "post-confirm-button");
-
-      const cancelSubmitButton = createButton("Zrušiť", () => {
-        addMessage("Zrušiť", "sent");
-    window.location.href = "/"; // Redirect to homepage
-      }, "post-confirm-button");
-
-      // Display the confirmation buttons
-      messageContainer.appendChild(confirmSubmitButton);
-      messageContainer.appendChild(cancelSubmitButton);
-    }, "post-report-button");
-
-    // Create the second button "Ešte budem pridávať"
-    const addMoreReportsButton = createButton("Ešte budem pridávať", () => {
-      addMessage("Ešte budem pridávať", "sent");
-      window.location.href = "/"; // Redirect to homepage
-    }, "post-report-button");
-
-    messageContainer.appendChild(allReportsDoneButton);
-    messageContainer.appendChild(addMoreReportsButton);
-  };
   
   const cancelReport = () => {
     window.location.reload();
@@ -846,5 +831,22 @@ document.addEventListener("DOMContentLoaded", () => {
       addMessage("Skvelé! Poďme začať s vaším novým reportom. Chcete pridať report pre nového klienta alebo existujúceho klienta?", "received");
       showClientTypeButtons();  // Show client type options
     }, 500);
+  };
+  
+  const showNewReportOptions = () => {
+    clearMessageContainer(); // Clear the message container
+
+    // Create "new customer" and "existing customer" buttons
+    const newCustomerButton = createButton("Nový zákazník", () => {
+      addMessage("Nový zákazník zvolený", "sent");
+    });
+
+    const existingCustomerButton = createButton("Existujúci zákazník", () => {
+      addMessage("Existujúci zákazník zvolený", "sent");
+    });
+
+    const messageContainer = document.querySelector(".message-input-container");
+    messageContainer.appendChild(newCustomerButton);
+    messageContainer.appendChild(existingCustomerButton);
   };
 });

@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, jsonify, session, redirec
 import openai
 from replit import db as replit_db
 import random
-from datetime import datetime
+from datetime import datetime, date
 
 chat_blueprint = Blueprint('chat', __name__)
 
@@ -113,3 +113,21 @@ def send_message():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@chat_blueprint.route('/get_today_reports', methods=['GET'])
+def get_today_reports():
+    try:
+        # Get today's date
+        today = date.today().isoformat()
+        # Store today's reports
+        today_reports = []
+        # Iterate through all the keys (assumed customer names) in the database
+        for key in replit_db.keys():
+            reports = replit_db[key] if isinstance(replit_db[key], list) else []
+            for report in reports:
+                # Check if the report is from today
+                report_date = report.get('created_at', '')
+                if report_date.startswith(today):
+                    today_reports.append(report)
+        return jsonify(today_reports), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
