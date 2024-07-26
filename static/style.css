@@ -671,5 +671,5 @@ button:hover {
 }
 
 .chat-messages {
-  padding-bottom: 80px; /* To make space for input elements */
+  padding-bottom: 50px; /* To make space for input elements */
 }
