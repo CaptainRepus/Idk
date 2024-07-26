@@ -441,13 +441,50 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Add createButton function at the top
-  const createButton = (text, callback, className = 'car-brand-button') => {
-      const button = document.createElement("button");
-      button.textContent = text;
-      button.className = className;
-      button.addEventListener('click', callback);
-      return button;
-  };
+  function createButton(text, callback, className = 'action-button') {
+    const button = document.createElement("button");
+    button.textContent = text;
+    button.className = className;
+    button.addEventListener('click', () => {
+      callback();
+      scrollToBottom(); // Ensure scroll to bottom on new button click
+    });
+    return button;
+  }
+
+  // Add this function to handle smooth scrolling to the bottom
+  function scrollToBottom() {
+    const chatMessages = document.querySelector('.chat-messages');
+    chatMessages.scroll({
+      top: chatMessages.scrollHeight,
+      behavior: 'smooth'
+    });
+  }
+
+  // Add this function to add event listeners to action buttons
+  function addActionButtonsListeners() {
+    const actionButtons = document.querySelectorAll('.action-button');
+    actionButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Custom logic on button click (if any)
+        scrollToBottom();
+      });
+    });
+  }
+
+  // Add listeners to action buttons after DOMContentLoaded
+  document.addEventListener('DOMContentLoaded', () => {
+    addActionButtonsListeners();
+  });
+
+  // If you want to scroll whenever a new message is added
+  document.addEventListener('DOMContentLoaded', () => {
+    const chatMessages = document.querySelector('.chat-messages');
+    const observer = new MutationObserver(() => {
+      scrollToBottom();
+    });
+    observer.observe(chatMessages, { childList: true });
+  });
 
   const displayAllReports = async () => {
       try {
