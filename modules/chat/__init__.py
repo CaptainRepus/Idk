@@ -35,7 +35,7 @@ def get_story():
                 "role":
                 "user",
                 "content":
-                f"Napíš veľmi krátky príbeh v slovenčine z oblasti predaja, v ktorom bude hrať {random_name}."
+                f"Napíš veľmi najkratší príbeh v slovenčine z oblasti predaja, v ktorom bude hrať {random_name}."
             }],
             max_tokens=250)
         ai_story = response.choices[0].message['content'].strip()

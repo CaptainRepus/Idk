@@ -140,6 +140,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const saveEndOfDayState = () => {
+      localStorage.setItem('reportsSubmittedToday', new Date().toISOString().split("T")[0]);
+      displayActionButtons(); // Call to update buttons immediately
+  };
+
   const fetchStory = async () => {
     showLoadingMessage();
     try {
@@ -217,40 +222,75 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   
   const displayActionButtons = () => {
+    const currentDay = new Date().toISOString().split("T")[0];
+    const reportsSubmittedToday = localStorage.getItem('reportsSubmittedToday');
+
+    const messageContainer = document.querySelector(".message-input-container");
+    messageContainer.innerHTML = ""; // Clear existing buttons
+
     const buttonsData = [
-      { text: "Nový report" },
-      { text: "Aktívne reporty" },
-      { text: "Oznámenia" },
-      { text: "Aké sú naše hodnoty?" },
-      { text: "Osobný rozvoj" },
-      { text: "Aký je môj level?" },
+        { text: "Nový report" },
+        { text: "Aktívne reporty" },
+        { text: "Oznámenia" },
+        { text: "Aké sú naše hodnoty?" },
+        { text: "Osobný rozvoj" },
+        { text: "Aký je môj level?" }
     ];
 
-    clearMessageContainer();
     const themeClass = localStorage.getItem('themeClass') || "theme-orange";
 
-    buttonsData.forEach((btn, index) => {
-      const actionButton = document.createElement("button");
-      actionButton.textContent = btn.text;
-      actionButton.className = `action-button ${themeClass}`;
-      document.querySelector(".message-input-container").appendChild(actionButton);
+    if (reportsSubmittedToday === currentDay) {
+        // User has submitted reports for the day, display "Joke of the day"
+        const jokeButton = createButton("Joke of the day", () => {}, "joke-button");
+        messageContainer.appendChild(jokeButton);
 
-      // Add event listener to load the module dynamically
-      actionButton.addEventListener('click', async () => {
-        if (btn.text === "Nový report") {
-          handleNewReportAction(chatBox);
-        } else if (btn.text === "Aktívne reporty") {
-          fetchReports();
-        } else {
-          console.error(`Handler for ${btn.text} not implemented`);
-        }
-      });
+        // Display other buttons except "Nový report"
+        buttonsData.forEach((btn, index) => {
+            if (btn.text !== "Nový report") {
+                const actionButton = createButton(btn.text, () => {
+                    if (btn.text === "Aktívne reporty") {
+                        fetchReports();
+                    } else {
+                        console.error(`Handler for ${btn.text} not implemented`);
+                    }
+                }, `action-button ${themeClass}`);
+                messageContainer.appendChild(actionButton);
 
-      setTimeout(() => {
-        actionButton.classList.add('visible');
-      }, index * 100);
-    });
+                setTimeout(() => {
+                    actionButton.classList.add('visible');
+                }, index * 100); // Animate buttons in order
+            }
+        });
+    } else {
+        // Display all buttons including "Nový report"
+        buttonsData.forEach((btn, index) => {
+            const actionButton = createButton(btn.text, () => {
+                if (btn.text === "Nový report") {
+                    handleNewReportAction(chatBox);
+                } else if (btn.text === "Aktívne reporty") {
+                    fetchReports();
+                } else {
+                    console.error(`Handler for ${btn.text} not implemented`);
+                }
+            }, `action-button ${themeClass}`);
+            messageContainer.appendChild(actionButton);
+
+            setTimeout(() => {
+                actionButton.classList.add('visible');
+            }, index * 100); // Animate buttons in order
+        });
+    }
   };
+
+  // Ensure this function is called after DOMContentLoaded
+  document.addEventListener("DOMContentLoaded", () => {
+    displayActionButtons(); // Ensure buttons are updated on page load
+  });
+
+  // Ensure this function is called after DOMContentLoaded
+  document.addEventListener("DOMContentLoaded", () => {
+    displayActionButtons();
+  });
 
   const hideAllActionButtons = () => {
     document.querySelectorAll(".action-button").forEach(button => {
@@ -367,7 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
     existingClientButton.textContent = "Existujúci zákazník";
     existingClientButton.className = "action-button new-report-button";
     existingClientButton.addEventListener('click', () => {
-      addMessage("Selected Existujúci zákazník", "sent");
+      addMessage("Chcem pridať existujúceho zákazníka", "sent");
       fetchExistingCustomers(); // Fetch and display existing customers
     });
     messageContainer.appendChild(existingClientButton);
@@ -378,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
     activeReportsButton.textContent = "Aktívne reporty";
     activeReportsButton.className = "action-button report-button";
     activeReportsButton.addEventListener('click', () => {
-      addMessage("Selected Aktívne reporty", "sent");
+      addMessage("Chcem vidieť aktívne reporty", "sent");
       fetchReports(); // Fetch and display active reports
     });
     messageContainer.appendChild(activeReportsButton);
@@ -387,59 +427,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Add createButton function at the top
   const createButton = (text, callback, className = 'car-brand-button') => {
-    const button = document.createElement("button");
-    button.textContent = text;
-    button.className = className;
-    button.addEventListener('click', callback);
-    return button;
+      const button = document.createElement("button");
+      button.textContent = text;
+      button.className = className;
+      button.addEventListener('click', callback);
+      return button;
   };
 
   const displayAllReports = async () => {
-    try {
-      const response = await fetch('/chat/get_today_reports', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      try {
+          const response = await fetch('/chat/get_today_reports', {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
 
-      if (response.ok) {
-        const reports = await response.json();
-        const messageContainer = document.querySelector(".message-input-container");
+          if (response.ok) {
+              const reports = await response.json();
+              const messageContainer = document.querySelector(".message-input-container");
 
-        // Clear existing content
-        clearMessageContainer();
+              // Clear existing content
+              clearMessageContainer();
 
-        // Display reports
-        reports.forEach(report => {
-          const reportDiv = document.createElement('div');
-          reportDiv.classList.add('report-item');
-          reportDiv.innerText = report.content;
-          messageContainer.appendChild(reportDiv);
-        });
+              // Display reports
+              reports.forEach(report => {
+                  const reportDiv = document.createElement('div');
+                  reportDiv.classList.add('report-item');
+                  reportDiv.innerText = report.content;
+                  messageContainer.appendChild(reportDiv);
+              });
 
-        // Display the confirmation message as an app message
-        addMessage("Naozaj chcete odovzdať všetky reporty? Po odovzdaní už nemôžete pridať report na dnešok", "received");
+              addMessage("Naozaj chcete odovzdať všetky reporty? Po odovzdaní už nemôžete pridať report na dnešok", "received");
 
-        const confirmSubmitButton = createButton("Odovzdať", () => {
-          // Confirm submission logic here
-          addMessage("Odovzdať", "sent");
-          // For now, do nothing
-        }, "post-confirm-button");
+              const confirmSubmitButton = createButton("Odovzdať", () => {
+                  saveEndOfDayState(); // Save the state when confirmed
+                  window.location.href = "/"; // Redirect to homepage
+              }, "post-confirm-button");
 
-        const cancelSubmitButton = createButton("Zrušiť", () => {
-          addMessage("Zrušiť", "sent");
-          window.location.href = "/"; // Redirect to homepage
-        }, "post-confirm-button");
+              const cancelSubmitButton = createButton("Zrušiť", () => {
+                  addMessage("Zrušiť", "sent");
+                  window.location.href = "/"; // Redirect to homepage
+              }, "post-confirm-button");
 
-        messageContainer.appendChild(confirmSubmitButton);
-        messageContainer.appendChild(cancelSubmitButton);
-      } else {
-        addMessage("Failed to fetch today's reports.", "received");
+              messageContainer.appendChild(confirmSubmitButton);
+              messageContainer.appendChild(cancelSubmitButton);
+          } else {
+              addMessage("Failed to fetch today's reports.", "received");
+          }
+      } catch (error) {
+          addMessage("Error: " + error.message, "received");
       }
-    } catch (error) {
-      addMessage("Error: " + error.message, "received");
-    }
   };
 
   const askForCustomerName = () => {
@@ -476,7 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Create meeting type buttons
     meetingTypes.forEach(meetingType => {
       const button = createButton(meetingType, () => {
-        addMessage(`Selected meeting type: ${meetingType}`, "sent");
+        addMessage(`Bol to druh stretnutia: ${meetingType}`, "sent");
         reportData.meetingType = meetingType;
         handleMeetingTypeSelection(meetingType); // Handle the specific meeting type
       }, "meeting-type-button");
@@ -490,12 +528,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (meetingType === "Meeting") {
       addMessage("Bol meeting online alebo offline?", "received");
       const onlineButton = createButton("Online meeting", () => {
-        addMessage("Online meeting selected", "sent");
+        addMessage("Bol to online meeting", "sent");
         reportData.meetingDetail = "Online meeting";
         askForCarBrand();
       }, "meeting-option-button");
       const offlineButton = createButton("Offline meeting", () => {
-        addMessage("Offline meeting selected", "sent");
+        addMessage("Bol to offline meeting", "sent");
         reportData.meetingDetail = "Offline meeting";
         askForCarBrand();
       }, "meeting-option-button");
@@ -504,12 +542,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (meetingType === "Order") {
       addMessage("V akom obchode bolo auto objednané?", "received");
       const presovButton = createButton("Prešov", () => {
-        addMessage("Prešov selected", "sent");
+        addMessage("Auto bolo objendané v Prešove", "sent");
         reportData.orderLocation = "Prešov";
         askForCarBrand();
       }, "order-option-button");
       const popradButton = createButton("Poprad", () => {
-        addMessage("Poprad selected", "sent");
+        addMessage("Auto bolo objendané v Poprade", "sent");
         reportData.orderLocation = "Poprad";
         askForCarBrand();
       }, "order-option-button");
@@ -521,12 +559,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (meetingType === "Vehicle Handover") {
       addMessage("Ako bolo alebo bude vozidlo financované?", "received");
       const fullAmountButton = createButton("Celá suma", () => {
-        addMessage("Celá suma selected", "sent");
+        addMessage("Klient vyplatil celú sumu", "sent");
         reportData.financing = "Celá suma";
         askForCarBrand();
       }, "financing-option-button");
       const leasingButton = createButton("Leasing", () => {
-        addMessage("Leasing selected", "sent");
+        addMessage("Klient si vybral auto na leasing", "sent");
         reportData.financing = "Leasing";
         askForCarBrand();
       }, "financing-option-button");
@@ -586,27 +624,27 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const showPostSubmissionOptions = () => {
-    clearMessageContainer(); // Clear the message container
+      clearMessageContainer(); // Clear the message container
 
-    // Add the question
-    addMessage("Dokončil si všetky reporty na dnes?", "received");
+      // Add the question
+      addMessage("Dokončil si všetky reporty na dnes?", "received");
 
-    // Create the first button "To sú všetky reporty na dnes"
-    const allReportsDoneButton = createButton("To sú všetky reporty na dnes", () => {
-      clearMessageContainer(); // Clear the message container before displaying reports
-      addMessage("To sú všetky reporty na dnes", "sent");
-      displayAllReports();
-    }, "post-report-button");
+      // Create the first button "To sú všetky reporty na dnes"
+      const allReportsDoneButton = createButton("To sú všetky reporty na dnes", () => {
+          clearMessageContainer(); // Clear the message container before displaying reports
+          addMessage("To sú všetky reporty na dnes", "sent");
+          displayAllReports();
+      }, "post-report-button");
 
-    // Create the second button "Ešte budem pridávať"
-    const addMoreReportsButton = createButton("Ešte budem pridávať", () => {
-      addMessage("Ešte budem pridávať", "sent");
-      window.location.href = "/"; // Redirect to homepage
-    }, "post-report-button");
+      // Create the second button "Ešte budem pridávať"
+      const addMoreReportsButton = createButton("Ešte budem pridávať", () => {
+          addMessage("Ešte budem pridávať", "sent");
+          window.location.href = "/"; // Redirect to homepage
+      }, "post-report-button");
 
-    const messageContainer = document.querySelector(".message-input-container");
-    messageContainer.appendChild(allReportsDoneButton);
-    messageContainer.appendChild(addMoreReportsButton);
+      const messageContainer = document.querySelector(".message-input-container");
+      messageContainer.appendChild(allReportsDoneButton);
+      messageContainer.appendChild(addMoreReportsButton);
   };
   
   const submitReport = async () => {
@@ -735,7 +773,7 @@ document.addEventListener("DOMContentLoaded", () => {
       customerButton.textContent = name;
       customerButton.className = "action-button customer-button";
       customerButton.addEventListener('click', () => {
-        addMessage(`Selected customer: ${name}`, "sent");
+        addMessage(`Chcem pridať report s klientom ${name}`, "sent");
         reportData.customerName = name;
         askForMeetingType();  // Proceed to next step
       });
@@ -848,5 +886,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const messageContainer = document.querySelector(".message-input-container");
     messageContainer.appendChild(newCustomerButton);
     messageContainer.appendChild(existingCustomerButton);
+  };
+  
+
+  const updateActionButtons = () => {
+    const currentDay = new Date().toISOString().split("T")[0];
+    const reportsSubmittedToday = localStorage.getItem('reportsSubmittedToday');
+
+    if (reportsSubmittedToday === currentDay) {
+        replaceNewReportButton();
+    }
+  };
+
+  // Ensure this function is called after DOMContentLoaded
+  document.addEventListener("DOMContentLoaded", () => {
+    updateActionButtons();
+  });
+
+  // Ensure this function is called after DOMContentLoaded
+  document.addEventListener("DOMContentLoaded", () => {
+    updateActionButtons();
+  });
+
+  const replaceNewReportButton = () => {
+      document.querySelectorAll('.new-report-button').forEach(button => {
+          button.textContent = "Joke of the day";
+          button.classList.add('joke-button');
+          button.classList.remove('new-report-button');
+          button.onclick = null; // Make it do nothing for now
+      });
   };
 });
