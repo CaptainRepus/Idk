@@ -106,7 +106,7 @@ button {
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-height: 96vh;
+    height: calc(100vh - 80px);
     background: url('./img/pattern.png');
     background-repeat: repeat-y;
     background-size: cover;
@@ -558,6 +558,7 @@ button:hover {
     overflow-y: auto;
     border-bottom: 1px solid #333;
     color: white; /* Ensure text color is visible */
+    padding-bottom: 80px; /* Add space for the message area */
 }
 
 /* Input area */
@@ -570,9 +571,12 @@ button:hover {
     gap: 1rem;
     margin-bottom: 1.5rem;
     width: 100%; /* Span the full width */
+    z-index: 10; /* Ensure it's above other elements */
+    background-color: #1f1f1f; /* Optional: Background color to match theme */
+    box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5); /* Optional: Shadow to distinguish from chat messages */
 }
 
-.message-input-container button{
+.message-input-container button {
     width: 100%;
     padding: 35px;
     background-color: #FF0000;
@@ -582,9 +586,10 @@ button:hover {
     border-radius: 40px;
     font-weight: 700;
     cursor: pointer;
-    opacity:1;
+    opacity: 1;
 }
 
+/* User input styles */
 #user-input {
     flex: 1;
     padding: 10px;
@@ -593,9 +598,9 @@ button:hover {
     border-radius: 8px 0 0 8px;
     background-color: #262626; /* Darker input background */
     color: white;
-    display: none; /* Initially hidden for steps flow */
 }
 
+/* Button styles */
 #send-button, #next-button, #start-day-button {
     padding: 10px 20px;
     background-color: #FF0000; /* Red background */
