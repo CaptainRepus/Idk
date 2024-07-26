@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
         messageInput.value = '';
     }
+    
 
     if (sendButton) {
         sendButton.addEventListener('click', sendMessage);
@@ -176,4 +177,5 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = "/chat/index";
         });
     }
+
 });

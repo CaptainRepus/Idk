@@ -131,3 +131,61 @@ def get_today_reports():
         return jsonify(today_reports), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@chat_blueprint.route('/get_funny_story', methods=['POST'])
+def get_funny_story():
+    try:
+        random_name = get_random_fullname()
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{
+                "role": "system",
+                "content": "Si kreatívny rozprávkár."
+            }, {
+                "role": "user",
+                "content": f"Vytvor najkrátší vtipný príbeh s {random_name}."
+            }],
+            max_tokens=150)
+        ai_story = response.choices[0].message['content'].strip()
+        return jsonify({"message": ai_story})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@chat_blueprint.route('/get_motivation', methods=['POST'])
+def get_motivation():
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{
+                "role": "system",
+                "content": "Si motivačný rečník, ktorý ide povzbudiť zamestnanca na zlepšenie svojich záujmov."
+            }, {
+                "role": "user",
+                "content": "Prosím, vytvor krátkú motiváciu"
+            }],
+            max_tokens=50)
+        ai_quote = response.choices[0].message['content'].strip()
+        return jsonify({"message": ai_quote})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@chat_blueprint.route('/get_random_message', methods=['GET'])
+def get_random_message():
+    try:
+        options = [
+            '/get_funny_story',    # Route to get funny story
+            '/get_motivation',     # Route to get motivation
+            '/get_team_photo'      # Route to get team photo
+        ]
+        # Select a random message type route
+        selected_route = random.choice(options)
+
+        # Depending on the selected route, get the corresponding response
+        if selected_route == '/get_funny_story':
+            return get_funny_story()
+        elif selected_route == '/get_motivation':
+            return get_motivation()
+        elif selected_route == '/get_team_photo':
+            return get_team_photo()
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

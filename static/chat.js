@@ -711,6 +711,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.ok) {
         addMessage("Report successfully submitted!", "received");
+        // Fetch and display the random message after all reports
+        await fetchRandomMessage();
         // Show the two new buttons only after the report is successfully submitted
         setTimeout(() => {
           showPostSubmissionOptions();
@@ -960,12 +962,51 @@ document.addEventListener("DOMContentLoaded", () => {
     updateActionButtons();
   });
 
-  const replaceNewReportButton = () => {
-      document.querySelectorAll('.new-report-button').forEach(button => {
-          button.textContent = "Joke of the day";
-          button.classList.add('joke-button');
-          button.classList.remove('new-report-button');
-          button.onclick = null; // Make it do nothing for now
+  function replaceNewReportButton() {
+    document.querySelectorAll('.new-report-button').forEach(button => {
+      button.textContent = "Joke of the day";
+      button.classList.add('joke-button');
+      button.classList.remove('new-report-button');
+      button.onclick = null; // Reset previous event listeners
+
+      button.addEventListener('click', async () => {
+        console.log('Joke button clicked'); // Debugging log
+        try {
+          const response = await fetch('/chat/get_funny_story', {
+            method: 'POST'
+          });
+          const data = await response.json();
+          if (data.message) {
+            addMessage(data.message, "received");
+            saveMessage(data.message, "received");
+          } else if (data.error) {
+            addMessage("Error: " + data.error, "received");
+          }
+        } catch (error) {
+          addMessage("Error: " + error.message, "received");
+        }
       });
+    });
+  }
+
+
+  const fetchRandomMessage = async () => {
+    showLoadingMessage();
+    try {
+      const response = await fetch('/chat/get_random_message', {
+        method: 'GET'
+      });
+      const data = await response.json();
+      hideLoadingMessage();
+      if (data.message) {
+        addMessage(data.message, "received");
+        saveMessage(data.message, "received");
+      } else if (data.error) {
+        addMessage("Error: " + data.error, "received");
+      }
+    } catch (error) {
+      hideLoadingMessage();
+      addMessage("Error: " + error.message, "received");
+    }
   };
 });

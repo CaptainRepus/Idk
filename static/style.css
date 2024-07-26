@@ -625,6 +625,7 @@ button:hover {
     border: none;
     border-radius: 30px;
     cursor: pointer;
+    margin-inline: 30px;
 }
 
 .message-input-container button.action-button:hover {
