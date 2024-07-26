@@ -241,8 +241,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (reportsSubmittedToday === currentDay) {
         // User has submitted reports for the day, display "Joke of the day"
-        const jokeButton = createButton("Joke of the day", () => {}, "joke-button");
+        const jokeButton = createButton("Joke of the day", () => {}, `action-button ${themeClass}`);
         messageContainer.appendChild(jokeButton);
+
+        // Make "Joke of the day" button visible
+        setTimeout(() => {
+            jokeButton.classList.add('visible');
+        }, 100);
 
         // Display other buttons except "Nový report"
         buttonsData.forEach((btn, index) => {
@@ -258,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 setTimeout(() => {
                     actionButton.classList.add('visible');
-                }, index * 100); // Animate buttons in order
+                }, (index + 1) * 100); // Animate buttons in order
             }
         });
     } else {
@@ -281,6 +286,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
   };
+
+  // Ensure this function is called after DOMContentLoaded
+  document.addEventListener("DOMContentLoaded", () => {
+    displayActionButtons(); // Ensure buttons are updated on page load
+  });
+
+  // Ensure this function is called after DOMContentLoaded
+  document.addEventListener("DOMContentLoaded", () => {
+    displayActionButtons(); // Ensure buttons are updated on page load
+  });
 
   // Ensure this function is called after DOMContentLoaded
   document.addEventListener("DOMContentLoaded", () => {
