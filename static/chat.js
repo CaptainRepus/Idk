@@ -221,6 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const displayReportsAsMessages = (reports) => {
     reports.forEach(report => {
       const reportMessage = `
+        <strong>Author:</strong> ${report.author}<br>
         <strong>Name:</strong> ${report.customerName}<br>
         <strong>Meeting Type:</strong> ${report.meetingType}<br>
         ${report.meetingDetail ? `<strong>Detail:</strong> ${report.meetingDetail}<br>` : ""}
@@ -713,18 +714,21 @@ document.addEventListener("DOMContentLoaded", () => {
   
   const submitReport = async () => {
     try {
+      const reportDataWithAuthor = {
+        ...reportData,
+        author: username // Add the user's name to the report data
+      };
+
       const response = await fetch('/chat/submit_report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(reportData)
+        body: JSON.stringify(reportDataWithAuthor)
       });
 
       if (response.ok) {
         addMessage("Report successfully submitted!", "received");
-        // Fetch and display the random message after all reports
-        await fetchRandomMessage();
         // Show the two new buttons only after the report is successfully submitted
         setTimeout(() => {
           showPostSubmissionOptions();

@@ -4,11 +4,7 @@ import openai
 
 # Blueprints
 from modules.auth import auth_blueprint
-from modules.reports import reports_blueprint
 from modules.chat import chat_blueprint  # Import chat blueprint
-from modules.values import values_blueprint
-from modules.personal_growth import personal_growth_blueprint
-from modules.improve import improve_blueprint
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
@@ -19,10 +15,7 @@ openai.api_key = my_secret
 
 app.register_blueprint(auth_blueprint, url_prefix='/auth')
 app.register_blueprint(chat_blueprint, url_prefix='/chat')  # Register chat blueprint
-app.register_blueprint(reports_blueprint, url_prefix='/reports')
-app.register_blueprint(values_blueprint, url_prefix='/values')
-app.register_blueprint(personal_growth_blueprint, url_prefix='/personal_growth')
-app.register_blueprint(improve_blueprint, url_prefix='/improve')
+
 
 @app.route('/')
 def welcome():

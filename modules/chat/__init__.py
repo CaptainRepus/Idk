@@ -58,7 +58,9 @@ def get_story():
 def submit_report():
     report_data = request.json
     customer_name = report_data.get("customerName")
-    if customer_name:
+    author = report_data.get("author")  # Extract the author's name
+
+    if customer_name and author:
         existing_reports = replit_db.get(customer_name, [])
 
         # Ensure existing_reports is a list
@@ -68,7 +70,7 @@ def submit_report():
         existing_reports.append(report_data)
         replit_db[customer_name] = existing_reports
         return jsonify({"message": "Report successfully submitted!"}), 200
-    return jsonify({"error": "Missing customer name"}), 400
+    return jsonify({"error": "Missing customer name or author"}), 400
 
 def observed_to_dict(obj):
     """
