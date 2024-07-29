@@ -16,6 +16,12 @@ body, html {
     width: 15%;
     height: 50%;
 }
+/* User level styling */
+.user-level {
+    font-size: 38px;
+    color: white;
+    margin-left: 30px;
+}
 .mt-4{
     margin-top: 100px;
 }
@@ -44,7 +50,6 @@ body, html {
 .nav-container .dropdown .fa-gear {
     font-size: 50px;
     color: white;
-    margin-right: 10px;
     transition: color 0.3s ease, transform 0.3s ease;
     padding: 0.5rem;
     margin-right: 2rem;
@@ -179,23 +184,46 @@ button {
 .message-container.received {
     justify-content: flex-start;
 }
+/* Message background themes */
+.message-container.theme-blue .message.sent {
+    background-color: #007bff;
+}
+
+.message-container.theme-green .message.sent {
+    background-color: #4caf50;
+}
+
+.message-container.theme-red .message.sent {
+    background-color: #f44336;
+}
+
+.message-container.theme-purple .message.sent {
+    background-color: #9c27b0;
+}
+
+.message-container.theme-orange .message.sent {
+    background-color: #ff9800;
+}
 
 /* Message styles */
 .message {
-  max-width: 60%;
-  padding: 10px;
-  border-radius: 10px;
-  word-wrap: break-word;
-  background-color: var(-.-message-bg-color, #f1f0f0);
-  color: var(--message-text-color, black);
-  position: relative;
-  flex: 1;
+   max-width: 60%;
+   padding: 20px;
+   border-radius: 20px;
+   word-wrap: break-word;
+   background-color: var(-.-message-bg-color, #f1f0f0);
+   color: var(--message-text-color, black);
+   position: relative;
+   flex: 1;
+   margin-bottom: 15px;
 }
 .message p{
-    font-size: 2rem;
+    font-size: 2.3rem;
+    margin-block-start: .7em;
+    margin-block-end: .7em;
 }
 .message.sent {
-  background-color: var(--user-bg-color, #007bff);
+  background-color: var(--user-bg-color, #007bff); /* Use the variable for dynamic background color */
   color: white;
   margin-left: 40%; /* Align sent messages to the right */
   text-align: left;

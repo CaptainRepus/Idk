@@ -30,31 +30,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const addMessage = (content, type) => {
       if (!addedMessages.has(content)) {
-        const messageElem = document.createElement("div");
-        const iconElem = document.createElement("div");
-        const iconContent = type === 'received' ? '<i class="fa-solid fa-brain-circuit"></i>' : '<i class="fa-solid fa-user"></i>';
+          const messageElem = document.createElement("div");
+          const iconElem = document.createElement("div");
+          const iconContent = type === 'received' ? '<i class="fa-solid fa-brain-circuit"></i>' : '<i class="fa-solid fa-user"></i>';
 
-        iconElem.className = `icon ${type}`;
-        iconElem.innerHTML = iconContent;
+          iconElem.className = `icon ${type}`;
+          iconElem.innerHTML = iconContent;
 
-        messageElem.className = `message-container ${type}`;
-        messageElem.innerHTML = `
-          <div class="message ${type}">
-            <p>${content}</p>
-          </div>
-        `;
+          messageElem.className = `message-container ${type}`;
+          messageElem.innerHTML = `
+              <div class="message ${type}">
+                  <p>${content}</p>
+              </div>
+          `;
 
-        if(type === 'received'){
-          messageElem.insertBefore(iconElem, messageElem.firstChild);
-        }
-        else{
-          messageElem.appendChild(iconElem);
-        }
+          if(type === 'received'){
+              messageElem.insertBefore(iconElem, messageElem.firstChild);
+          }
+          else{
+              messageElem.appendChild(iconElem);
+          }
 
-        chatBox.appendChild(messageElem);
-        chatBox.scrollTop = chatBox.scrollHeight;
-        addedMessages.add(content); // Mark this message as added
-        return messageElem;
+          // Apply current theme class to the message container
+          const themeClass = localStorage.getItem('themeClass') || "theme-orange";
+          messageElem.classList.add(themeClass);
+
+          chatBox.appendChild(messageElem);
+          chatBox.scrollTop = chatBox.scrollHeight;
+          addedMessages.add(content); // Mark this message as added
+          return messageElem;
       }
       return null;
   };
