@@ -205,11 +205,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fetchReports = async () => {
     try {
-      const response = await fetch('/chat/get_reports');
+      const response = await fetch(`/chat/get_reports`);
       const data = await response.json();
 
       if (data.reports) {
-        displayReportsAsMessages(data.reports);
+        const userReports = data.reports.filter(report => report.author === username);
+        displayReportsAsMessages(userReports);
       } else {
         addMessage("No reports found.", "received");
       }
@@ -221,15 +222,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const displayReportsAsMessages = (reports) => {
     reports.forEach(report => {
       const reportMessage = `
-        <strong>Author:</strong> ${report.author}<br>
-        <strong>Name:</strong> ${report.customerName}<br>
-        <strong>Meeting Type:</strong> ${report.meetingType}<br>
+        <strong>Meno klienta:</strong> ${report.customerName}<br>
+        <strong>Typ stretnutia:</strong> ${report.meetingType}<br>
         ${report.meetingDetail ? `<strong>Detail:</strong> ${report.meetingDetail}<br>` : ""}
-        ${report.orderLocation ? `<strong>Order Location:</strong> ${report.orderLocation}<br>` : ""}
-        ${report.financing ? `<strong>Financing:</strong> ${report.financing}<br>` : ""}
-        <strong>Car Brand:</strong> ${report.carBrand}<br>
-        <strong>Car Model:</strong> ${report.carModel}
-      `;
+        ${report.orderLocation ? `<strong>Predajňa objednávky:</strong> ${report.orderLocation}<br>` : ""}
+        ${report.financing ? `<strong>Financovanie:</strong> ${report.financing}<br>` : ""}
+        <strong>Auto:</strong> ${report.carBrand} ${report.carModel}`;
       addMessage(reportMessage, "received");
     });
   };
