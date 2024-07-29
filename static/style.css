@@ -248,7 +248,7 @@ button {
   flex-shrink: 0;
 }
 .message-container .icon.sent {
-  background-color: var(--user-color, #007bff);
+  background-color: var(--user-bg-color, #007bff); /* Use the variable for dynamic background color of the icon */
   order: 1;
   margin-left: 10px; /* Adjust margin if needed */
 }
