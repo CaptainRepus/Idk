@@ -14,15 +14,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // To keep track of added messages and avoid duplication
   const addedMessages = new Set();
 
+  
   const settingsModal = document.getElementById("settings-modal");
   const closeSettingsButton = document.getElementById("close-settings-button");
   const dropdownButton = document.getElementById("dropdown-button");
   const steps = [
     { type: "welcome", content: `Vitaj späť, ${username}! Klikni "Ďalej" pre tvoj motivačný impulz na dnešok:` },
     { type: "api", content: "Motivácia dňa v slovenčine" },
-    { type: "image", content: `<img src="/static/images/team_photo.jpg" alt="Team Photo">` },
-    { type: "level", content: `Tvoj level: ${userLevel}, XP do ďalšieho levlu: 100.` },
-    { type: "api_story", content: "Generate sales story" },
     { type: "final", content: "Čo by si chcel dnes robiť?" },
   ];
   const MESSAGE_STORAGE_KEY = 'chatMessages';
@@ -100,18 +98,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const showLoadingMessage = () => {
-    loadingMessageElem = addMessage("AI generuje...", "loading");
+    const loadingMessageElem = addMessage('<span>AI generuje odpoveď<span class="loading-dots"></span></span>', "received"); // Make it look like a received message
+    const themeClass = localStorage.getItem('themeClass') || "theme-orange";
+    loadingMessageElem.classList.add(themeClass);
+    loadingMessageElem.classList.add('loading');
+
+    return loadingMessageElem;
   };
 
-  const hideLoadingMessage = () => {
+  const hideLoadingMessage = (loadingMessageElem) => {
     if (loadingMessageElem) {
       chatBox.removeChild(loadingMessageElem);
-      loadingMessageElem = null;
     }
   };
 
   const fetchAIResponse = async (message) => {
-    showLoadingMessage();
+    const loadingMessageElem = showLoadingMessage();
+
     try {
       const response = await fetch("/chat/send_message", {
         method: "POST",
@@ -122,8 +125,10 @@ document.addEventListener("DOMContentLoaded", () => {
           message
         }),
       });
+
       const data = await response.json();
-      hideLoadingMessage();
+      hideLoadingMessage(loadingMessageElem);
+
       if (data.message) {
         addMessage(data.message, "received");
         saveMessage(data.message, "received");
@@ -134,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         showNextButton();
       }
     } catch (error) {
-      hideLoadingMessage();
+      hideLoadingMessage(loadingMessageElem);
       addMessage("Error: " + error.message, "received");
       showNextButton();
     }
@@ -146,13 +151,16 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const fetchStory = async () => {
-    showLoadingMessage();
+    const loadingMessageElem = showLoadingMessage();
+
     try {
       const response = await fetch("/chat/get_story", {
         method: "POST"
       });
+
       const data = await response.json();
-      hideLoadingMessage();
+      hideLoadingMessage(loadingMessageElem);
+
       if (data.story) {
         addMessage(data.story, "received");
         saveMessage(data.story, "received");
@@ -162,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
         showNextButton();
       }
     } catch (error) {
-      hideLoadingMessage();
+      hideLoadingMessage(loadingMessageElem);
       addMessage("Error: " + error.message, "received");
       showNextButton();
     }

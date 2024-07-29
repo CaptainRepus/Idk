@@ -4,6 +4,7 @@ import openai
 from replit import db as replit_db
 import random
 from datetime import datetime, date
+import logging
 
 chat_blueprint = Blueprint('chat', __name__)
 
@@ -23,24 +24,34 @@ def get_random_fullname():
 def get_story():
     try:
         random_name = get_random_fullname()
+        logging.debug(f"Selected random name: {random_name}")
+
         if not random_name:
             return jsonify({"error": "No users found in the database."}), 404
 
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=[{
                 "role": "system",
-                "content": "Si kreatívny spisovateľ."
+                "content": "You are a creative writer."
             }, {
-                "role":
-                "user",
-                "content":
-                f"Napíš veľmi najkratší príbeh v slovenčine z oblasti predaja, v ktorom bude hrať {random_name}."
+                "role": "user",
+                "content": f"Write a very short sales industry story in Slovak featuring {random_name}."
             }],
-            max_tokens=250)
-        ai_story = response.choices[0].message['content'].strip()
-        return jsonify({"story": ai_story})
+            max_tokens=250
+        )
+
+        # Ensure 'choices' is a list and parse the response properly
+        if isinstance(response.choices, list) and len(response.choices) > 0:
+            ai_story = response.choices[0]['message']['content'].strip()  # Correct key access
+
+            logging.debug(f"AI story generated: {ai_story}")
+            return jsonify({"story": ai_story})
+        else:
+            raise ValueError("OpenAI API response structure is not as expected")
+
     except Exception as e:
+        logging.error(f"Error in get_story: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 @chat_blueprint.route('/submit_report', methods=['POST'])
@@ -69,7 +80,7 @@ def observed_to_dict(obj):
         return [observed_to_dict(i) for i in obj]
     else:
         return obj
-        
+
 @chat_blueprint.route('/get_reports', methods=['GET'])
 def get_reports():
     all_reports = []
@@ -99,7 +110,7 @@ def update_welcome_date():
 def send_message():
     user_message = request.json.get('message')
     try:
-        response = openai.ChatCompletion.create(model="gpt-3.5-turbo",
+        response = openai.ChatCompletion.create(model="gpt-4o-mini",
         messages=[
                     {
                     "role": "user",
@@ -137,7 +148,7 @@ def get_funny_story():
     try:
         random_name = get_random_fullname()
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=[{
                 "role": "system",
                 "content": "Si kreatívny rozprávkár."
@@ -145,8 +156,9 @@ def get_funny_story():
                 "role": "user",
                 "content": f"Vytvor najkrátší vtipný príbeh s {random_name}."
             }],
-            max_tokens=150)
-        ai_story = response.choices[0].message['content'].strip()
+            max_tokens=150
+        )
+        ai_story = response.choices[0]['message']['content'].strip()
         return jsonify({"message": ai_story})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -155,7 +167,7 @@ def get_funny_story():
 def get_motivation():
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=[{
                 "role": "system",
                 "content": "Si motivačný rečník, ktorý ide povzbudiť zamestnanca na zlepšenie svojich záujmov."

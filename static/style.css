@@ -8,13 +8,37 @@ body, html {
     justify-content: center;
     align-items: center;
 }
-
+.message.loading {
+  background-color: var(--user-bg-color, #ffffff); /* Adjust based on theme */
+  color: var(--message-text-color, black);
+}
 .backbutton {
     width: 15%;
     height: 50%;
 }
 .mt-4{
     margin-top: 100px;
+}
+
+/* Loading dots animation */
+@keyframes loadingDots {
+  0% {
+    content: "";
+  }
+  33% {
+    content: ".";
+  }
+  67% {
+    content: "..";
+  }
+  100% {
+    content: "...";
+  }
+}
+
+.loading-dots::after {
+  content: "";
+  animation: loadingDots 1s steps(3, end) infinite;
 }
 
 .nav-container .dropdown .fa-gear {
