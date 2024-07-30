@@ -233,6 +233,52 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   };
 
+  const handleSearchExistingCustomers = async (query) => {
+      try {
+          const response = await fetch("/chat/get_reports");
+          const data = await response.json();
+
+          if (data.reports) {
+              const allCustomers = [...new Set(data.reports.map(report => report.customerName))];
+              const filteredCustomers = allCustomers.filter(name => name && name.toLowerCase().includes(query.toLowerCase()));
+
+              displayCustomerButtons(filteredCustomers);
+          } else {
+              addMessage("No existing customers found.", "received");
+          }
+      } catch (error) {
+          addMessage(`Error fetching customers: ${error.message}`, "received");
+      }
+  };
+
+  const displayCustomerButtons = (customerNames) => {
+      const messageContainer = document.querySelector(".message-input-container");
+
+      // Helper function to add animation
+      const animateButton = (button, delay) => {
+          setTimeout(() => {
+              button.classList.add('visible');
+          }, delay);
+      };
+
+      // Clear existing customer buttons without removing search input
+      clearCustomerButtons();
+
+      // Create customer name buttons
+      customerNames.forEach((name, index) => {
+          const customerButton = document.createElement("button");
+          customerButton.textContent = name;
+          customerButton.className = "action-button customer-button";
+          customerButton.addEventListener('click', () => {
+              addMessage(`Chcem pridať report s klientom ${name}`, "sent");
+              reportData.customerName = name;
+              askForMeetingType();  // Proceed to next step
+          });
+          messageContainer.appendChild(customerButton);
+          animateButton(customerButton, index * 100); // Stagger animations
+      });
+  };
+
   const handleSearchReports = async (query, type) => {
       try {
           const response = await fetch("/chat/get_reports");
@@ -848,34 +894,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Function to display customer buttons
-  const displayCustomerButtons = (customerNames) => {
-    const messageContainer = document.querySelector(".message-input-container");
-
-    // Clear existing content
-    messageContainer.innerHTML = "";
-
-    // Helper function to add animation
-    const animateButton = (button, delay) => {
-      setTimeout(() => {
-        button.classList.add('visible');
-      }, delay);
-    };
-
-    // Create customer name buttons
-    customerNames.forEach((name, index) => {
-      const customerButton = document.createElement("button");
-      customerButton.textContent = name;
-      customerButton.className = "action-button customer-button";
-      customerButton.addEventListener('click', () => {
-        addMessage(`Chcem pridať report s klientom ${name}`, "sent");
-        reportData.customerName = name;
-        askForMeetingType();  // Proceed to next step
-      });
-      messageContainer.appendChild(customerButton);
-      animateButton(customerButton, index * 100); // Stagger animations
-    });
-  };
 
   // CSS to ensure proper styling
   style.innerHTML = `
@@ -933,38 +951,89 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Ensure the updated showClientTypeButtons method is used in the handleNewReportAction where necessary
   const handleNewReportAction = (chatBox) => {
-    const messageContainer = document.querySelector(".message-input-container");
+      const messageContainer = document.querySelector(".message-input-container");
 
-    const addMessage = (content, type) => {
-      const messageElem = document.createElement("div");
-      const iconElem = document.createElement("div");
-      iconElem.className = `icon ${type}`;
-      iconElem.innerHTML = type === 'received' ? '<i class="fa-solid fa-brain-circuit"></i>' : '<i class="fa-solid fa-user"></i>';
+      const addMessage = (content, type) => {
+          const messageElem = document.createElement("div");
+          const iconElem = document.createElement("div");
+          iconElem.className = `icon ${type}`;
+          iconElem.innerHTML = type === 'received' ? '<i class="fa-solid fa-brain-circuit"></i>' : '<i class="fa-solid fa-user"></i>';
 
-      messageElem.className = `message-container ${type}`;
+          messageElem.className = `message-container ${type}`;
 
-      const messageContent = `
-        <div class="message ${type}">
-          <p>${content}</p>
-        </div>
-      `;
+          const messageContent = `
+              <div class="message ${type}">
+                  <p>${content}</p>
+              </div>
+          `;
 
-      if (type === 'received') {
-        messageElem.innerHTML = `${iconElem.outerHTML} ${messageContent}`;
-      } else {
-        messageElem.innerHTML = `${messageContent} ${iconElem.outerHTML}`;
-      }
+          if (type === 'received') {
+              messageElem.innerHTML = `${iconElem.outerHTML} ${messageContent}`;
+          } else {
+              messageElem.innerHTML = `${messageContent} ${iconElem.outerHTML}`;
+          }
 
-      chatBox.appendChild(messageElem);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    };
+          chatBox.appendChild(messageElem);
+          chatBox.scrollTop = chatBox.scrollHeight;
+      };
 
-    addMessage("Chcem pridať nový report", "sent");
-    setTimeout(() => {
-      addMessage("Skvelé! Poďme začať s vaším novým reportom. Chcete pridať report pre nového klienta alebo existujúceho klienta?", "received");
-      showClientTypeButtons();  // Show client type options
-    }, 500);
+      addMessage("Chcem pridať nový report", "sent");
+      setTimeout(() => {
+          addMessage("Skvelé! Poďme začať s vaším novým reportom. Chcete pridať report pre nového klienta alebo existujúceho klienta?", "received");
+
+          clearMessageContainer(); // Clear existing content
+
+          // Create "Nový zákazník" button
+          const newClientButton = createButton("Nový zákazník", () => {
+              addMessage("Nový zákazník zvolený", "sent");
+              askForCustomerName(); // Handle new customer report
+          });
+          newClientButton.classList.add('visible');
+
+          // Create "Existujúci zákazník" button
+          const existingClientButton = createButton("Existujúci zákazník", () => {
+              addMessage("Existujúci zákazník zvolený", "sent");
+              showSearchForExistingCustomers(); // Show search for existing customers
+          });
+          existingClientButton.classList.add('visible');
+
+          messageContainer.appendChild(newClientButton);
+          messageContainer.appendChild(existingClientButton);
+      }, 500);
   };
+
+  const clearCustomerButtons = () => {
+      const customerButtons = document.querySelectorAll(".action-button.customer-button");
+      customerButtons.forEach(button => button.remove());
+  };
+
+  const showSearchForExistingCustomers = () => {
+      clearMessageContainer();
+
+      // Prompt user to search for existing customers
+      addMessage("Vyhľadajte existujúceho zákazníka podľa mena:", "received");
+
+      const messageContainer = document.querySelector(".message-input-container");
+
+      // Create search input
+      const searchInput = document.createElement("input");
+      searchInput.type = "text";
+      searchInput.placeholder = "Vyhľadať meno klienta...";
+      searchInput.classList.add("search-input");
+
+      searchInput.addEventListener('input', () => {
+          const query = searchInput.value.trim();
+          if (query.length > 0) {
+              handleSearchExistingCustomers(query);
+          } else {
+              clearCustomerButtons(); // Clear buttons if query is empty
+          }
+      });
+
+      messageContainer.appendChild(searchInput);
+  };
+
+  
   
   const showNewReportOptions = () => {
     clearMessageContainer(); // Clear the message container

@@ -17,7 +17,7 @@ body, html {
 .search-input, .type-select {
     width: calc(100% - 28px); /* Adjusting width to fit within the container */
     padding: 10px;
-    margin: 8px 14px; /* Giving some margin to keep space between elements */
+    margin: 8px 30px; /* Giving some margin to keep space between elements */
     border-radius: 8px;
     border: 1px solid #ccc;
 }
@@ -641,7 +641,6 @@ button:hover {
     margin-bottom: 1.5rem;
     width: 100%; /* Span the full width */
     z-index: 10; /* Ensure it's above other elements */
-    background-color: #1f1f1f; /* Optional: Background color to match theme */
     box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5); /* Optional: Shadow to distinguish from chat messages */
 }
 
