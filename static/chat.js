@@ -242,17 +242,14 @@ document.addEventListener("DOMContentLoaded", () => {
               const filteredReports = data.reports.filter(report => {
                   const matchesClient = query ? report.customerName.includes(query) : true;
                   const matchesType = type ? report.meetingType === type : true;
-                  return matchesClient && matchesType;
+                  const matchesAuthor = report.author === username; // Filter by current user's name
+                  return matchesClient && matchesType && matchesAuthor;
               });
 
               if (filteredReports.length > 0) {
                   displayReportsAsMessages(filteredReports);
               } else {
-                  if (!query) {
-                      displayReportsAsMessages(data.reports); // Show all reports if search is empty
-                  } else {
-                      addMessage("No reports found matching the criteria.", "received");
-                  }
+                  addMessage("No reports found matching the criteria.", "received");
               }
           } else {
               addMessage("No reports found.", "received");
