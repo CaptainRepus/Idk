@@ -220,82 +220,111 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const displayReportsAsMessages = (reports) => {
-    reports.forEach(report => {
-      const reportMessage = `
-        <strong>Meno klienta:</strong> ${report.customerName}<br>
-        <strong>Typ stretnutia:</strong> ${report.meetingType}<br>
-        ${report.meetingDetail ? `<strong>Detail:</strong> ${report.meetingDetail}<br>` : ""}
-        ${report.orderLocation ? `<strong>Predajňa objednávky:</strong> ${report.orderLocation}<br>` : ""}
-        ${report.financing ? `<strong>Financovanie:</strong> ${report.financing}<br>` : ""}
-        <strong>Auto:</strong> ${report.carBrand} ${report.carModel}`;
-      addMessage(reportMessage, "received");
-    });
+      reports.forEach(report => {
+          const reportMessage = `
+          <strong>Meno klienta:</strong> ${report.customerName}<br>
+          <strong>Typ stretnutia:</strong> ${report.meetingType}<br>
+          ${report.meetingDetail ? `<strong>Detail:</strong> ${report.meetingDetail}<br>` : ""}
+          ${report.orderLocation ? `<strong>Predajňa objednávky:</strong> ${report.orderLocation}<br>` : ""}
+          ${report.financing ? `<strong>Financovanie:</strong> ${report.financing}<br>` : ""}
+          <strong>Auto:</strong> ${report.carBrand} ${report.carModel}`;
+          addMessage(reportMessage, "received");
+      });
+  };
+
+  const handleSearchReports = async (query, type) => {
+      try {
+          const response = await fetch("/chat/get_reports");
+          const data = await response.json();
+
+          if (data.reports) {
+              const filteredReports = data.reports.filter(report => {
+                  const matchesClient = query ? report.customerName.includes(query) : true;
+                  const matchesType = type ? report.meetingType === type : true;
+                  return matchesClient && matchesType;
+              });
+
+              if (filteredReports.length) {
+                  displayReportsAsMessages(filteredReports);
+              } else {
+                  addMessage("No reports found matching the criteria.", "received");
+              }
+          } else {
+              addMessage("No reports found.", "received");
+          }
+      } catch (error) {
+          addMessage(`Error fetching reports: ${error.message}`, "received");
+      }
+  };
+
+  const handleActiveReports = () => {
+      clearMessageContainer();
+      addMessage("Predtým ako budeš vidieť svoje aktívne reporty, tak vyhľadaj aké chceš vidieť.(Prázdné políčko ukáže všetky reporty)", "received");
+
+      const searchContainer = document.createElement("div");
+      searchContainer.className = "search-container";
+
+      const searchInput = document.createElement("input");
+      searchInput.type = "text";
+      searchInput.placeholder = "Vyhľadať meno klienta...";
+
+      const typeSelect = document.createElement("select");
+      const meetingTypes = ["", "Meeting", "Test Drive", "Order", "Vehicle Handover"];
+      meetingTypes.forEach(type => {
+          const option = document.createElement("option");
+          option.value = type;
+          option.text = type ? type : "Vybrať typ stretnutia";
+          typeSelect.appendChild(option);
+      });
+
+      const searchButton = createButton("Vyhľadávať", () => {
+          const query = searchInput.value.trim();
+          const type = typeSelect.value.trim();
+          handleSearchReports(query, type);
+      });
+
+      searchContainer.appendChild(searchInput);
+      searchContainer.appendChild(typeSelect);
+      searchContainer.appendChild(searchButton);
+      document.querySelector(".message-input-container").appendChild(searchContainer);
   };
   
   const displayActionButtons = () => {
-    const currentDay = new Date().toISOString().split("T")[0];
-    const reportsSubmittedToday = localStorage.getItem('reportsSubmittedToday');
+      const currentDay = new Date().toISOString().split("T")[0];
+      const reportsSubmittedToday = localStorage.getItem('reportsSubmittedToday');
 
-    const messageContainer = document.querySelector(".message-input-container");
-    messageContainer.innerHTML = ""; // Clear existing buttons
+      const messageContainer = document.querySelector(".message-input-container");
+      messageContainer.innerHTML = ""; // Clear existing buttons
 
-    const buttonsData = [
-        { text: "Nový report" },
-        { text: "Aktívne reporty" },
-        { text: "Oznámenia" },
-        { text: "Aké sú naše hodnoty?" },
-        { text: "Osobný rozvoj" },
-        { text: "Aký je môj level?" }
-    ];
+      const buttonsData = [
+          { text: "Nový report" },
+          { text: "Aktívne reporty" }, // Add this button to the action buttons list
+          { text: "Oznámenia" },
+          { text: "Aké sú naše hodnoty?" },
+          { text: "Osobný rozvoj" },
+      ];
 
-    const themeClass = localStorage.getItem('themeClass') || "theme-orange";
+      const themeClass = localStorage.getItem('themeClass') || "theme-orange";
 
-    if (reportsSubmittedToday === currentDay) {
-        // User has submitted reports for the day, display "Joke of the day"
-        const jokeButton = createButton("Joke of the day", () => {}, `action-button ${themeClass}`);
-        messageContainer.appendChild(jokeButton);
+      if (reportsSubmittedToday === currentDay) {
+          buttonsData.splice(0, 1); // Remove "Nový report" if reports submitted today
+      }
+      buttonsData.forEach((btn, index) => {
+          const actionButton = createButton(btn.text, () => {
+              if (btn.text === "Nový report") {
+                  handleNewReportAction(chatBox);
+              } else if (btn.text === "Aktívne reporty") {
+                  handleActiveReports();
+              } else {
+                  console.error(`Handler for ${btn.text} not implemented`);
+              }
+          }, `action-button ${themeClass}`);
+          messageContainer.appendChild(actionButton);
 
-        // Make "Joke of the day" button visible
-        setTimeout(() => {
-            jokeButton.classList.add('visible');
-        }, 100);
-
-        // Display other buttons except "Nový report"
-        buttonsData.forEach((btn, index) => {
-            if (btn.text !== "Nový report") {
-                const actionButton = createButton(btn.text, () => {
-                    if (btn.text === "Aktívne reporty") {
-                        fetchReports();
-                    } else {
-                        console.error(`Handler for ${btn.text} not implemented`);
-                    }
-                }, `action-button ${themeClass}`);
-                messageContainer.appendChild(actionButton);
-
-                setTimeout(() => {
-                    actionButton.classList.add('visible');
-                }, (index + 1) * 100); // Animate buttons in order
-            }
-        });
-    } else {
-        // Display all buttons including "Nový report"
-        buttonsData.forEach((btn, index) => {
-            const actionButton = createButton(btn.text, () => {
-                if (btn.text === "Nový report") {
-                    handleNewReportAction(chatBox);
-                } else if (btn.text === "Aktívne reporty") {
-                    fetchReports();
-                } else {
-                    console.error(`Handler for ${btn.text} not implemented`);
-                }
-            }, `action-button ${themeClass}`);
-            messageContainer.appendChild(actionButton);
-
-            setTimeout(() => {
-                actionButton.classList.add('visible');
-            }, index * 100); // Animate buttons in order
-        });
-    }
+          setTimeout(() => {
+              actionButton.classList.add('visible');
+          }, index * 100); // Animate buttons in order
+      });
   };
 
   // Ensure this function is called after DOMContentLoaded
@@ -325,8 +354,8 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const clearMessageContainer = () => {
-    const messageContainer = document.querySelector(".message-input-container");
-    messageContainer.innerHTML = ""; // Clear existing content
+      const messageContainer = document.querySelector(".message-input-container");
+      messageContainer.innerHTML = ""; // Clear existing content
   };
 
   const handleNextStep = () => {
