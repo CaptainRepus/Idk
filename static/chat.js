@@ -222,6 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const displayReportsAsMessages = (reports) => {
       reports.forEach(report => {
           const reportMessage = `
+          <strong>Predajca:</strong> ${report.author}<br>
           <strong>Meno klienta:</strong> ${report.customerName}<br>
           <strong>Typ stretnutia:</strong> ${report.meetingType}<br>
           ${report.meetingDetail ? `<strong>Detail:</strong> ${report.meetingDetail}<br>` : ""}
@@ -265,13 +266,15 @@ document.addEventListener("DOMContentLoaded", () => {
       clearMessageContainer();
       addMessage("Predtým ako budeš vidieť svoje aktívne reporty, tak vyhľadaj aké chceš vidieť.(Prázdné políčko ukáže všetky reporty)", "received");
 
-      const searchContainer = document.createElement("div");
-      searchContainer.className = "search-container";
+      const messageContainer = document.querySelector(".message-input-container");
 
+      // Create search input
       const searchInput = document.createElement("input");
       searchInput.type = "text";
       searchInput.placeholder = "Vyhľadať meno klienta...";
+      searchInput.classList.add("search-input");
 
+      // Create type selector
       const typeSelect = document.createElement("select");
       const meetingTypes = ["", "Meeting", "Test Drive", "Order", "Vehicle Handover"];
       meetingTypes.forEach(type => {
@@ -280,23 +283,26 @@ document.addEventListener("DOMContentLoaded", () => {
           option.text = type ? type : "Vybrať typ stretnutia";
           typeSelect.appendChild(option);
       });
+      typeSelect.classList.add("type-select");
 
+      // Create search button
       const searchButton = createButton("Vyhľadávať", () => {
           const query = searchInput.value.trim();
           const type = typeSelect.value.trim();
           handleSearchReports(query, type);
       });
+      searchButton.classList.add('visible');
 
       // Create the cancel button
       const cancelButton = createButton("Zrušiť", () => {
           window.location.href = "/"; // Redirect to the root route
-      }, "cancel-button");
+      }, "action-button cancel-button visible");
 
-      searchContainer.appendChild(searchInput);
-      searchContainer.appendChild(typeSelect);
-      searchContainer.appendChild(searchButton);
-      searchContainer.appendChild(cancelButton); // Add the cancel button to the container
-      document.querySelector(".message-input-container").appendChild(searchContainer);
+      // Append all elements to the message container
+      messageContainer.appendChild(searchInput);
+      messageContainer.appendChild(typeSelect);
+      messageContainer.appendChild(searchButton);
+      messageContainer.appendChild(cancelButton);
   };
   
   const displayActionButtons = () => {
@@ -339,21 +345,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Ensure this function is called after DOMContentLoaded
   document.addEventListener("DOMContentLoaded", () => {
     displayActionButtons(); // Ensure buttons are updated on page load
-  });
-
-  // Ensure this function is called after DOMContentLoaded
-  document.addEventListener("DOMContentLoaded", () => {
-    displayActionButtons(); // Ensure buttons are updated on page load
-  });
-
-  // Ensure this function is called after DOMContentLoaded
-  document.addEventListener("DOMContentLoaded", () => {
-    displayActionButtons(); // Ensure buttons are updated on page load
-  });
-
-  // Ensure this function is called after DOMContentLoaded
-  document.addEventListener("DOMContentLoaded", () => {
-    displayActionButtons();
   });
 
   const hideAllActionButtons = () => {

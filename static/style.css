@@ -8,23 +8,22 @@ body, html {
     justify-content: center;
     align-items: center;
 }
-.search-container{
-    width: 100%;
-    height: 100%;
-}
+
 .message.loading {
   background-color: var(--user-bg-color, #ffffff); /* Adjust based on theme */
   color: var(--message-text-color, black);
 }
-.backbutton {
-    width: 15%;
-    height: 50%;
+
+.search-input, .type-select {
+    width: calc(100% - 28px); /* Adjusting width to fit within the container */
+    padding: 10px;
+    margin: 8px 14px; /* Giving some margin to keep space between elements */
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
+
 .cancel-button {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    background-color: var(--user-bg-color, #007bff); /* Red for cancel button */
+    background-color: #FF0000; /* Red for cancel button */
     color: white;
     border: none;
     cursor: pointer;
@@ -32,7 +31,7 @@ body, html {
 }
 
 .cancel-button:hover {
-    background-color: var(--user-bg-color, #007bff); /* Darker red on hover */
+    background-color: #cc0000; /* Darker red on hover */
 }
 /* User level styling */
 .user-level {
