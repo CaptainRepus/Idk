@@ -8,6 +8,10 @@ body, html {
     justify-content: center;
     align-items: center;
 }
+.search-container{
+    width: 100%;
+    height: 100%;
+}
 .message.loading {
   background-color: var(--user-bg-color, #ffffff); /* Adjust based on theme */
   color: var(--message-text-color, black);
@@ -15,6 +19,20 @@ body, html {
 .backbutton {
     width: 15%;
     height: 50%;
+}
+.cancel-button {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    background-color: var(--user-bg-color, #007bff); /* Red for cancel button */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.cancel-button:hover {
+    background-color: var(--user-bg-color, #007bff); /* Darker red on hover */
 }
 /* User level styling */
 .user-level {

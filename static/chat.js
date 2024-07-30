@@ -244,10 +244,14 @@ document.addEventListener("DOMContentLoaded", () => {
                   return matchesClient && matchesType;
               });
 
-              if (filteredReports.length) {
+              if (filteredReports.length > 0) {
                   displayReportsAsMessages(filteredReports);
               } else {
-                  addMessage("No reports found matching the criteria.", "received");
+                  if (!query) {
+                      displayReportsAsMessages(data.reports); // Show all reports if search is empty
+                  } else {
+                      addMessage("No reports found matching the criteria.", "received");
+                  }
               }
           } else {
               addMessage("No reports found.", "received");
@@ -283,9 +287,15 @@ document.addEventListener("DOMContentLoaded", () => {
           handleSearchReports(query, type);
       });
 
+      // Create the cancel button
+      const cancelButton = createButton("Zrušiť", () => {
+          window.location.href = "/"; // Redirect to the root route
+      }, "cancel-button");
+
       searchContainer.appendChild(searchInput);
       searchContainer.appendChild(typeSelect);
       searchContainer.appendChild(searchButton);
+      searchContainer.appendChild(cancelButton); // Add the cancel button to the container
       document.querySelector(".message-input-container").appendChild(searchContainer);
   };
   
@@ -320,7 +330,6 @@ document.addEventListener("DOMContentLoaded", () => {
               }
           }, `action-button ${themeClass}`);
           messageContainer.appendChild(actionButton);
-
           setTimeout(() => {
               actionButton.classList.add('visible');
           }, index * 100); // Animate buttons in order
