@@ -711,41 +711,63 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
   const askForCarBrand = () => {
-    const messageContainer = document.querySelector(".message-input-container");
-    // Clear existing content
-    messageContainer.innerHTML = "";
-    // Ask for car brand
-    addMessage("Zaznačte, o ktorú značku auta mal klient záujem", "received");
-    // Create car brand buttons with corresponding model selection
-    const brands = [
-      { brand: "Nissan", models: ["model7", "model8", "model9"] },
-      { brand: "Opel", models: ["model4", "model5", "model6"] },
-      { brand: "Toyota", models: ["model1", "model2", "model3"] }
-    ];
-    brands.forEach(({ brand, models }) => {
-      const button = createButton(brand, () => {
-        addMessage(`Klient má záujem o ${brand}`, "sent");
-        reportData.carBrand = brand;
-        displayCarModels(brand, models);
-      });
-      messageContainer.appendChild(button);
-    });
-  };
+        const messageContainer = document.querySelector(".message-input-container");
+
+        // Clear existing content
+        clearMessageContainer(false);
+
+        // Ask for car brand
+        addMessage("Zaznačte, o ktorú značku auta mal klient záujem", "received");
+
+        // Create car brand buttons with corresponding model selection
+        const brands = [
+            { brand: "Nissan", models: ["model7", "model8", "model9"] },
+            { brand: "Opel", models: ["model4", "model5", "model6"] },
+            { brand: "Toyota", models: ["model1", "model2", "model3"] }
+        ];
+
+        brands.forEach(({ brand, models }, index) => {
+            const button = createButton(brand, () => {
+                addMessage(`Klient má záujem o ${brand}`, "sent");
+                reportData.carBrand = brand;
+                displayCarModels(brand, models);
+            });
+
+            // Append the button to the message container
+            messageContainer.appendChild(button);
+
+            // Add the visible class for animation
+            setTimeout(() => {
+                button.classList.add('visible');
+            }, index * 100); // Stagger animations
+        });
+    };
+  
   const displayCarModels = (brand, models) => {
-    const messageContainer = document.querySelector(".message-input-container");
-    // Clear existing content
-    messageContainer.innerHTML = "";
-    // Ask to select a car model
-    addMessage("Teraz vyberte model auta", "received");
-    // Create car model buttons
-    models.forEach((model) => {
-      const button = createButton(model, () => {
-        addMessage(`Vybraný model: ${model}`, "sent");
-        reportData.carModel = model;
-        finalizeReport();
-      }, "car-model-button");
-      messageContainer.appendChild(button);
-    });
+      const messageContainer = document.querySelector(".message-input-container");
+
+      // Clear existing content
+      clearMessageContainer(false);
+
+      // Ask to select a car model
+      addMessage("Teraz vyberte model auta", "received");
+
+      // Create car model buttons
+      models.forEach((model, index) => {
+          const button = createButton(model, () => {
+              addMessage(`Vybraný model: ${model}`, "sent");
+              reportData.carModel = model;
+              finalizeReport();
+          }, "car-model-button");
+
+          // Append the button to the message container
+          messageContainer.appendChild(button);
+
+          // Add the visible class for animation
+          setTimeout(() => {
+              button.classList.add('visible');
+          }, index * 100); // Stagger animations
+      });
   };
   const finalizeReport = () => {
     clearMessageContainer(); // Clear the message container
