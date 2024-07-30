@@ -240,7 +240,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (data.reports) {
               const filteredReports = data.reports.filter(report => {
-                  const matchesClient = query ? report.customerName.includes(query) : true;
+                  const hasCustomerName = report.customerName !== undefined;
+                  const matchesClient = query ? (hasCustomerName && report.customerName.includes(query)) : true;
                   const matchesType = type ? report.meetingType === type : true;
                   const matchesAuthor = report.author === username; // Filter by current user's name
                   return matchesClient && matchesType && matchesAuthor;
@@ -249,13 +250,13 @@ document.addEventListener("DOMContentLoaded", () => {
               if (filteredReports.length > 0) {
                   displayReportsAsMessages(filteredReports);
               } else {
-                  addMessage("No reports found matching the criteria.", "received");
+                  addMessage("Neboli nájdené žiadne reporty", "received");
               }
           } else {
-              addMessage("No reports found.", "received");
+              addMessage("Neboli nájdené žiadne reporty", "received");
           }
       } catch (error) {
-          addMessage(`Error fetching reports: ${error.message}`, "received");
+          addMessage(`Problém s vyhľadavaním: ${error.message}`, "received");
       }
   };
 
