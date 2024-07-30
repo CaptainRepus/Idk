@@ -203,3 +203,14 @@ def get_random_message():
             return get_team_photo()
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@chat_blueprint.route('/get_notifications', methods=['GET'])
+def get_notifications():
+    try:
+        notifications = replit_db.get('notifications', [])
+        # Convert ObservedList to a regular list
+        notifications = list(notifications)
+        return jsonify({"notifications": notifications})
+    except Exception as e:
+        logging.error(f"Error fetching notifications: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500

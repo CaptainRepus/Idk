@@ -358,8 +358,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const buttonsData = [
           { text: "Nový report" },
-          { text: "Aktívne reporty" }, // Add this button to the action buttons list
-          { text: "Oznámenia" },
+          { text: "Aktívne reporty" },
+          { text: "Oznámenia" }, // Add this button to the action buttons list
           { text: "Aké sú naše hodnoty?" },
           { text: "Osobný rozvoj" },
       ];
@@ -375,6 +375,8 @@ document.addEventListener("DOMContentLoaded", () => {
                   handleNewReportAction(chatBox);
               } else if (btn.text === "Aktívne reporty") {
                   handleActiveReports();
+              } else if (btn.text === "Oznámenia") {
+                  handleNotifications();
               } else {
                   console.error(`Handler for ${btn.text} not implemented`);
               }
@@ -1000,6 +1002,27 @@ document.addEventListener("DOMContentLoaded", () => {
           messageContainer.appendChild(newClientButton);
           messageContainer.appendChild(existingClientButton);
       }, 500);
+  };
+
+  const handleNotifications = async () => {
+      try {
+          const response = await fetch("/chat/get_notifications");
+          const data = await response.json();
+
+          if (response.ok) {
+              if (data.notifications && data.notifications.length > 0) {
+                  data.notifications.forEach(notification => {
+                      addMessage(notification, "received");
+                  });
+              } else {
+                  addMessage("Niesú nahrané žiadné nové upozornenia", "received");
+              }
+          } else {
+              addMessage(`Error fetching notifications: ${data.error}`, "received");
+          }
+      } catch (error) {
+          addMessage(`Problém s načítaním upozornení: ${error.message}`, "received");
+      }
   };
 
   const clearCustomerButtons = () => {
