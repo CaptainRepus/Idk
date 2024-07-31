@@ -11,6 +11,7 @@ sqlalchemy = "^1.4"
 flask-sqlalchemy = "^2.5"
 werkzeug = ">=3.0.0"
 openai = "^0.28"
+replit = "^3.2.9"  # Add this line to include the replit module
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"

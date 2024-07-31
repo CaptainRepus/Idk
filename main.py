@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 # OpenAI API key configuration
-my_secret = os.environ['Functu3000']
+my_secret = "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"
 openai.api_key = my_secret
 
 app.register_blueprint(auth_blueprint, url_prefix='/auth')

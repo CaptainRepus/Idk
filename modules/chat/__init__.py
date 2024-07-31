@@ -8,8 +8,7 @@ import logging
 
 chat_blueprint = Blueprint('chat', __name__)
 
-my_secret = os.environ['Functu3000']
-openai.api_key = my_secret
+openai.api_key = "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"
 
 def get_random_fullname():
     user_keys = list(replit_db.keys())
