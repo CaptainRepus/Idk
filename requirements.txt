@@ -2,3 +2,4 @@ Flask
 replit
 werkzeug
 openai
+gunicorn

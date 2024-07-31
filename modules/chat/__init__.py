@@ -57,18 +57,37 @@ def get_story():
 def submit_report():
     report_data = request.json
     customer_name = report_data.get("customerName")
-    author = report_data.get("author")  # Extract the author's name
+    author = report_data.get("author")
+
+    logging.debug(f"Submitting report by {author} for customer {customer_name}")
 
     if customer_name and author:
         existing_reports = replit_db.get(customer_name, [])
-
-        # Ensure existing_reports is a list
         if not isinstance(existing_reports, list):
             existing_reports = list(observed_to_dict(existing_reports))
 
         existing_reports.append(report_data)
         replit_db[customer_name] = existing_reports
+
+        user_data = replit_db.get(author)
+        if user_data:
+            report_count = user_data.get('report_count', 0) + 1
+            user_data['report_count'] = report_count
+
+            logging.debug(f"Report count for user {author}: {report_count}")
+
+            if report_count % 3 == 0:
+                user_data['level'] = user_data.get('level', 1) + 1
+                logging.debug(f"Level increased for user {author} to {user_data['level']}")
+
+            replit_db[author] = user_data
+
+            # Include the new level in the response if it was increased
+            if report_count % 3 == 0:
+                return jsonify({"message": "Report successfully submitted!", "new_level": user_data['level']}), 200
+
         return jsonify({"message": "Report successfully submitted!"}), 200
+
     return jsonify({"error": "Missing customer name or author"}), 400
 
 def observed_to_dict(obj):
@@ -82,6 +101,7 @@ def observed_to_dict(obj):
     else:
         return obj
 
+        
 @chat_blueprint.route('/get_reports', methods=['GET'])
 def get_reports():
     all_reports = []
@@ -90,6 +110,7 @@ def get_reports():
         for report in customer_reports:
             all_reports.append(observed_to_dict(report))  # Convert to regular dict
     return jsonify({"reports": all_reports})
+
 
 @chat_blueprint.route('/index')
 def index():
@@ -106,6 +127,7 @@ def update_welcome_date():
     # Update the session with the current date as the last welcome date
     session['last_welcome_date'] = datetime.now().strftime('%Y-%m-%d')
     return jsonify({"message": "Welcome date updated"})
+
 
 @chat_blueprint.route('/send_message', methods=['POST'])
 def send_message():
@@ -125,6 +147,7 @@ def send_message():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @chat_blueprint.route('/get_today_reports', methods=['GET'])
 def get_today_reports():
     try:
@@ -143,6 +166,7 @@ def get_today_reports():
         return jsonify(today_reports), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @chat_blueprint.route('/get_funny_story', methods=['POST'])
 def get_funny_story():
@@ -213,3 +237,36 @@ def get_notifications():
     except Exception as e:
         logging.error(f"Error fetching notifications: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
+
+@chat_blueprint.route('/get_user_level', methods=['GET'])
+def get_user_level():
+    if 'username' in session:
+        username = session['username']
+        logging.debug(f"Fetching level for user: {username}")
+
+        # Count the number of reports authored by the user
+        report_count = 0
+        for key in replit_db.keys():
+            reports = replit_db.get(key, [])
+            if isinstance(reports, list):
+                authored_reports = [report for report in reports if report.get('author') == username]
+                report_count += len(authored_reports)
+                logging.debug(f"Reports for key '{key}': {authored_reports}")
+
+        # Calculate the level based on the report count
+        if report_count < 5:
+            level = 1
+        elif report_count < 15:
+            level = 2
+        elif report_count < 30:
+            level = 3
+        else:
+            level = 4 + (report_count - 30) // 15
+
+        logging.debug(f"Report count for user {username}: {report_count}")
+        logging.debug(f"User level: {level}")
+
+        return jsonify({"level": level}), 200
+
+    logging.error("User not logged in or data not found")
+    return jsonify({"error": "User not logged in or data not found"}), 400

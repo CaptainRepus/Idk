@@ -14,7 +14,39 @@ document.addEventListener("DOMContentLoaded", () => {
   // To keep track of added messages and avoid duplication
   const addedMessages = new Set();
 
-  
+  const getUserLevel = async () => {
+    try {
+      const response = await fetch('/chat/get_user_level', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const level = data.level || 1; // Default to 1 if level is not available
+        // Update the UI with the user's level
+        document.querySelector('.user-level span').textContent = `Úroveň: ${level}`;
+        // Store the user level in local storage for later use
+        localStorage.setItem('userLevel', level);
+      } else {
+        console.error("Failed to fetch user level");
+      }
+    } catch (error) {
+      console.error("Error fetching user level:", error);
+    }
+  };
+
+  // Call getUserData when the page loads
+  getUserLevel();
+
+  // Re-fetch user data when the user moves to "/"
+  window.addEventListener('popstate', (event) => {
+    if (location.pathname === "/") {
+      getUserLevel();
+    }
+  });
+
   const settingsModal = document.getElementById("settings-modal");
   const closeSettingsButton = document.getElementById("close-settings-button");
   const dropdownButton = document.getElementById("dropdown-button");
@@ -808,32 +840,44 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   
   const submitReport = async () => {
-    try {
-      const reportDataWithAuthor = {
-        ...reportData,
-        author: username // Add the user's name to the report data
-      };
+      try {
+          const reportDataWithAuthor = {
+              ...reportData,
+              author: username // Add the user's name to the report data
+          };
 
-      const response = await fetch('/chat/submit_report', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reportDataWithAuthor)
-      });
+          const response = await fetch('/chat/submit_report', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(reportDataWithAuthor)
+          });
 
-      if (response.ok) {
-        addMessage("Report successfully submitted!", "received");
-        // Show the two new buttons only after the report is successfully submitted
-        setTimeout(() => {
-          showPostSubmissionOptions();
-        }, 2000);
-      } else {
-        addMessage("Failed to submit report. Please try again.", "received");
+          if (response.ok) {
+              const data = await response.json();
+
+              if (data.message) {
+                  addMessage(data.message, "received");
+
+                  // Check if the level was increased and notify the user
+                  if (data.new_level) {
+                      addMessage(`Congrats! Your level has been increased to ${data.new_level}`, "received");
+                  }
+
+                  // Show the two new buttons only after the report is successfully submitted
+                  setTimeout(() => {
+                      showPostSubmissionOptions();
+                  }, 2000);
+              } else {
+                  addMessage("Failed to submit report. Please try again.", "received");
+              }
+          } else {
+              addMessage("Failed to submit report. Please try again.", "received");
+          }
+      } catch (error) {
+          addMessage("Error: " + error.message, "received");
       }
-    } catch (error) {
-      addMessage("Error: " + error.message, "received");
-    }
   };
 
   
