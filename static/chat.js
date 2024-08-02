@@ -16,14 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutButton = document.getElementById("logout-button");
   logoutButton.addEventListener("click", async () => {
     try {
-      const response = await fetch("/logout", {
+      const response = await fetch("/auth/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         }
       });
       if (response.ok) {
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
       } else {
         console.error("Failed to log out");
       }
