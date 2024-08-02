@@ -254,7 +254,7 @@ def get_user_level():
                 logging.debug(f"Reports for key '{key}': {authored_reports}")
 
         # Calculate the level based on the report count
-        if report_count < 5:
+        if report_count < 4:
             level = 1
         elif report_count < 15:
             level = 2

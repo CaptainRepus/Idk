@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const userInput = document.getElementById("user-input");
   const sendButton = document.getElementById("send-button");
   let reportData = {};
+  const role = "{{ role }}";
 
   // Initialize nextButton
   let nextButton = document.createElement("button");
@@ -10,6 +11,26 @@ document.addEventListener("DOMContentLoaded", () => {
   nextButton.id = "next-button";
   nextButton.style.display = "none";
   document.querySelector(".message-input-container").appendChild(nextButton);
+
+  //LogOut button
+  const logoutButton = document.getElementById("logout-button");
+  logoutButton.addEventListener("click", async () => {
+    try {
+      const response = await fetch("/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      if (response.ok) {
+        window.location.href = "/login";
+      } else {
+        console.error("Failed to log out");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  });
 
   // To keep track of added messages and avoid duplication
   const addedMessages = new Set();
@@ -380,6 +401,14 @@ document.addEventListener("DOMContentLoaded", () => {
       messageContainer.appendChild(searchButton);
       messageContainer.appendChild(cancelButton);
   };
+
+  const handleAddNotification = () => {
+    addMessage("Pridať oznámenie handling is not implemented yet.", "received");
+};
+
+const handleManageValues = () => {
+    addMessage("Spravovať hodnoty handling is not implemented yet.", "received");
+};
   
   const displayActionButtons = () => {
       const currentDay = new Date().toISOString().split("T")[0];
@@ -396,6 +425,13 @@ document.addEventListener("DOMContentLoaded", () => {
           { text: "Osobný rozvoj" },
       ];
 
+      // Add role-specific action buttons
+      const role = "{{ role }}"; // Make sure the role is being passed to the front-end
+      if (role === "manager" || role === "leader") {
+          buttonsData.push({ text: "Pridať oznámenie" });
+          buttonsData.push({ text: "Spravovať hodnoty" });
+      }
+
       const themeClass = localStorage.getItem('themeClass') || "theme-orange";
 
       if (reportsSubmittedToday === currentDay) {
@@ -407,8 +443,10 @@ document.addEventListener("DOMContentLoaded", () => {
                   handleNewReportAction(chatBox);
               } else if (btn.text === "Aktívne reporty") {
                   handleActiveReports();
-              } else if (btn.text === "Oznámenia") {
-                  handleNotifications();
+              } else if (btn.text === "Pridať oznámenie") {
+                  handleAddNotification(); // Placeholder, to be implemented
+              } else if (btn.text === "Spravovať hodnoty") {
+                  handleManageValues(); // Placeholder, to be implemented
               } else {
                   console.error(`Handler for ${btn.text} not implemented`);
               }

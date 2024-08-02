@@ -229,7 +229,7 @@ button {
    border-radius: 20px;
    word-wrap: break-word;
    background-color: var(-.-message-bg-color, #f1f0f0);
-   color: var(--message-text-color, black);
+   color: var(--user-text-color, black);
    position: relative;
    flex: 1;
    margin-bottom: 15px;
@@ -670,16 +670,18 @@ button:hover {
 
 /* Button styles */
 #send-button, #next-button, #start-day-button {
-    padding: 10px 20px;
-    background-color: #FF0000; /* Red background */
+    padding: 20px 20px;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 30px;
     cursor: pointer;
+    margin-inline: 30px;
+    margin-bottom: 50px;
+    background-color: var(--user-bg-color, #007bff);
 }
 
 #send-button:hover, #next-button:hover, #start-day-button:hover {
-    background-color: #cc0000; /* Darker red on hover */
+    background-color: var(--user-bg-color, #007bff); /* Darker red on hover */
 }
 
 #next-button {

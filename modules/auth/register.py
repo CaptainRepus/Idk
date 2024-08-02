@@ -12,13 +12,15 @@ def auth_register():
         pin3 = request.form['pin3']
         pin4 = request.form['pin4']
         pin5 = request.form['pin5']
+        role = request.form['role']
         pin = pin1 + pin2 + pin3 + pin4 + pin5
 
         hashed_pin = generate_password_hash(pin)
         replit_db[pin] = {
             'fullname': fullname,
             'pin': hashed_pin,
-            'level': 1
+            'level': 1,
+            'role': role
         }
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html')
