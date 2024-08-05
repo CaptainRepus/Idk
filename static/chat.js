@@ -443,8 +443,8 @@ const handleManageValues = () => {
                   handleNewReportAction(chatBox);
               } else if (btn.text === "Aktívne reporty") {
                   handleActiveReports();
-              } else if (btn.text === "Pridať oznámenie") {
-                  handleAddNotification(); // Placeholder, to be implemented
+              } else if (btn.text === "Pridať oznámenie" || btn.text === "Oznámenia") {
+                  handleNotifications(); // Placeholder, to be implemented
               } else if (btn.text === "Spravovať hodnoty") {
                   handleManageValues(); // Placeholder, to be implemented
               } else {

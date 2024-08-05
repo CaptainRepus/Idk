@@ -2,6 +2,7 @@ from flask import render_template, jsonify, request
 from . import backoffice_blueprint as bp
 from replit import db as replit_db
 from collections.abc import Iterable
+from werkzeug.security import generate_password_hash
 
 def convert_to_serializable(data):
     """Convert non-serializable objects to serializable."""
@@ -62,3 +63,21 @@ def edit_user():
             replit_db[user_key] = user_data
             return jsonify({"message": "User edited successfully"}), 200
     return jsonify({"error": "User not found"}), 404
+
+@bp.route('/api/add_user', methods=['POST'])
+def add_user():
+    fullname = request.json.get('fullname')
+    role = request.json.get('role')
+    level = request.json.get('level')
+    pin = request.json.get('pin')
+
+    if not pin or len(pin) != 5 or not pin.isdigit():
+        return jsonify({"error": "Invalid PIN. Must be a 5-digit number."}), 400
+
+    hashed_pin = generate_password_hash(pin)
+    new_key = str(max([int(key) for key in replit_db.keys() if key.isdigit()]) + 1)
+
+    if fullname and role and level and pin:
+        replit_db[new_key] = {'fullname': fullname, 'role': role, 'level': level, 'pin': hashed_pin}
+        return jsonify({"message": "User added successfully", "key": new_key}), 200
+    return jsonify({"error": "Invalid data"}), 400

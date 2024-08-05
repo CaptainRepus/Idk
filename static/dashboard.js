@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const modal = document.getElementById('editModal');
     const span = document.getElementsByClassName('close')[0];
     const editForm = document.getElementById('editForm');
+    const addUserButton = document.getElementById('addUserButton');
+    const backButton = document.getElementById('backButton');
 
     // Close the modal when the user clicks on <span> (x)
     span.onclick = function() {
@@ -14,6 +16,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (event.target == modal) {
             modal.style.display = 'none';
         }
+    }
+
+    // Open the modal for adding a new user
+    addUserButton.onclick = function() {
+        openEditModal({fullname: '', role: '', level: '', key: '', pin: ''});
+    }
+
+    // Navigate back to home page
+    backButton.onclick = function() {
+        window.location.href = "/";
     }
 
     try {
@@ -42,6 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             userData.innerHTML = `
                 <p><strong>Role:</strong> ${user.role}</p>
                 <p><strong>Level:</strong> ${user.level}</p>
+                <p><strong>PIN:</strong> ${user.key}</p>
             `;
             userDiv.appendChild(userData);
 
@@ -89,12 +102,14 @@ function openEditModal(user) {
     const roleInput = document.getElementById('role');
     const levelInput = document.getElementById('level');
     const userKeyInput = document.getElementById('userKey');
+    const pinInput = document.getElementById('pin');
 
     // Set the current user details in the form
     fullnameInput.value = user.fullname;
     roleInput.value = user.role;
     levelInput.value = user.level;
     userKeyInput.value = user.key;
+    pinInput.value = user.pin || '';
 
     // Display the modal
     modal.style.display = 'block';
@@ -120,7 +135,7 @@ async function removeUser(userKey) {
     }
 }
 
-// Handle form submission for editing user
+// Handle form submission for editing or adding user
 document.getElementById('editForm').addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -128,22 +143,31 @@ document.getElementById('editForm').addEventListener('submit', async (event) => 
     const fullname = document.getElementById('fullname').value;
     const role = document.getElementById('role').value;
     const level = document.getElementById('level').value;
+    const pin = document.getElementById('pin').value;
+
+    if (pin.length !== 5 || isNaN(pin)) {
+        alert('PIN must be a 5-digit number');
+        return;
+    }
+
+    const url = userKey ? '/backoffice/api/edit_user' : '/backoffice/api/add_user';
+    const method = userKey ? 'POST' : 'POST';
 
     try {
-        const response = await fetch('/backoffice/api/edit_user', {
-            method: 'POST',
+        const response = await fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ key: userKey, fullname, role, level }),
+            body: JSON.stringify({ key: userKey, fullname, role, level, pin }),
         });
         const result = await response.json();
         if (response.ok) {
-            console.log('User edited successfully:', result);
+            console.log(`${userKey ? 'User edited' : 'User added'} successfully:`, result);
             document.getElementById('editModal').style.display = 'none';
             location.reload();  // Reload the page to reflect changes
         } else {
-            console.error('Error editing user:', result);
+            console.error(`Error ${userKey ? 'editing' : 'adding'} user:`, result);
         }
     } catch (error) {
         console.error('Error:', error);

@@ -20,7 +20,7 @@
             font-size: 3rem;
             color: white;
         }
-        p{
+        p {
             font-size: 2rem;
         }
         #user-container {
@@ -107,14 +107,13 @@
         }
         .modal-content {
             background-color: #fefefe;
-            /* margin: 5% auto; */
             padding: 20px;
             border: 1px solid #888;
             width: 100%;
             max-width: 96vw;
             border-radius: 8px;
         }
-        .modal-content h2{
+        .modal-content h2 {
             font-size: 3rem;
         }
         .close {
@@ -141,7 +140,7 @@
         form input {
             padding: 10px;
             margin-top: 5px;
-    font: size;rder-radius: 5px;
+            border-radius: 5px;
             border: 1px solid #ccc;
             font-size: 2rem;
         }
@@ -155,17 +154,50 @@
             cursor: pointer;
             font-size: 55px;
         }
+        /* Add User Button */
+        #addUserButton {
+            position: fixed;
+            bottom: 150px;
+            right: 0;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px;
+            font-size: 50px;
+            height: 110px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        /* Back Button */
+        #backButton {
+            position: fixed;
+            bottom: 20px;
+            right: 0;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px;
+            height: 50px;
+            font-size: 50px;
+            height: 110px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
     <h1>Backoffice Dashboard</h1>
     <div id="user-container"></div>
+    <button id="addUserButton">+</button>
+    <button id="backButton">&larr;</button>
 
     <!-- The Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Upraviť použivateľa</h2>
+            <h2>Upraviť používateľa</h2>
             <form id="editForm">
                 <label for="fullname">Full Name:</label>
                 <input type="text" id="fullname" name="fullname" required>
@@ -175,6 +207,9 @@
                 <br>
                 <label for="level">Level:</label>
                 <input type="number" id="level" name="level" required>
+                <br>
+                <label for="pin">PIN:</label>
+                <input type="text" id="pin" name="pin" required maxlength="5" pattern="\d{5}">
                 <br>
                 <input type="hidden" id="userKey" name="userKey">
                 <button type="submit">Uložiť</button>
