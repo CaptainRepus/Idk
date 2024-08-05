@@ -16,9 +16,12 @@
         }
         h1 {
             text-align: center;
-            margin-top: 30px;
-            font-size: 50px;
+            margin-top: 3rem;
+            font-size: 3rem;
             color: white;
+        }
+        p{
+            font-size: 2rem;
         }
         #user-container {
             display: grid;
@@ -33,28 +36,36 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
         }
         .user-name {
-            font-size: 35px;
+            font-size: 3rem;
             margin-bottom: 10px;
             color: #555;
             font-weight: 700;
+            text-align: center;
         }
         .user-data {
-            font-size: 25px;
+            font-size: 16px;
             color: #777;
             margin-bottom: 10px;
+            text-align: center;
         }
         .user-buttons {
             display: flex;
             justify-content: space-between;
+            width: 100%;
         }
         .user-buttons button {
-            padding: 10px 15px;
-            font-size: 16px;
+            padding: 21px 15px;
+            font-size: 30px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            flex: 1;
+            margin: 5px;
         }
         .edit-button {
             background-color: #4CAF50;
@@ -66,30 +77,111 @@
         }
         @media (max-width: 600px) {
             h1 {
-                font-size: 50px;
-            }
-            #user-container {
-                grid-template-columns: repeat(2, 1fr);
+                font-size: 20px;
             }
             .user-container {
                 padding: 10px;
             }
             .user-name {
-                font-size: 16px;
+                font-size: 18px;
             }
             .user-data {
-                font-size: 25px;
-            }
-            .user-buttons button {
-                padding: 5px 10px;
                 font-size: 14px;
             }
+            .user-buttons button {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            /* margin: 5% auto; */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 100%;
+            max-width: 96vw;
+            border-radius: 8px;
+        }
+        .modal-content h2{
+            font-size: 3rem;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 65px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        form label {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 2rem;
+        }
+        form input {
+            padding: 10px;
+            margin-top: 5px;
+    font: size;rder-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 2rem;
+        }
+        form button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 55px;
         }
     </style>
 </head>
 <body>
     <h1>Backoffice Dashboard</h1>
     <div id="user-container"></div>
+
+    <!-- The Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Upraviť použivateľa</h2>
+            <form id="editForm">
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname" required>
+                <br>
+                <label for="role">Role:</label>
+                <input type="text" id="role" name="role" required>
+                <br>
+                <label for="level">Level:</label>
+                <input type="number" id="level" name="level" required>
+                <br>
+                <input type="hidden" id="userKey" name="userKey">
+                <button type="submit">Uložiť</button>
+            </form>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 </body>
 </html>

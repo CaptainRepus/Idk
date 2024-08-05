@@ -1,5 +1,20 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const userContainer = document.getElementById('user-container');
+    const modal = document.getElementById('editModal');
+    const span = document.getElementsByClassName('close')[0];
+    const editForm = document.getElementById('editForm');
+
+    // Close the modal when the user clicks on <span> (x)
+    span.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    // Close the modal when the user clicks anywhere outside of the modal
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
 
     try {
         const response = await fetch('/backoffice/api/data');
@@ -27,7 +42,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             userData.innerHTML = `
                 <p><strong>Role:</strong> ${user.role}</p>
                 <p><strong>Level:</strong> ${user.level}</p>
-                <p><strong>PIN:</strong> ${user.key}</p>
             `;
             userDiv.appendChild(userData);
 
@@ -40,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             editButton.classList.add('edit-button');
             editButton.textContent = 'Edit';
             editButton.addEventListener('click', () => {
-                editUser(user);
+                openEditModal(user);
             });
 
             // Create remove button
@@ -69,9 +83,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-function editUser(user) {
-    console.log('Editing user:', user);  // Add your edit logic here
-    // Example: Open a modal with a form to edit user details
+function openEditModal(user) {
+    const modal = document.getElementById('editModal');
+    const fullnameInput = document.getElementById('fullname');
+    const roleInput = document.getElementById('role');
+    const levelInput = document.getElementById('level');
+    const userKeyInput = document.getElementById('userKey');
+
+    // Set the current user details in the form
+    fullnameInput.value = user.fullname;
+    roleInput.value = user.role;
+    levelInput.value = user.level;
+    userKeyInput.value = user.key;
+
+    // Display the modal
+    modal.style.display = 'block';
 }
 
 async function removeUser(userKey) {
@@ -93,3 +119,33 @@ async function removeUser(userKey) {
         console.error('Error:', error);
     }
 }
+
+// Handle form submission for editing user
+document.getElementById('editForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const userKey = document.getElementById('userKey').value;
+    const fullname = document.getElementById('fullname').value;
+    const role = document.getElementById('role').value;
+    const level = document.getElementById('level').value;
+
+    try {
+        const response = await fetch('/backoffice/api/edit_user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ key: userKey, fullname, role, level }),
+        });
+        const result = await response.json();
+        if (response.ok) {
+            console.log('User edited successfully:', result);
+            document.getElementById('editModal').style.display = 'none';
+            location.reload();  // Reload the page to reflect changes
+        } else {
+            console.error('Error editing user:', result);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});

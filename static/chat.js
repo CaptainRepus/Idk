@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize nextButton
   let nextButton = document.createElement("button");
-  nextButton.textContent = "Next";
+  nextButton.textContent = "Ďalej";
   nextButton.id = "next-button";
   nextButton.style.display = "none";
   document.querySelector(".message-input-container").appendChild(nextButton);

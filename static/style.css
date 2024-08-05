@@ -26,11 +26,13 @@ body, html {
 }
 
 .search-input, .type-select {
-    width: calc(100% - 28px); /* Adjusting width to fit within the container */
+    width: calc(100% - 28px);
     padding: 10px;
-    margin: 8px 30px; /* Giving some margin to keep space between elements */
+    margin: 8px 30px;
     border-radius: 8px;
     border: 1px solid #ccc;
+    font-size: 33px;
+    height: 66px;
 }
 
 .cancel-button {

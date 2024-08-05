@@ -45,3 +45,20 @@ def delete_user():
         del replit_db[user_key]
         return jsonify({"message": "User deleted successfully"}), 200
     return jsonify({"error": "User not found"}), 404
+
+@bp.route('/api/edit_user', methods=['POST'])
+def edit_user():
+    user_key = request.json.get('key')
+    fullname = request.json.get('fullname')
+    role = request.json.get('role')
+    level = request.json.get('level')
+
+    if user_key and user_key in replit_db:
+        user_data = replit_db[user_key]
+        if isinstance(user_data, dict):
+            user_data['fullname'] = fullname
+            user_data['role'] = role
+            user_data['level'] = level
+            replit_db[user_key] = user_data
+            return jsonify({"message": "User edited successfully"}), 200
+    return jsonify({"error": "User not found"}), 404
