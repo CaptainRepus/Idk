@@ -1,4 +1,4 @@
-from flask import render_template, jsonify
+from flask import render_template, jsonify, request
 from . import backoffice_blueprint as bp
 from replit import db as replit_db
 from collections.abc import Iterable
@@ -23,10 +23,25 @@ def dashboard():
 
 @bp.route('/api/data')
 def get_data():
-    db_data = {}
-    for key in replit_db.keys():
-        db_data[key] = convert_to_serializable(replit_db[key])
-        print(f"Key: {key}, Data: {replit_db[key]}")  # Debugging
+    users_with_role = []
 
-    print(f"Database: {db_data}")  # Debugging
-    return jsonify(db_data)
+    for key in replit_db.keys():
+        user_data = replit_db[key]
+        serializable_user_data = convert_to_serializable(user_data)
+
+        # Check if key is numeric and user has a role
+        if key.isdigit():
+            if isinstance(serializable_user_data, dict) and 'role' in serializable_user_data:
+                users_with_role.append({"key": key, **serializable_user_data})
+
+    print(f"Users with role: {users_with_role}")  # Debugging
+
+    return jsonify(users_with_role)
+
+@bp.route('/api/delete_user', methods=['POST'])
+def delete_user():
+    user_key = request.json.get('key')
+    if user_key and user_key in replit_db:
+        del replit_db[user_key]
+        return jsonify({"message": "User deleted successfully"}), 200
+    return jsonify({"error": "User not found"}), 404
