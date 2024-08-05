@@ -8,7 +8,18 @@ body, html {
     justify-content: center;
     align-items: center;
 }
-
+.user-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+.report {
+    background-color: #e9e9e9;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+}
 .message.loading {
   background-color: var(--user-bg-color, #ffffff); /* Adjust based on theme */
   color: var(--message-text-color, black);

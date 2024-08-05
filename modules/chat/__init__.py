@@ -198,7 +198,7 @@ def get_motivation():
                 "content": "Si motivačný rečník, ktorý ide povzbudiť zamestnanca na zlepšenie svojich záujmov."
             }, {
                 "role": "user",
-                "content": "Prosím, vytvor krátkú motiváciu"
+                "content": "Prosím, vytvor veľmi krátku motiváciu, možno nejaký motivačný citát od nejakého autora/celebrity"
             }],
             max_tokens=50)
         ai_quote = response.choices[0].message['content'].strip()
@@ -211,8 +211,8 @@ def get_random_message():
     try:
         options = [
             '/get_funny_story',    # Route to get funny story
-            '/get_motivation',     # Route to get motivation
-            '/get_team_photo'      # Route to get team photo
+            '/get_motivation'   # Route to get motivation
+                  # Route to get team photo
         ]
         # Select a random message type route
         selected_route = random.choice(options)
@@ -222,8 +222,6 @@ def get_random_message():
             return get_funny_story()
         elif selected_route == '/get_motivation':
             return get_motivation()
-        elif selected_route == '/get_team_photo':
-            return get_team_photo()
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
