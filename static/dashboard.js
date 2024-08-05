@@ -1,22 +1,48 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const userContainer = document.getElementById('user-container');
     const modal = document.getElementById('editModal');
+    const confirmModal = document.getElementById('confirmModal');
     const span = document.getElementsByClassName('close')[0];
+    const confirmSpan = confirmModal.getElementsByClassName('close')[0];
     const editForm = document.getElementById('editForm');
     const addUserButton = document.getElementById('addUserButton');
     const backButton = document.getElementById('backButton');
+    const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+    const cancelDeleteButton = document.getElementById('cancelDeleteButton');
+    const tabs = document.querySelectorAll('.tab');
+    let userToDelete = null;
 
-    // Close the modal when the user clicks on <span> (x)
+    // Close the modals
     span.onclick = function() {
         modal.style.display = 'none';
     }
-
-    // Close the modal when the user clicks anywhere outside of the modal
+    confirmSpan.onclick = function() {
+        confirmModal.style.display = 'none';
+    }
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = 'none';
         }
+        if (event.target == confirmModal) {
+            confirmModal.style.display = 'none';
+        }
     }
+
+    // Handle tab switching
+    tabs.forEach(tab => {
+        tab.onclick = function() {
+            document.querySelector('.tab-active').classList.remove('tab-active');
+            tab.classList.add('tab-active');
+
+            const activeTabContent = document.querySelector('.tab-content-active');
+            if (activeTabContent) {
+                activeTabContent.classList.remove('tab-content-active');
+            }
+
+            const tabName = tab.getAttribute('data-tab');
+            document.getElementById(`${tabName}-container`).classList.add('tab-content-active');
+        }
+    });
 
     // Open the modal for adding a new user
     addUserButton.onclick = function() {
@@ -74,9 +100,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             const removeButton = document.createElement('button');
             removeButton.classList.add('remove-button');
             removeButton.textContent = 'Remove';
-            removeButton.addEventListener('click', async () => {
-                await removeUser(user.key);
-                userDiv.remove();  // Remove user from DOM
+            removeButton.addEventListener('click', () => {
+                openConfirmModal(user);
             });
 
             userButtons.appendChild(editButton);
@@ -114,6 +139,24 @@ function openEditModal(user) {
     // Display the modal
     modal.style.display = 'block';
 }
+
+function openConfirmModal(user) {
+    userToDelete = user;
+    const confirmModal = document.getElementById('confirmModal');
+    confirmModal.style.display = 'block';
+}
+
+document.getElementById('confirmDeleteButton').addEventListener('click', async () => {
+    if (userToDelete) {
+        await removeUser(userToDelete.key);
+        document.getElementById('confirmModal').style.display = 'none';
+        document.querySelector(`div[data-key="${userToDelete.key}"]`).remove();  // Remove user from DOM
+    }
+});
+
+document.getElementById('cancelDeleteButton').addEventListener('click', () => {
+    document.getElementById('confirmModal').style.display = 'none';
+});
 
 async function removeUser(userKey) {
     try {
