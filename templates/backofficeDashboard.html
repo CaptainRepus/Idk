@@ -23,13 +23,35 @@
         p {
             font-size: 2rem;
         }
-        #user-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 10px;
-            padding: 10px;
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1;
         }
-        .user-container {
+        .tab {
+            padding: 15px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+        .tab-active {
+            background-color: #555;
+        }
+        #tabContentContainer {
+            padding: 80px 20px 20px; /* Add padding to avoid overlap with the fixed tab bar */
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content-active {
+            display: block;
+        }
+        .user-container, .car-container {
             background-color: #ffffff;
             padding: 15px;
             border-radius: 8px;
@@ -40,25 +62,25 @@
             justify-content: center;
             height: 400px;
         }
-        .user-name {
+        .user-name, .car-name {
             font-size: 3rem;
             margin-bottom: 10px;
             color: #555;
             font-weight: 700;
             text-align: center;
         }
-        .user-data {
+        .user-data, .car-data {
             font-size: 16px;
             color: #777;
             margin-bottom: 10px;
             text-align: center;
         }
-        .user-buttons {
+        .user-buttons, .car-buttons {
             display: flex;
             justify-content: space-between;
             width: 100%;
         }
-        .user-buttons button {
+        .user-buttons button, .car-buttons button {
             padding: 21px 15px;
             font-size: 30px;
             border: none;
@@ -92,16 +114,16 @@
             h1 {
                 font-size: 20px;
             }
-            .user-container {
+            .user-container, .car-container {
                 padding: 10px;
             }
-            .user-name {
+            .user-name, .car-name {
                 font-size: 18px;
             }
-            .user-data {
+            .user-data, .car-data {
                 font-size: 14px;
             }
-            .user-buttons button {
+            .user-buttons button, .car-buttons button {
                 padding: 8px;
                 font-size: 12px;
             }
@@ -177,8 +199,8 @@
             cursor: pointer;
             font-size: 55px;
         }
-        /* Add User Button */
-        #addUserButton {
+        /* Add Button */
+        #addUserButton, #addCarButton {
             position: fixed;
             bottom: 80px;
             right: 20px;
@@ -217,13 +239,18 @@
         <div class="tab" data-tab="car">Add Car</div>
     </div>
     <div id="tabContentContainer">
-        <div id="user-container" class="tab-content tab-content-active"></div>
-        <div id="car-container" class="tab-content"></div>
+        <div id="user-container" class="tab-content tab-content-active">
+            <!-- User related content will go here -->
+        </div>
+        <div id="car-container" class="tab-content">
+            <!-- Car related content will go here -->
+        </div>
     </div>
     <button id="addUserButton">+</button>
+    <button id="addCarButton" style="display: none;">+</button>
     <button id="backButton">&larr;</button>
 
-    <!-- The Edit Modal -->
+    <!-- The Edit User Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -242,6 +269,23 @@
                 <input type="text" id="pin" name="pin" required maxlength="5" pattern="\d{5}">
                 <br>
                 <input type="hidden" id="userKey" name="userKey">
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- The Add Car Modal -->
+    <div id="addCarModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Car</h2>
+            <form id="addCarForm">
+                <label for="carBrand">Car Brand:</label>
+                <input type="text" id="carBrand" name="carBrand" required>
+                <br>
+                <label for="carModel">Car Model:</label>
+                <input type="text" id="carModel" name="carModel" required>
+                <br>
                 <button type="submit">Save</button>
             </form>
         </div>

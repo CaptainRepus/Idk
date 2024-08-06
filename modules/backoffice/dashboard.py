@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request
+from flask import render_template, jsonify, request, session
 from . import backoffice_blueprint as bp
 from replit import db as replit_db
 from collections.abc import Iterable
@@ -20,24 +20,29 @@ def convert_to_serializable(data):
 
 @bp.route('/dashboard')
 def dashboard():
-    return render_template('backofficeDashboard.html')
+    user_role = session.get('role', '')
+    return render_template('backofficeDashboard.html', user_role=user_role)
 
 @bp.route('/api/data')
 def get_data():
     users_with_role = []
+    cars = []
 
     for key in replit_db.keys():
-        user_data = replit_db[key]
-        serializable_user_data = convert_to_serializable(user_data)
+        data = replit_db[key]
+        serializable_data = convert_to_serializable(data)
 
-        # Check if key is numeric and user has a role
         if key.isdigit():
-            if isinstance(serializable_user_data, dict) and 'role' in serializable_user_data:
-                users_with_role.append({"key": key, **serializable_user_data})
+            if isinstance(serializable_data, dict) and 'role' in serializable_data:
+                users_with_role.append({"key": key, **serializable_data})
+        else:
+            if isinstance(serializable_data, dict) and 'brand' in serializable_data and 'model' in serializable_data:
+                cars.append({"key": key, **serializable_data})
 
     print(f"Users with role: {users_with_role}")  # Debugging
+    print(f"Cars: {cars}")  # Debugging
 
-    return jsonify(users_with_role)
+    return jsonify({"users": users_with_role, "cars": cars})
 
 @bp.route('/api/delete_user', methods=['POST'])
 def delete_user():
@@ -71,13 +76,29 @@ def add_user():
     level = request.json.get('level')
     pin = request.json.get('pin')
 
-    if not pin or len(pin) != 5 or not pin.isdigit():
-        return jsonify({"error": "Invalid PIN. Must be a 5-digit number."}), 400
+    if not (fullname and role and level and pin):
+        return jsonify({"error": "Missing required fields"}), 400
 
     hashed_pin = generate_password_hash(pin)
-    new_key = str(max([int(key) for key in replit_db.keys() if key.isdigit()]) + 1)
+    replit_db[pin] = {
+        'fullname': fullname,
+        'pin': hashed_pin,
+        'level': level,
+        'role': role
+    }
+    return jsonify({"message": "User added successfully"}), 200
 
-    if fullname and role and level and pin:
-        replit_db[new_key] = {'fullname': fullname, 'role': role, 'level': level, 'pin': hashed_pin}
-        return jsonify({"message": "User added successfully", "key": new_key}), 200
-    return jsonify({"error": "Invalid data"}), 400
+@bp.route('/api/add_car', methods=['POST'])
+def add_car():
+    brand = request.json.get('brand')
+    model = request.json.get('model')
+
+    if not (brand and model):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    car_key = f"{brand}_{model}"
+    replit_db[car_key] = {
+        'brand': brand,
+        'model': model
+    }
+    return jsonify({"message": "Car added successfully"}), 200

@@ -1,11 +1,16 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const userContainer = document.getElementById('user-container');
-    const modal = document.getElementById('editModal');
+    const carContainer = document.getElementById('car-container');
+    const editModal = document.getElementById('editModal');
+    const addCarModal = document.getElementById('addCarModal');
     const confirmModal = document.getElementById('confirmModal');
-    const span = document.getElementsByClassName('close')[0];
+    const editSpan = editModal.getElementsByClassName('close')[0];
+    const addCarSpan = addCarModal.getElementsByClassName('close')[0];
     const confirmSpan = confirmModal.getElementsByClassName('close')[0];
     const editForm = document.getElementById('editForm');
+    const addCarForm = document.getElementById('addCarForm');
     const addUserButton = document.getElementById('addUserButton');
+    const addCarButton = document.getElementById('addCarButton');
     const backButton = document.getElementById('backButton');
     const confirmDeleteButton = document.getElementById('confirmDeleteButton');
     const cancelDeleteButton = document.getElementById('cancelDeleteButton');
@@ -13,15 +18,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     let userToDelete = null;
 
     // Close the modals
-    span.onclick = function() {
-        modal.style.display = 'none';
+    editSpan.onclick = function() {
+        editModal.style.display = 'none';
+    }
+    addCarSpan.onclick = function() {
+        addCarModal.style.display = 'none';
     }
     confirmSpan.onclick = function() {
         confirmModal.style.display = 'none';
     }
     window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
+        if (event.target == editModal) {
+            editModal.style.display = 'none';
+        }
+        if (event.target == addCarModal) {
+            addCarModal.style.display = 'none';
         }
         if (event.target == confirmModal) {
             confirmModal.style.display = 'none';
@@ -41,12 +52,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const tabName = tab.getAttribute('data-tab');
             document.getElementById(`${tabName}-container`).classList.add('tab-content-active');
+
+            // Toggle Add buttons
+            if (tabName === 'user') {
+                addUserButton.style.display = 'block';
+                addCarButton.style.display = 'none';
+            } else {
+                addUserButton.style.display = 'none';
+                addCarButton.style.display = 'block';
+            }
         }
     });
 
     // Open the modal for adding a new user
     addUserButton.onclick = function() {
         openEditModal({fullname: '', role: '', level: '', key: '', pin: ''});
+    }
+
+    // Open the modal for adding a new car
+    addCarButton.onclick = function() {
+        openAddCarModal();
     }
 
     // Navigate back to home page
@@ -60,11 +85,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         console.log('Data fetched from API:', data);  // Debug to see the fetched data
 
-        if (!data || data.length === 0) {
+        if (!data || Object.keys(data).length === 0) {
             throw new Error("No data found");
         }
 
-        data.forEach(user => {
+        // Process users
+        data.users.forEach(user => {
             console.log('Processing user:', user);  // Debug user processing
             // Create user box
             const userDiv = document.createElement('div');
@@ -112,7 +138,30 @@ document.addEventListener("DOMContentLoaded", async () => {
             userContainer.appendChild(userDiv);
         });
 
-        console.log('Finished processing all users.');  // Debug final step
+        // Process cars
+        data.cars.forEach(car => {
+            console.log('Processing car:', car);  // Debug car processing
+            // Create car box
+            const carDiv = document.createElement('div');
+            carDiv.classList.add('car-container');
+
+            const carName = document.createElement('div');
+            carName.classList.add('car-name');
+            carName.textContent = `${car.brand} ${car.model}`;
+            carDiv.appendChild(carName);
+
+            const carData = document.createElement('div');
+            carData.classList.add('car-data');
+            carData.innerHTML = `
+                <p><strong>Brand:</strong> ${car.brand}</p>
+                <p><strong>Model:</strong> ${car.model}</p>
+            `;
+            carDiv.appendChild(carData);
+
+            carContainer.appendChild(carDiv);
+        });
+
+        console.log('Finished processing all data.');  // Debug final step
     } catch (error) {
         console.error("Error fetching data:", error);
         const errorText = document.createElement('p');
@@ -135,6 +184,19 @@ function openEditModal(user) {
     levelInput.value = user.level;
     userKeyInput.value = user.key;
     pinInput.value = user.pin || '';
+
+    // Display the modal
+    modal.style.display = 'block';
+}
+
+function openAddCarModal() {
+    const modal = document.getElementById('addCarModal');
+    const carBrandInput = document.getElementById('carBrand');
+    const carModelInput = document.getElementById('carModel');
+
+    // Clear the input fields
+    carBrandInput.value = '';
+    carModelInput.value = '';
 
     // Display the modal
     modal.style.display = 'block';
@@ -211,6 +273,34 @@ document.getElementById('editForm').addEventListener('submit', async (event) => 
             location.reload();  // Reload the page to reflect changes
         } else {
             console.error(`Error ${userKey ? 'editing' : 'adding'} user:`, result);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+// Handle form submission for adding car
+document.getElementById('addCarForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const carBrand = document.getElementById('carBrand').value;
+    const carModel = document.getElementById('carModel').value;
+
+    try {
+        const response = await fetch('/backoffice/api/add_car', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ brand: carBrand, model: carModel }),
+        });
+        const result = await response.json();
+        if (response.ok) {
+            console.log('Car added successfully:', result);
+            document.getElementById('addCarModal').style.display = 'none';
+            location.reload();  // Reload the page to reflect changes
+        } else {
+            console.error('Error adding car:', result);
         }
     } catch (error) {
         console.error('Error:', error);
