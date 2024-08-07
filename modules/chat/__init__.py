@@ -69,26 +69,27 @@ def submit_report():
         existing_reports.append(report_data)
         replit_db[customer_name] = existing_reports
 
-        user_data = replit_db.get(author)
-        if user_data:
-            report_count = user_data.get('report_count', 0) + 1
-            user_data['report_count'] = report_count
+        user_data = replit_db.get(author, {})
+        report_count = user_data.get('report_count', 0) + 1
+        user_data['report_count'] = report_count
 
-            logging.debug(f"Report count for user {author}: {report_count}")
+        logging.debug(f"Report count for user {author}: {report_count}")
 
-            if report_count % 3 == 0:
-                user_data['level'] = user_data.get('level', 1) + 1
-                logging.debug(f"Level increased for user {author} to {user_data['level']}")
+        # Increase the user's level every 3 reports
+        if report_count % 3 == 0:
+            user_data['level'] = user_data.get('level', 1) + 1
+            logging.debug(f"Úroveň zvýšená pre {author} na {user_data['level']}")
 
-            replit_db[author] = user_data
+        replit_db[author] = user_data
 
-            # Include the new level in the response if it was increased
-            if report_count % 3 == 0:
-                return jsonify({"message": "Report successfully submitted!", "new_level": user_data['level']}), 200
+        # Include the new level in the response if it was increased
+        if report_count % 3 == 0:
+            return jsonify({"message": "Report successfully submitted!", "new_level": user_data['level']}), 200
 
-        return jsonify({"message": "Report successfully submitted!"}), 200
+        return jsonify({"message": "Report bol úspešne odoslaný!"}), 200
 
-    return jsonify({"error": "Missing customer name or author"}), 400
+    return jsonify({"error": "Chýba meno klienta"}), 400
+
 
 def observed_to_dict(obj):
     """
@@ -188,24 +189,6 @@ def get_funny_story():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@chat_blueprint.route('/get_motivation', methods=['POST'])
-def get_motivation():
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4o-mini",
-            messages=[{
-                "role": "system",
-                "content": "Si motivačný rečník, ktorý ide povzbudiť zamestnanca na zlepšenie svojich záujmov."
-            }, {
-                "role": "user",
-                "content": "Prosím, vytvor veľmi krátku motiváciu, možno nejaký motivačný citát od nejakého autora/celebrity"
-            }],
-            max_tokens=50)
-        ai_quote = response.choices[0].message['content'].strip()
-        return jsonify({"message": ai_quote})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
 @chat_blueprint.route('/get_random_message', methods=['GET'])
 def get_random_message():
     try:
@@ -224,6 +207,26 @@ def get_random_message():
             return get_motivation()
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@chat_blueprint.route('/get_motivation', methods=['POST'])
+def get_motivation():
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
+            messages=[{
+                "role": "system",
+                "content": "Si motivačný rečník, ktorý ide povzbudiť zamestnanca na zlepšenie svojich záujmov."
+            }, {
+                "role": "user",
+                "content": "Prosím, vytvor veľmi krátku motiváciu, možno nejaký motivačný citát od nejakého autora/celebrity"
+            }],
+            max_tokens=50)
+        ai_quote = response.choices[0].message['content'].strip()
+        return jsonify({"message": ai_quote})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @chat_blueprint.route('/get_notifications', methods=['GET'])
 def get_notifications():
@@ -252,14 +255,7 @@ def get_user_level():
                 logging.debug(f"Reports for key '{key}': {authored_reports}")
 
         # Calculate the level based on the report count
-        if report_count < 4:
-            level = 1
-        elif report_count < 15:
-            level = 2
-        elif report_count < 30:
-            level = 3
-        else:
-            level = 4 + (report_count - 30) // 15
+        level = report_count // 3 + 1
 
         logging.debug(f"Report count for user {username}: {report_count}")
         logging.debug(f"User level: {level}")

@@ -36,27 +36,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const addedMessages = new Set();
 
   const getUserLevel = async () => {
-    try {
-      const response = await fetch('/chat/get_user_level', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const level = data.level || 1; // Default to 1 if level is not available
-        // Update the UI with the user's level
-        document.querySelector('.user-level span').textContent = `Úroveň: ${level}`;
-        // Store the user level in local storage for later use
-        localStorage.setItem('userLevel', level);
-      } else {
-        console.error("Failed to fetch user level");
+  try {
+    const response = await fetch('/chat/get_user_level', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
       }
-    } catch (error) {
-      console.error("Error fetching user level:", error);
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const level = data.level || 1; // Default to 1 if level is not available
+      // Update the UI with the user's level
+      document.querySelector('.user-level span').textContent = `Úroveň: ${level}`;
+      // Store the user level in local storage for later use
+      localStorage.setItem('userLevel', level);
+    } else {
+      console.error("Failed to fetch user level");
     }
-  };
+  } catch (error) {
+    console.error("Error fetching user level:", error);
+  }
+};
 
   // Call getUserData when the page loads
   getUserLevel();
@@ -781,64 +781,50 @@ const handleManageValues = () => {
     }
   };
   const askForCarBrand = () => {
-        const messageContainer = document.querySelector(".message-input-container");
+    const messageContainer = document.querySelector(".message-input-container");
+    clearMessageContainer(false);
+    addMessage("Zaznačte, o ktorú značku auta mal klient záujem", "received");
 
-        // Clear existing content
-        clearMessageContainer(false);
-
-        // Ask for car brand
-        addMessage("Zaznačte, o ktorú značku auta mal klient záujem", "received");
-
-        // Create car brand buttons with corresponding model selection
-        const brands = [
-            { brand: "Nissan", models: ["model7", "model8", "model9"] },
-            { brand: "Opel", models: ["model4", "model5", "model6"] },
-            { brand: "Toyota", models: ["model1", "model2", "model3"] }
-        ];
-
-        brands.forEach(({ brand, models }, index) => {
-            const button = createButton(brand, () => {
-                addMessage(`Klient má záujem o ${brand}`, "sent");
-                reportData.carBrand = brand;
-                displayCarModels(brand, models);
-            });
-
-            // Append the button to the message container
-            messageContainer.appendChild(button);
-
-            // Add the visible class for animation
-            setTimeout(() => {
-                button.classList.add('visible');
-            }, index * 100); // Stagger animations
+    const brands = ["Nissan", "Opel", "Toyota"];
+    brands.forEach((brand, index) => {
+        const button = createButton(brand, async () => {
+            addMessage(`Klient má záujem o ${brand}`, "sent");
+            reportData.carBrand = brand;
+            await fetchCarModels(brand);
         });
-    };
-  
-  const displayCarModels = (brand, models) => {
-      const messageContainer = document.querySelector(".message-input-container");
 
-      // Clear existing content
-      clearMessageContainer(false);
-
-      // Ask to select a car model
-      addMessage("Teraz vyberte model auta", "received");
-
-      // Create car model buttons
-      models.forEach((model, index) => {
-          const button = createButton(model, () => {
-              addMessage(`Vybraný model: ${model}`, "sent");
-              reportData.carModel = model;
-              finalizeReport();
-          }, "car-model-button");
-
-          // Append the button to the message container
-          messageContainer.appendChild(button);
-
-          // Add the visible class for animation
-          setTimeout(() => {
-              button.classList.add('visible');
-          }, index * 100); // Stagger animations
-      });
+        messageContainer.appendChild(button);
+        setTimeout(() => {
+            button.classList.add('visible');
+        }, index * 100);
+    });
   };
+
+  const fetchCarModels = async (brand) => {
+    const response = await fetch(`/backoffice/api/car_models/${brand}`);
+    const data = await response.json();
+    displayCarModels(brand, data.models);
+  };
+
+  const displayCarModels = (brand, models) => {
+    const messageContainer = document.querySelector(".message-input-container");
+    clearMessageContainer(false);
+    addMessage("Teraz vyberte model auta", "received");
+
+    models.forEach((model, index) => {
+        const button = createButton(model, () => {
+            addMessage(`Vybraný model: ${model}`, "sent");
+            reportData.carModel = model;
+            finalizeReport();
+        }, "car-model-button");
+
+        messageContainer.appendChild(button);
+        setTimeout(() => {
+            button.classList.add('visible');
+        }, index * 100);
+    });
+  };
+
   const finalizeReport = () => {
     clearMessageContainer(); // Clear the message container
 
@@ -1180,15 +1166,6 @@ const handleManageValues = () => {
   };
   
 
-  const updateActionButtons = () => {
-    const currentDay = new Date().toISOString().split("T")[0];
-    const reportsSubmittedToday = localStorage.getItem('reportsSubmittedToday');
-
-    if (reportsSubmittedToday === currentDay) {
-        replaceNewReportButton();
-    }
-  };
-
   // Ensure this function is called after DOMContentLoaded
   document.addEventListener("DOMContentLoaded", () => {
     updateActionButtons();
@@ -1225,6 +1202,21 @@ const handleManageValues = () => {
       });
     });
   }
+
+  const updateActionButtons = () => {
+    const currentDay = new Date().toISOString().split("T")[0];
+    const reportsSubmittedToday = localStorage.getItem('reportsSubmittedToday');
+
+    if (reportsSubmittedToday === currentDay) {
+      replaceNewReportButton();
+    }
+  };
+
+  // Ensure this function is called after DOMContentLoaded
+  document.addEventListener("DOMContentLoaded", () => {
+    updateActionButtons();
+  });
+
 
 
   const fetchRandomMessage = async () => {

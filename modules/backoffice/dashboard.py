@@ -96,3 +96,12 @@ def delete_car():
         del replit_db[car_key]
         return jsonify({"message": "Car deleted successfully"}), 200
     return jsonify({"error": "Car not found"}), 404
+
+@bp.route('/api/car_models/<brand>', methods=['GET'])
+def get_car_models(brand):
+    car_models = []
+    for key in replit_db.keys():
+        if key.startswith(brand + "_"):
+            car_data = replit_db[key]
+            car_models.append(car_data['model'])
+    return jsonify({"models": car_models}), 200

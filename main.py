@@ -22,7 +22,7 @@ app.register_blueprint(backoffice_blueprint, url_prefix='/backoffice')  # Regist
 def welcome():
     if 'username' in session:
         return redirect(url_for('chat.index'))
-    return render_template('welcome.html')
+    return redirect(url_for('auth.login'))
 
 @app.route('/settings')
 def settings():

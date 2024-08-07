@@ -53,9 +53,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 root.style.setProperty('--user-bg-color', '#9c27b0');
                 root.style.setProperty('--ai-color', '#7b1fa2');
                 break;
-            default:
+            case 'theme-orange':
                 root.style.setProperty('--user-bg-color', '#ff9800');
                 root.style.setProperty('--ai-color', '#f57c00');
+                break;
+            default:
+                root.style.setProperty('--user-bg-color', '#f44336');
+                root.style.setProperty('--ai-color', '#d32f2f');
                 break;
         }
     };

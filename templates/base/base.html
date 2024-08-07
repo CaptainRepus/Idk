@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="--user-bg-color: #f44336; --ai-color: #d32f2f;">
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Moja Aplikácia{% endblock %}</title>
+        <title>{% block title %}PK Auto{% endblock %}</title>
         <link
             rel="stylesheet"
             href="{{ url_for('static', filename='style.css') }}"
@@ -18,7 +18,7 @@
         <script src="{{ url_for('static', filename='chat_additional.js') }}"></script>
         <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css">
     </head>
-    <body>
+    <body class="theme-red">
         <div class="content">{% block content %}{% endblock %}</div>
     </body>
 </html>
