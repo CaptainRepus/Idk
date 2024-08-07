@@ -12,6 +12,7 @@ def auth_login():
         if user_data and check_password_hash(user_data['pin'], pin):
             session['username'] = user_data['fullname']
             session['level'] = user_data.get('level', 1)
+            session['role'] = user_data.get('role', 'sales')  # Adding role to session
             return redirect(url_for('chat.index'))
         return 'Nesprávny PIN'
     return render_template('auth/login.html')

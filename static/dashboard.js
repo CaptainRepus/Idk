@@ -1,13 +1,12 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const userContainer = document.getElementById('user-container');
     const carContainer = document.getElementById('car-container');
-    const editModal = document.getElementById('editModal');
     const addCarModal = document.getElementById('addCarModal');
     const confirmModal = document.getElementById('confirmModal');
-    const editSpan = editModal.getElementsByClassName('close')[0];
+    const editModal = document.getElementById('editModal');
     const addCarSpan = addCarModal.getElementsByClassName('close')[0];
     const confirmSpan = confirmModal.getElementsByClassName('close')[0];
-    const editForm = document.getElementById('editForm');
+    const editSpan = editModal.getElementsByClassName('close')[0];
     const addCarForm = document.getElementById('addCarForm');
     const addUserButton = document.getElementById('addUserButton');
     const addCarButton = document.getElementById('addCarButton');
@@ -18,24 +17,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     let userToDelete = null;
 
     // Close the modals
-    editSpan.onclick = function() {
-        editModal.style.display = 'none';
-    }
     addCarSpan.onclick = function() {
         addCarModal.style.display = 'none';
     }
     confirmSpan.onclick = function() {
         confirmModal.style.display = 'none';
     }
+    editSpan.onclick = function() {
+        editModal.style.display = 'none';
+    }
     window.onclick = function(event) {
-        if (event.target == editModal) {
-            editModal.style.display = 'none';
-        }
         if (event.target == addCarModal) {
             addCarModal.style.display = 'none';
         }
         if (event.target == confirmModal) {
             confirmModal.style.display = 'none';
+        }
+        if (event.target == editModal) {
+            editModal.style.display = 'none';
         }
     }
 
@@ -95,6 +94,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Create user box
             const userDiv = document.createElement('div');
             userDiv.classList.add('user-container');
+            userDiv.dataset.key = user.key;
 
             const userName = document.createElement('div');
             userName.classList.add('user-name');
@@ -114,14 +114,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             const userButtons = document.createElement('div');
             userButtons.classList.add('user-buttons');
 
-            // Create edit button
-            const editButton = document.createElement('button');
-            editButton.classList.add('edit-button');
-            editButton.textContent = 'Edit';
-            editButton.addEventListener('click', () => {
-                openEditModal(user);
-            });
-
             // Create remove button
             const removeButton = document.createElement('button');
             removeButton.classList.add('remove-button');
@@ -130,9 +122,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 openConfirmModal(user);
             });
 
-            userButtons.appendChild(editButton);
             userButtons.appendChild(removeButton);
-
             userDiv.appendChild(userButtons);
 
             userContainer.appendChild(userDiv);
@@ -144,6 +134,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Create car box
             const carDiv = document.createElement('div');
             carDiv.classList.add('car-container');
+            carDiv.dataset.key = car.key;
 
             const carName = document.createElement('div');
             carName.classList.add('car-name');
@@ -158,6 +149,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
             carDiv.appendChild(carData);
 
+            // Create buttons container
+            const carButtons = document.createElement('div');
+            carButtons.classList.add('car-buttons');
+
+            // Create remove button
+            const removeButton = document.createElement('button');
+            removeButton.classList.add('remove-button');
+            removeButton.textContent = 'Remove';
+            removeButton.addEventListener('click', () => {
+                openConfirmModal(car);
+            });
+
+            carButtons.appendChild(removeButton);
+            carDiv.appendChild(carButtons);
+
             carContainer.appendChild(carDiv);
         });
 
@@ -170,47 +176,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-function openEditModal(user) {
-    const modal = document.getElementById('editModal');
-    const fullnameInput = document.getElementById('fullname');
-    const roleInput = document.getElementById('role');
-    const levelInput = document.getElementById('level');
-    const userKeyInput = document.getElementById('userKey');
-    const pinInput = document.getElementById('pin');
-
-    // Set the current user details in the form
-    fullnameInput.value = user.fullname;
-    roleInput.value = user.role;
-    levelInput.value = user.level;
-    userKeyInput.value = user.key;
-    pinInput.value = user.pin || '';
-
-    // Display the modal
-    modal.style.display = 'block';
-}
-
-function openAddCarModal() {
-    const modal = document.getElementById('addCarModal');
-    const carBrandInput = document.getElementById('carBrand');
-    const carModelInput = document.getElementById('carModel');
-
-    // Clear the input fields
-    carBrandInput.value = '';
-    carModelInput.value = '';
-
-    // Display the modal
-    modal.style.display = 'block';
-}
-
-function openConfirmModal(user) {
-    userToDelete = user;
+function openConfirmModal(item) {
+    userToDelete = item;
     const confirmModal = document.getElementById('confirmModal');
     confirmModal.style.display = 'block';
 }
 
 document.getElementById('confirmDeleteButton').addEventListener('click', async () => {
     if (userToDelete) {
-        await removeUser(userToDelete.key);
+        if (userToDelete.role) {
+            await removeUser(userToDelete.key);
+        } else {
+            await removeCar(userToDelete.key);
+        }
         document.getElementById('confirmModal').style.display = 'none';
         document.querySelector(`div[data-key="${userToDelete.key}"]`).remove();  // Remove user from DOM
     }
@@ -240,23 +218,58 @@ async function removeUser(userKey) {
     }
 }
 
-// Handle form submission for editing or adding user
+async function removeCar(carKey) {
+    try {
+        const response = await fetch('/backoffice/api/delete_car', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ key: carKey }),
+        });
+        const result = await response.json();
+        if (response.ok) {
+            console.log('Car deleted successfully:', result);
+        } else {
+            console.error('Error deleting car:', result);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+function openEditModal(user) {
+    const editModal = document.getElementById('editModal');
+    document.getElementById('fullname').value = user.fullname;
+    document.getElementById('role').value = user.role;
+    document.getElementById('level').value = user.level;
+    document.getElementById('userKey').value = user.key;
+    document.getElementById('pin').value = user.pin;  // Set the PIN field for adding/editing
+    editModal.style.display = 'block';
+}
+
+function openAddCarModal() {
+    const addCarModal = document.getElementById('addCarModal');
+    addCarModal.style.display = 'block';
+}
+
+// Handle form submission for adding user
 document.getElementById('editForm').addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const userKey = document.getElementById('userKey').value;
     const fullname = document.getElementById('fullname').value;
     const role = document.getElementById('role').value;
     const level = document.getElementById('level').value;
     const pin = document.getElementById('pin').value;
 
+    // PIN validation only for adding users
     if (pin.length !== 5 || isNaN(pin)) {
         alert('PIN must be a 5-digit number');
         return;
     }
 
-    const url = userKey ? '/backoffice/api/edit_user' : '/backoffice/api/add_user';
-    const method = userKey ? 'POST' : 'POST';
+    const url = '/backoffice/api/add_user';
+    const method = 'POST';
 
     try {
         const response = await fetch(url, {
@@ -264,15 +277,15 @@ document.getElementById('editForm').addEventListener('submit', async (event) => 
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ key: userKey, fullname, role, level, pin }),
+            body: JSON.stringify({ fullname, role, level, pin }),
         });
         const result = await response.json();
         if (response.ok) {
-            console.log(`${userKey ? 'User edited' : 'User added'} successfully:`, result);
+            console.log('User added successfully:', result);
             document.getElementById('editModal').style.display = 'none';
             location.reload();  // Reload the page to reflect changes
         } else {
-            console.error(`Error ${userKey ? 'editing' : 'adding'} user:`, result);
+            console.error('Error adding user:', result);
         }
     } catch (error) {
         console.error('Error:', error);
@@ -286,9 +299,12 @@ document.getElementById('addCarForm').addEventListener('submit', async (event) =
     const carBrand = document.getElementById('carBrand').value;
     const carModel = document.getElementById('carModel').value;
 
+    const url = '/backoffice/api/add_car';
+    const method = 'POST';
+
     try {
-        const response = await fetch('/backoffice/api/add_car', {
-            method: 'POST',
+        const response = await fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
             },

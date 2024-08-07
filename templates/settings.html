@@ -1,17 +1,10 @@
-<!-- templates/settings.html -->
 {% extends "base/base.html" %}
 
 {% block title %}Settings{% endblock %}
 
 {% block content %}
 <div class="settings-container">
-    <div class="toggle-container">
-        <h2 class="mt-4">Tmavý režim :</h2>
-        <label class="switch">
-            <input type="checkbox" id="dark-mode-toggle">
-            <span class="slider round"></span>
-        </label>
-    </div>
+    
     <h2>Vyber si tému aplikácie:</h2>
     <div class="theme-selection">
         <div class="theme-box" id="theme-orange" style="background-color: #FFA500;">Oranžová</div>
@@ -23,7 +16,9 @@
 
     <button id="logout-button">Odhlásiť sa</button>
 
+    {% if session.role in ['manager', 'leader'] %}
     <button class="settings-button" onclick="location.href='/backoffice/dashboard'">Prejdite do administrácie</button>
+    {% endif %}
 </div>
 {% endblock %}
 

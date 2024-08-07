@@ -52,23 +52,6 @@ def delete_user():
         return jsonify({"message": "User deleted successfully"}), 200
     return jsonify({"error": "User not found"}), 404
 
-@bp.route('/api/edit_user', methods=['POST'])
-def edit_user():
-    user_key = request.json.get('key')
-    fullname = request.json.get('fullname')
-    role = request.json.get('role')
-    level = request.json.get('level')
-
-    if user_key and user_key in replit_db:
-        user_data = replit_db[user_key]
-        if isinstance(user_data, dict):
-            user_data['fullname'] = fullname
-            user_data['role'] = role
-            user_data['level'] = level
-            replit_db[user_key] = user_data
-            return jsonify({"message": "User edited successfully"}), 200
-    return jsonify({"error": "User not found"}), 404
-
 @bp.route('/api/add_user', methods=['POST'])
 def add_user():
     fullname = request.json.get('fullname')
@@ -78,6 +61,9 @@ def add_user():
 
     if not (fullname and role and level and pin):
         return jsonify({"error": "Missing required fields"}), 400
+
+    if len(pin) != 5 or not pin.isdigit():
+        return jsonify({"error": "PIN must be a 5-digit number"}), 400
 
     hashed_pin = generate_password_hash(pin)
     replit_db[pin] = {
@@ -102,3 +88,11 @@ def add_car():
         'model': model
     }
     return jsonify({"message": "Car added successfully"}), 200
+
+@bp.route('/api/delete_car', methods=['POST'])
+def delete_car():
+    car_key = request.json.get('key')
+    if car_key and car_key in replit_db:
+        del replit_db[car_key]
+        return jsonify({"message": "Car deleted successfully"}), 200
+    return jsonify({"error": "Car not found"}), 404
