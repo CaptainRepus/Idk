@@ -886,7 +886,7 @@ const handleManageValues = () => {
 
                   // Check if the level was increased and notify the user
                   if (data.new_level) {
-                      addMessage(`Congrats! Your level has been increased to ${data.new_level}`, "received");
+                      addMessage(`Gratulujem! Tvoj level bol zvýšený na ${data.new_level}`, "received");
                   }
 
                   // Show the two new buttons only after the report is successfully submitted

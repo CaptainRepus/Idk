@@ -78,7 +78,7 @@ def submit_report():
         replit_db[author] = user_data
 
         # Include the new level in the response if it was increased
-        return jsonify({"message": "Report successfully submitted!", "new_level": new_level}), 200
+        return jsonify({"message": "Report bol úspešne odoslaný!", "new_level": new_level}), 200
 
     return jsonify({"error": "Chýba meno klienta"}), 400
 
