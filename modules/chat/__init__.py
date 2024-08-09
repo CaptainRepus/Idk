@@ -59,8 +59,6 @@ def submit_report():
     customer_name = report_data.get("customerName")
     author = report_data.get("author")
 
-    logging.debug(f"Submitting report by {author} for customer {customer_name}")
-
     if customer_name and author:
         existing_reports = replit_db.get(customer_name, [])
         if not isinstance(existing_reports, list):
@@ -73,22 +71,17 @@ def submit_report():
         report_count = user_data.get('report_count', 0) + 1
         user_data['report_count'] = report_count
 
-        logging.debug(f"Report count for user {author}: {report_count}")
-
-        # Increase the user's level every 3 reports
-        if report_count % 3 == 0:
-            user_data['level'] = user_data.get('level', 1) + 1
-            logging.debug(f"Úroveň zvýšená pre {author} na {user_data['level']}")
+        # Calculate the new level
+        new_level = report_count // 3 + 1
+        user_data['level'] = new_level
 
         replit_db[author] = user_data
 
         # Include the new level in the response if it was increased
-        if report_count % 3 == 0:
-            return jsonify({"message": "Report successfully submitted!", "new_level": user_data['level']}), 200
-
-        return jsonify({"message": "Report bol úspešne odoslaný!"}), 200
+        return jsonify({"message": "Report successfully submitted!", "new_level": new_level}), 200
 
     return jsonify({"error": "Chýba meno klienta"}), 400
+
 
 
 def observed_to_dict(obj):
@@ -245,22 +238,13 @@ def get_user_level():
         username = session['username']
         logging.debug(f"Fetching level for user: {username}")
 
-        # Count the number of reports authored by the user
-        report_count = 0
-        for key in replit_db.keys():
-            reports = replit_db.get(key, [])
-            if isinstance(reports, list):
-                authored_reports = [report for report in reports if report.get('author') == username]
-                report_count += len(authored_reports)
-                logging.debug(f"Reports for key '{key}': {authored_reports}")
+        user_data = replit_db.get(username, {})
+        level = user_data.get('level', 1)
 
-        # Calculate the level based on the report count
-        level = report_count // 3 + 1
-
-        logging.debug(f"Report count for user {username}: {report_count}")
         logging.debug(f"User level: {level}")
 
         return jsonify({"level": level}), 200
 
     logging.error("User not logged in or data not found")
     return jsonify({"error": "User not logged in or data not found"}), 400
+
