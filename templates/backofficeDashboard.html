@@ -64,6 +64,7 @@
             align-items: center;
             justify-content: center;
             height: 400px;
+            margin-bottom: 1rem;
         }
         .user-name, .car-name {
             font-size: 3rem;
@@ -250,6 +251,13 @@
             margin: 5px 0;
             width: 100%;
         }
+        .search {
+            width: 97.8%;
+            height: 5rem;
+            font-size: 2rem;
+            padding-inline-start: 1rem;
+            margin-bottom: 1rem;
+        }
 
     </style>
 </head>
@@ -262,9 +270,12 @@
     </div>
     <div id="tabContentContainer">
         <div id="user-container" class="tab-content tab-content-active">
+            <input type="text" id="searchInput" class="search" placeholder="Vyhľadaj použivateľa...">
+
             <!-- User related content will go here -->
         </div>
         <div id="car-container" class="tab-content">
+            <input type="text" id="searchInputCars" class="search" placeholder="Vyhľadaj auto...">
             <!-- Car related content will go here -->
         </div>
     </div>

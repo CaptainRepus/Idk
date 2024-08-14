@@ -82,8 +82,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         const response = await fetch('/backoffice/api/data');
         const data = await response.json();
 
-        console.log('Data fetched from API:', data);  // Debug to see the fetched data
-
         if (!data || Object.keys(data).length === 0) {
             throw new Error("No data found");
         }
@@ -174,6 +172,36 @@ document.addEventListener("DOMContentLoaded", async () => {
         errorText.textContent = `Error: ${error.message}`;
         userContainer.appendChild(errorText);
     }
+
+    // Search functionality for users
+    const searchInputUsers = document.getElementById('searchInput');
+    searchInputUsers.addEventListener('input', function() {
+        const filter = searchInputUsers.value.toLowerCase();
+        const userDivs = userContainer.getElementsByClassName('user-container');
+        Array.from(userDivs).forEach(userDiv => {
+            const userName = userDiv.querySelector('.user-name').textContent;
+            if (userName.toLowerCase().includes(filter)) {
+                userDiv.style.display = '';
+            } else {
+                userDiv.style.display = 'none';
+            }
+        });
+    });
+
+    // Search functionality for cars
+    const searchInputCars = document.getElementById('searchInputCars');
+    searchInputCars.addEventListener('input', function() {
+        const filter = searchInputCars.value.toLowerCase();
+        const carDivs = carContainer.getElementsByClassName('car-container');
+        Array.from(carDivs).forEach(carDiv => {
+            const carName = carDiv.querySelector('.car-name').textContent;
+            if (carName.toLowerCase().includes(filter)) {
+                carDiv.style.display = '';
+            } else {
+                carDiv.style.display = 'none';
+            }
+        });
+    });
 });
 
 function openConfirmModal(item) {

@@ -65,6 +65,10 @@ def add_user():
     if len(pin) != 5 or not pin.isdigit():
         return jsonify({"error": "PIN must be a 5-digit number"}), 400
 
+    # Check if the PIN is already in use
+    if pin in replit_db:
+        return jsonify({"error": "This PIN is already in use. Please choose a different PIN."}), 400
+
     hashed_pin = generate_password_hash(pin)
     replit_db[pin] = {
         'fullname': fullname,
@@ -73,6 +77,7 @@ def add_user():
         'role': role
     }
     return jsonify({"message": "User added successfully"}), 200
+
 
 @bp.route('/api/add_car', methods=['POST'])
 def add_car():
