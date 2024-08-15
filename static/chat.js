@@ -116,11 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return null;
   };
 
-  const addWelcomeBackMessage = (username) => {
-    const welcomeMessage = `Vítaj späť, ${username}! Pre pokračovanie zaklikni "Otvoriť menu".`;
-    addMessage(welcomeMessage, "received");
-    saveMessage(welcomeMessage, "received");
-  };
 
   function saveMessage(content, type) {
     const message = {
@@ -496,18 +491,13 @@ const handleManageValues = () => {
 
   const initChatFlow = () => {
     const currentDate = new Date().toISOString().split("T")[0];
+
     if (lastWelcomeDate === currentDate) {
+      // Directly show the action buttons
       userInput.style.display = "none";
       sendButton.style.display = "none";
-      const openMenuButton = document.getElementById("open-menu-button");
-      if (openMenuButton) {
-        openMenuButton.style.display = "inline";
-        openMenuButton.addEventListener("click", () => {
-          displayActionButtons();
-          openMenuButton.style.display = "none";
-        });
-      }
-      addMessage(`Vítaj späť, ${username}! Klikni na "Otvoriť menu" pre pokračovanie`, "received");
+      displayActionButtons();
+      addMessage(`Vítaj späť, ${username}!`, "received");
     } else {
       handleNextStep();
       fetch("/chat/update_welcome_date", {
@@ -515,6 +505,7 @@ const handleManageValues = () => {
       });
     }
   };
+
 
   dropdownButton.addEventListener('click', () => {
     settingsModal.style.display = 'block';
@@ -546,7 +537,6 @@ const handleManageValues = () => {
   });
 
   loadMessages();
-  addWelcomeBackMessage(username);
   initChatFlow();
   // Update showClientTypeButtons to include Existing Customer handler
   const showClientTypeButtons = () => {
@@ -704,7 +694,7 @@ const handleManageValues = () => {
     const submitButton = createButton('Odoslať', () => {
       const customerName = nameInput.value.trim();
       if (customerName) {
-        addMessage(`Nový zákazník: ${customerName}`, "sent");
+        addMessage(`Nový zákazník sa volá ${customerName}`, "sent");
         reportData.customerName = customerName;
         askForMeetingType(); // Call the function to handle meeting type selection
       }
@@ -722,7 +712,7 @@ const handleManageValues = () => {
     // Create meeting type buttons
     meetingTypes.forEach(meetingType => {
       const button = createButton(meetingType, () => {
-        addMessage(`Bol to druh stretnutia: ${meetingType}`, "sent");
+        addMessage(`Bol to druh stretnutia ${meetingType}`, "sent");
         reportData.meetingType = meetingType;
         handleMeetingTypeSelection(meetingType); // Handle the specific meeting type
       }, "meeting-type-button");
@@ -734,29 +724,29 @@ const handleManageValues = () => {
     // Clear existing content
     messageContainer.innerHTML = "";
     if (meetingType === "Meeting") {
-      addMessage("Bol meeting online alebo offline?", "received");
-      const onlineButton = createButton("Online meeting", () => {
-        addMessage("Bol to online meeting", "sent");
-        reportData.meetingDetail = "Online meeting";
+      addMessage("Bolo to stretnutie online alebo osobne?", "received");
+      const onlineButton = createButton("Online stretnutie", () => {
+        addMessage("Bolo to online stretnutie", "sent");
+        reportData.meetingDetail = "Online stretnutie";
         askForCarBrand();
       }, "meeting-option-button");
-      const offlineButton = createButton("Offline meeting", () => {
-        addMessage("Bol to offline meeting", "sent");
-        reportData.meetingDetail = "Offline meeting";
+      const offlineButton = createButton("Osobné stretnutie", () => {
+        addMessage("Bolo to osobné stretnutie", "sent");
+        reportData.meetingDetail = "Osobné stretnutie";
         askForCarBrand();
       }, "meeting-option-button");
       messageContainer.appendChild(onlineButton);
       messageContainer.appendChild(offlineButton);
     } else if (meetingType === "Order") {
-      addMessage("V akom obchode bolo auto objednané?", "received");
-      const presovButton = createButton("Prešov", () => {
-        addMessage("Auto bolo objendané v Prešove", "sent");
-        reportData.orderLocation = "Prešov";
+      addMessage("V akej predajni bolo auto objednané?", "received");
+      const presovButton = createButton("V predajni PK Auto Prešov", () => {
+        addMessage("Auto bolo objednané v predajni PK Auto Prešov", "sent");
+        reportData.orderLocation = "Predajňa PK Auto Prešov";
         askForCarBrand();
       }, "order-option-button");
-      const popradButton = createButton("Poprad", () => {
-        addMessage("Auto bolo objendané v Poprade", "sent");
-        reportData.orderLocation = "Poprad";
+      const popradButton = createButton("Sklad", () => {
+        addMessage("Auto bolo objednané v sklade", "sent");
+        reportData.orderLocation = "Sklad";
         askForCarBrand();
       }, "order-option-button");
       messageContainer.appendChild(presovButton);
@@ -813,7 +803,7 @@ const handleManageValues = () => {
 
     models.forEach((model, index) => {
         const button = createButton(model, () => {
-            addMessage(`Vybraný model: ${model}`, "sent");
+            addMessage(`Klient mal záujem o ${model}`, "sent");
             reportData.carModel = model;
             finalizeReport();
         }, "car-model-button");
@@ -885,8 +875,12 @@ const handleManageValues = () => {
                   addMessage(data.message, "received");
 
                   // Check if the level was increased and notify the user
-                  if (data.new_level) {
-                      addMessage(`Gratulujem! Tvoj level bol zvýšený na ${data.new_level}`, "received");
+                  const currentLevel = parseInt(localStorage.getItem('userLevel'), 10) || 1;
+                  const newLevel = data.new_level;
+
+                  if (newLevel && newLevel > currentLevel) {
+                      localStorage.setItem('userLevel', newLevel); // Update the stored level
+                      addMessage(`Gratulujem! Tvoj level bol zvýšený na ${newLevel}`, "received");
                   }
 
                   // Show the two new buttons only after the report is successfully submitted
@@ -903,6 +897,7 @@ const handleManageValues = () => {
           addMessage("Error: " + error.message, "received");
       }
   };
+
 
   
   const cancelReport = () => {
@@ -1105,10 +1100,10 @@ const handleManageValues = () => {
                       addMessage(notification, "received");
                   });
               } else {
-                  addMessage("Niesú nahrané žiadné nové upozornenia", "received");
+                  addMessage("Nemáš žiadné nové upozornenia.", "received");
               }
           } else {
-              addMessage(`Error fetching notifications: ${data.error}`, "received");
+              addMessage(`Problém s načítaním upozornení: ${data.error}`, "received");
           }
       } catch (error) {
           addMessage(`Problém s načítaním upozornení: ${error.message}`, "received");

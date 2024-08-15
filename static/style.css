@@ -245,7 +245,7 @@ button {
    color: var(--user-text-color, black);
    position: relative;
    flex: 1;
-   margin-bottom: 15px;
+   margin-bottom: 20px;
 }
 .message p{
     font-size: 2.3rem;
@@ -757,4 +757,26 @@ button:hover {
 
 .chat-messages {
   padding-bottom: 50px; /* To make space for input elements */
+    padding-top: 70px; /* To make space for input elements */
+}
+/* Define a keyframe animation for fading in */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px); /* Optional: Slightly move from bottom */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply the animation to the message container */
+.message-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Optional: Add the animation to the loading message as well */
+.message.loading {
+  animation: fadeIn 0.5s ease-out;
 }

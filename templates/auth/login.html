@@ -10,7 +10,7 @@
         <form id="login-form" action="{{ url_for('auth.auth_login') }}" method="post">
             <div class="pin-inputs">
                 {% for i in range(1, 6) %}
-                <input type="text" maxlength="1" class="pin-input" id="pin{{ i }}" name="pin{{ i }}" required>
+                <input type="number" maxlength="1" class="pin-input" id="pin{{ i }}" name="pin{{ i }}" required>
                 {% endfor %}
             </div>
             <button type="submit" id="login-button">Pokračovať</button>

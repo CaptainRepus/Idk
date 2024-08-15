@@ -15,6 +15,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cancelDeleteButton = document.getElementById('cancelDeleteButton');
     const tabs = document.querySelectorAll('.tab');
     let userToDelete = null;
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
+    loadingSpinner.style.display = 'block';  // Show the spinner
 
     // Close the modals
     addCarSpan.onclick = function() {
@@ -85,6 +88,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!data || Object.keys(data).length === 0) {
             throw new Error("No data found");
         }
+        // Hide the spinner once the data is loaded
+        loadingSpinner.style.display = 'none';
 
         // Process users
         data.users.forEach(user => {
@@ -103,7 +108,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             userData.classList.add('user-data');
             userData.innerHTML = `
                 <p><strong>Role:</strong> ${user.role}</p>
-                <p><strong>Level:</strong> ${user.level}</p>
                 <p><strong>PIN:</strong> ${user.key}</p>
             `;
             userDiv.appendChild(userData);

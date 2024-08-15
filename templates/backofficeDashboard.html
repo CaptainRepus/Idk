@@ -258,11 +258,36 @@
             padding-inline-start: 1rem;
             margin-bottom: 1rem;
         }
+        .loading-spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            display: none;
+        }
+
+        .spinner {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
     </style>
 </head>
 <body>
     <h1>Administrácia</h1>
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+    </div>
 
     <div class="tab-container">
         <div class="tab tab-active" data-tab="user">Pridať použivateľa</div>
@@ -306,7 +331,7 @@
             <input type="number" id="level" name="level" required value="1">
             <br>
             <label for="pin">PIN kód:</label>
-            <input type="text" id="pin" name="pin" required>
+            <input type="text" id="pin" name="pin" maxlength="5" required>
             <br>
             <input type="hidden" id="userKey" name="userKey">
             <button type="submit">Uložiť</button>
