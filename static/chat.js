@@ -289,7 +289,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const displayReportsAsMessages = (reports) => {
       reports.forEach(report => {
           const reportMessage = `
-          <strong>Predajca:</strong> ${report.author}<br>
           <strong>Meno klienta:</strong> ${report.customerName}<br>
           <strong>Typ stretnutia:</strong> ${report.meetingType}<br>
           ${report.meetingDetail ? `<strong>Detail:</strong> ${report.meetingDetail}<br>` : ""}

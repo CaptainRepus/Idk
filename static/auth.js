@@ -2,6 +2,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const pinInputs = document.querySelectorAll(".pin-input");
     const loginForm = document.getElementById('login-form');
 
+    // Check if there's a saved PIN in local storage
+    const savedPin = localStorage.getItem('userPin');
+    if (savedPin && pinInputs.length) {
+        // Fill the inputs with the saved PIN and submit the form
+        savedPin.split('').forEach((digit, index) => {
+            if (pinInputs[index]) {
+                pinInputs[index].value = digit;
+            }
+        });
+
+        // Automatically submit the form if all inputs are filled
+        loginForm.submit();
+    }
+
     if (pinInputs.length && loginForm) {
         pinInputs.forEach((input, index) => {
             input.addEventListener("input", (e) => {
@@ -28,6 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const pin = Array.from(pinInputs).map(input => input.value).join('');
+
+            // Save the PIN in local storage
+            localStorage.setItem('userPin', pin);
+
             fetch('{{ url_for("auth.auth_login") }}', {
                 method: 'POST',
                 headers: {
@@ -45,6 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 if (data.includes('Nesprávny PIN')) {
                     alert('Nesprávny PIN');
+                    // Clear the saved PIN in case of an incorrect PIN
+                    localStorage.removeItem('userPin');
                 } else if (data.includes('/chat/index')) {
                     window.location.href = data;
                 }
