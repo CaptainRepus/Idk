@@ -300,23 +300,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   };
 
-  const handleSearchExistingCustomers = async (query) => {
-      try {
-          const response = await fetch("/chat/get_reports");
-          const data = await response.json();
-
-          if (data.reports) {
-              const allCustomers = [...new Set(data.reports.map(report => report.customerName))];
-              const filteredCustomers = allCustomers.filter(name => name && name.toLowerCase().includes(query.toLowerCase()));
-
-              displayCustomerButtons(filteredCustomers);
-          } else {
-              addMessage("No existing customers found.", "received");
-          }
-      } catch (error) {
-          addMessage(`Error fetching customers: ${error.message}`, "received");
-      }
-  };
 
   const displayCustomerButtons = (customerNames) => {
       const messageContainer = document.querySelector(".message-input-container");
@@ -347,37 +330,56 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const handleSearchReports = async (query, type) => {
-      const loadingMessageElem = showLoadingMessage(); // Show loading message
+    const loadingMessageElem = showLoadingMessage(); // Show loading message
 
-      try {
-          const response = await fetch("/chat/get_reports");
-          const data = await response.json();
+    try {
+        const response = await fetch("/chat/get_reports");
+        const data = await response.json();
 
-          hideLoadingMessage(loadingMessageElem); // Hide loading message after fetching
+        hideLoadingMessage(loadingMessageElem); // Hide loading message after fetching
 
-          if (data.reports) {
-              const filteredReports = data.reports.filter(report => {
-                  const hasCustomerName = report.customerName !== undefined;
-                  const matchesClient = query ? (hasCustomerName && report.customerName.includes(query)) : true;
-                  const matchesType = type ? report.meetingType === type : true;
-                  const matchesAuthor = report.author === username; // Filter by current user's name
-                  return matchesClient && matchesType && matchesAuthor;
-              });
+        if (data.reports) {
+            const filteredReports = data.reports.filter(report => {
+                const hasCustomerName = report.customerName !== undefined;
+                const matchesClient = query ? (hasCustomerName && report.customerName.toLowerCase().includes(query.toLowerCase())) : true;
+                const matchesType = type ? report.meetingType === type : true;
+                const matchesAuthor = report.author === username; // Filter by current user's name
+                return matchesClient && matchesType && matchesAuthor;
+            });
 
-              if (filteredReports.length > 0) {
-                  displayReportsAsMessages(filteredReports);
+            if (filteredReports.length > 0) {
+                displayReportsAsMessages(filteredReports);
                 addMessage("Toto je tvoj výsledok vyhľadávania.", "received");
-              } else {
-                  addMessage("Neboli nájdené žiadne reporty", "received");
-              }
-          } else {
-              addMessage("Neboli nájdené žiadne reporty", "received");
-          }
-      } catch (error) {
-          hideLoadingMessage(loadingMessageElem); // Hide loading message if error occurs
-          addMessage(`Problém s vyhľadavaním: ${error.message}`, "received");
-      }
+            } else {
+                addMessage("Neboli nájdené žiadne reporty. Skontrolujte, či ste napísali meno klienta správne.", "received");
+            }
+        } else {
+            addMessage("Neboli nájdené žiadne reporty", "received");
+        }
+    } catch (error) {
+        hideLoadingMessage(loadingMessageElem); // Hide loading message if error occurs
+        addMessage(`Problém s vyhľadavaním: ${error.message}`, "received");
+    }
   };
+
+  const handleSearchExistingCustomers = async (query) => {
+    try {
+        const response = await fetch("/chat/get_reports");
+        const data = await response.json();
+
+        if (data.reports) {
+            const allCustomers = [...new Set(data.reports.map(report => report.customerName))];
+            const filteredCustomers = allCustomers.filter(name => name && name.toLowerCase().includes(query.toLowerCase()));
+
+            displayCustomerButtons(filteredCustomers);
+        } else {
+            addMessage("No existing customers found.", "received");
+        }
+    } catch (error) {
+        addMessage(`Error fetching customers: ${error.message}`, "received");
+    }
+  };
+
 
 
   const handleActiveReports = () => {

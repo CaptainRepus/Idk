@@ -103,7 +103,7 @@ def get_reports():
         customer_reports = replit_db[key]
         for report in customer_reports:
             all_reports.append(observed_to_dict(report))  # Convert to regular dict
-    return jsonify({"reports": all_reports})
+    return jsonify({"reports": all_reports[:28]})
 
 
 @chat_blueprint.route('/index')
