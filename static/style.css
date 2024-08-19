@@ -780,3 +780,15 @@ button:hover {
 .message.loading {
   animation: fadeIn 0.5s ease-out;
 }
+/* Initially hide the modal */
+#settings-modal {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* When the modal is open */
+#settings-modal.open {
+  opacity: 1;
+  visibility: visible;
+}

@@ -71,6 +71,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const settingsModal = document.getElementById("settings-modal");
   const closeSettingsButton = document.getElementById("close-settings-button");
   const dropdownButton = document.getElementById("dropdown-button");
+  dropdownButton.addEventListener('click', () => {
+    settingsModal.classList.add('open'); // Add the 'open' class to show the modal
+  });
+
+  closeSettingsButton.addEventListener('click', () => {
+    settingsModal.classList.remove('open'); // Remove the 'open' class to hide the modal
+  });
   const steps = [
     { type: "welcome", content: `Vitaj späť, ${username}! Klikni "Ďalej" pre tvoj motivačný impulz na dnešok:` },
     { type: "api", content: "Motivácia dňa v slovenčine" },
@@ -149,14 +156,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const showLoadingMessage = () => {
-    const loadingMessageElem = addMessage('<span>AI generuje odpoveď<span class="loading-dots"></span></span>', "received"); // Make it look like a received message
-    const themeClass = localStorage.getItem('themeClass') || "theme-orange";
-    loadingMessageElem.classList.add(themeClass);
-    loadingMessageElem.classList.add('loading');
 
-    return loadingMessageElem;
+  
+  const showLoadingMessage = () => {
+      const loadingMessageElem = addMessage('<span>Načítava<span class="loading-dots"></span></span>', "received"); // Make it look like a received message
+      if (loadingMessageElem) {
+          const themeClass = localStorage.getItem('themeClass') || "theme-orange";
+          loadingMessageElem.classList.add(themeClass);
+          loadingMessageElem.classList.add('loading');
+      } else {
+          console.error('Loading message element could not be created');
+      }
+      return loadingMessageElem;
   };
+
 
   const hideLoadingMessage = (loadingMessageElem) => {
     if (loadingMessageElem) {
@@ -252,20 +265,26 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const fetchReports = async () => {
-    try {
-      const response = await fetch(`/chat/get_reports`);
-      const data = await response.json();
+      const loadingMessageElem = showLoadingMessage(); // Show loading message
 
-      if (data.reports) {
-        const userReports = data.reports.filter(report => report.author === username);
-        displayReportsAsMessages(userReports);
-      } else {
-        addMessage("No reports found.", "received");
+      try {
+          const response = await fetch(`/chat/get_reports`);
+          const data = await response.json();
+
+          hideLoadingMessage(loadingMessageElem); // Hide loading message after fetching
+
+          if (data.reports) {
+              const userReports = data.reports.filter(report => report.author === username);
+              displayReportsAsMessages(userReports);
+          } else {
+              addMessage("No reports found.", "received");
+          }
+      } catch (error) {
+          hideLoadingMessage(loadingMessageElem); // Hide loading message if error occurs
+          addMessage("Error fetching reports: " + error.message, "received");
       }
-    } catch (error) {
-      addMessage("Error fetching reports: " + error.message, "received");
-    }
   };
+
 
   const displayReportsAsMessages = (reports) => {
       reports.forEach(report => {
@@ -328,9 +347,13 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const handleSearchReports = async (query, type) => {
+      const loadingMessageElem = showLoadingMessage(); // Show loading message
+
       try {
           const response = await fetch("/chat/get_reports");
           const data = await response.json();
+
+          hideLoadingMessage(loadingMessageElem); // Hide loading message after fetching
 
           if (data.reports) {
               const filteredReports = data.reports.filter(report => {
@@ -343,6 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
               if (filteredReports.length > 0) {
                   displayReportsAsMessages(filteredReports);
+                addMessage("Toto je tvoj výsledok vyhľadávania.", "received");
               } else {
                   addMessage("Neboli nájdené žiadne reporty", "received");
               }
@@ -350,9 +374,11 @@ document.addEventListener("DOMContentLoaded", () => {
               addMessage("Neboli nájdené žiadne reporty", "received");
           }
       } catch (error) {
+          hideLoadingMessage(loadingMessageElem); // Hide loading message if error occurs
           addMessage(`Problém s vyhľadavaním: ${error.message}`, "received");
       }
   };
+
 
   const handleActiveReports = () => {
       clearMessageContainer();
@@ -1234,3 +1260,4 @@ const handleManageValues = () => {
     }
   };
 });
+

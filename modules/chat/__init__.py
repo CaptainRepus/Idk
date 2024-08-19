@@ -248,3 +248,25 @@ def get_user_level():
     logging.error("User not logged in or data not found")
     return jsonify({"error": "User not logged in or data not found"}), 400
 
+@chat_blueprint.route('/get_recent_reports', methods=['GET'])
+def get_recent_reports():
+    try:
+        username = session.get('username')
+        if not username:
+            return jsonify({"error": "User not logged in"}), 401
+
+        # Get all reports for the user
+        all_reports = []
+        for key in replit_db.keys():
+            customer_reports = replit_db[key]
+            for report in customer_reports:
+                if report.get('author') == username:
+                    all_reports.append(observed_to_dict(report))
+
+        # Sort by the creation date and limit to the last 10 reports
+        all_reports = sorted(all_reports, key=lambda r: r['created_at'], reverse=True)[:10]
+
+        return jsonify({"reports": all_reports}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
