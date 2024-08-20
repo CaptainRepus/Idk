@@ -54,7 +54,7 @@
             display: block;
             margin-bottom: 15rem;
         }
-        .user-container, .car-container {
+        .user-container, .car-container, .notification-container {
             background-color: #ffffff;
             padding: 15px;
             border-radius: 8px;
@@ -66,12 +66,18 @@
             height: 400px;
             margin-bottom: 1rem;
         }
-        .user-name, .car-name {
+        .user-name, .car-name, .notification-title {
             font-size: 3rem;
             margin-bottom: 10px;
             color: #555;
             font-weight: 700;
             text-align: center;
+        }
+        .notification-content{
+            font-size: 2rem;
+        }
+        .notification-buttons{
+            width: 100%;
         }
         .user-data, .car-data {
             font-size: 16px;
@@ -100,6 +106,9 @@
         .remove-button {
             background-color: #f44336;
             color: white;
+            margin-top: 3rem;
+            width: 100%;
+            font-size: 2rem;
         }
         .settings-button {
             position: fixed;
@@ -204,7 +213,7 @@
             font-size: 55px;
         }
         /* Add Button */
-        #addUserButton, #addCarButton {
+        #addUserButton, #addCarButton, #addNotificationButton {
             position: fixed;
             bottom: 130px;
             background-color: #4CAF50;
@@ -247,7 +256,7 @@
         }
 
         /* Adjust buttons to fit inside the container */
-        #addUserButton, #addCarButton, #backButton {
+        #addUserButton, #addCarButton, #backButton, #addNotificationButton {
             margin: 5px 0;
             width: 100%;
         }
@@ -280,7 +289,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
     </style>
 </head>
 <body>
@@ -290,8 +298,9 @@
     </div>
 
     <div class="tab-container">
-        <div class="tab tab-active" data-tab="user">Pridať použivateľa</div>
-        <div class="tab" data-tab="car">Pridať auto</div>
+        <div class="tab tab-active" data-tab="user">Použivatelia</div>
+        <div class="tab" data-tab="car">Autá</div>
+         <div class="tab" data-tab="notification">Upozornenia</div>
     </div>
     <div id="tabContentContainer">
         <div id="user-container" class="tab-content tab-content-active">
@@ -302,11 +311,16 @@
         <div id="car-container" class="tab-content">
             <input type="text" id="searchInputCars" class="search" placeholder="Vyhľadaj auto...">
             <!-- Car related content will go here -->
+                  </div>
+        <div id="notification-container" class="tab-content">
+            <input type="text" id="searchInputNotifications" class="search" placeholder="Vyhľadaj upozornenie...">
+            <!-- Notification related content will go here -->
         </div>
     </div>
     <div class="button-container">
         <button id="addUserButton">Pridať</button>
         <button id="addCarButton" style="display: none;">Pridať</button>
+        <button id="addNotificationButton" style="display: none;">Pridať</button>
         <button id="backButton">Vrátiť sa späť</button>
     </div>
 
@@ -350,6 +364,23 @@
                 <br>
                 <label for="carModel">Model auta:</label>
                 <input type="text" id="carModel" name="carModel" required>
+                <br>
+                <button type="submit">Uložiť</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- The Add Notification Modal -->
+    <div id="addNotificationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Pridať upozornenie</h2>
+            <form id="addNotificationForm">
+                <label for="notificationTitle">Titulok:</label>
+                <input type="text" id="notificationTitle" name="notificationTitle" required>
+                <br>
+                <label for="notificationContent">Obsah:</label>
+                <textarea id="notificationContent" name="notificationContent" required></textarea>
                 <br>
                 <button type="submit">Uložiť</button>
             </form>

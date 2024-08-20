@@ -13,8 +13,13 @@ def auth_login():
         if user_data and check_password_hash(user_data['pin'], pin):
             session['username'] = user_data['fullname']
             session['level'] = user_data.get('level', 1)
-            session['role'] = user_data.get('role', 'sales')
-            return redirect(url_for('chat.index'))
+            session['role'] = user_data.get('role')  # Directly assign the role from user_data
+
+            # Redirect based on role
+            if session['role'] == 'sales':
+                return redirect(url_for('chat.index'))
+            else:
+                return redirect(url_for('backoffice.dashboard'))
 
     if request.method == 'POST':
         pin = ''.join(request.form[f'pin{i}'] for i in range(1, 6))
@@ -25,8 +30,14 @@ def auth_login():
             session['user_pin'] = pin
             session['username'] = user_data['fullname']
             session['level'] = user_data.get('level', 1)
-            session['role'] = user_data.get('role', 'sales')
-            return redirect(url_for('chat.index'))
+            session['role'] = user_data.get('role')  # Directly assign the role from user_data
+
+            # Redirect based on role
+            if session['role'] == 'sales':
+                return redirect(url_for('chat.index'))
+            else:
+                return redirect(url_for('backoffice.dashboard'))
+
         return 'Nesprávny PIN'
 
     return render_template('auth/login.html')

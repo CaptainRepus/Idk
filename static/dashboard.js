@@ -1,3 +1,4 @@
+const notificationContainer = document.getElementById('notification-container');
 document.addEventListener("DOMContentLoaded", async () => {
     const userContainer = document.getElementById('user-container');
     const carContainer = document.getElementById('car-container');
@@ -16,6 +17,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const tabs = document.querySelectorAll('.tab');
     let userToDelete = null;
     const loadingSpinner = document.getElementById('loadingSpinner');
+    const addNotificationModal = document.getElementById('addNotificationModal');
+    const addNotificationSpan = addNotificationModal.getElementsByClassName('close')[0];
+    const addNotificationButton = document.getElementById('addNotificationButton');
+    const notificationContainer = document.getElementById('notification-container'); // Ensure this line is present and defined here
 
     loadingSpinner.style.display = 'block';  // Show the spinner
 
@@ -29,6 +34,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     editSpan.onclick = function() {
         editModal.style.display = 'none';
     }
+    // Close the Add Notification Modal
+    addNotificationSpan.onclick = function() {
+        addNotificationModal.style.display = 'none';
+    }
     window.onclick = function(event) {
         if (event.target == addCarModal) {
             addCarModal.style.display = 'none';
@@ -41,7 +50,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Handle tab switching
     tabs.forEach(tab => {
         tab.onclick = function() {
             document.querySelector('.tab-active').classList.remove('tab-active');
@@ -59,12 +67,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (tabName === 'user') {
                 addUserButton.style.display = 'block';
                 addCarButton.style.display = 'none';
-            } else {
+                addNotificationButton.style.display = 'none';
+            } else if (tabName === 'car') {
                 addUserButton.style.display = 'none';
                 addCarButton.style.display = 'block';
+                addNotificationButton.style.display = 'none';
+            } else if (tabName === 'notification') {
+                addUserButton.style.display = 'none';
+                addCarButton.style.display = 'none';
+                addNotificationButton.style.display = 'block';
             }
         }
     });
+
 
     // Open the modal for adding a new user
     addUserButton.onclick = function() {
@@ -74,6 +89,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Open the modal for adding a new car
     addCarButton.onclick = function() {
         openAddCarModal();
+    }
+    // Open the modal for adding a new notification
+    addNotificationButton.onclick = function() {
+        openAddNotificationModal();
     }
 
     // Navigate back to home page
@@ -130,6 +149,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             userContainer.appendChild(userDiv);
         });
 
+        
         // Process cars
         data.cars.forEach(car => {
             console.log('Processing car:', car);  // Debug car processing
@@ -167,6 +187,42 @@ document.addEventListener("DOMContentLoaded", async () => {
             carDiv.appendChild(carButtons);
 
             carContainer.appendChild(carDiv);
+        });
+        
+        // Process notifications
+        data.notifications.forEach(notification => {
+            console.log('Processing notification:', notification);
+
+            const notificationDiv = document.createElement('div');
+            notificationDiv.classList.add('notification-container');
+            notificationDiv.dataset.key = notification.key;
+
+            const notificationTitle = document.createElement('div');
+            notificationTitle.classList.add('notification-title');
+            notificationTitle.textContent = notification.title;
+            notificationDiv.appendChild(notificationTitle);
+
+            const notificationContent = document.createElement('div');
+            notificationContent.classList.add('notification-content');
+            notificationContent.textContent = notification.content;
+            notificationDiv.appendChild(notificationContent);
+
+            // Create buttons container
+            const notificationButtons = document.createElement('div');
+            notificationButtons.classList.add('notification-buttons');
+
+            // Create remove button
+            const removeButton = document.createElement('button');
+            removeButton.classList.add('remove-button');
+            removeButton.textContent = 'Remove';
+            removeButton.addEventListener('click', () => {
+                openConfirmModal(notification);
+            });
+
+            notificationButtons.appendChild(removeButton);
+            notificationDiv.appendChild(notificationButtons);
+
+            notificationContainer.appendChild(notificationDiv);
         });
 
         console.log('Finished processing all data.');  // Debug final step
@@ -323,6 +379,60 @@ document.getElementById('editForm').addEventListener('submit', async (event) => 
         console.error('Error:', error);
     }
 });
+
+// Open Add Notification Modal
+function openAddNotificationModal() {
+    addNotificationModal.style.display = 'block';
+}
+
+// Search functionality for notifications
+const searchInputNotifications = document.getElementById('searchInputNotifications');
+searchInputNotifications.addEventListener('input', function() {
+    const filter = searchInputNotifications.value.toLowerCase();
+    const notificationDivs = notificationContainer.getElementsByClassName('notification-container');
+    Array.from(notificationDivs).forEach(notificationDiv => {
+        const notificationTitle = notificationDiv.querySelector('.notification-title').textContent;
+        if (notificationTitle.toLowerCase().includes(filter)) {
+            notificationDiv.style.display = '';
+        } else {
+            notificationDiv.style.display = 'none';
+        }
+    });
+});
+
+
+
+// Handle form submission for adding notification
+document.getElementById('addNotificationForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const title = document.getElementById('notificationTitle').value;
+    const content = document.getElementById('notificationContent').value;
+
+    const url = '/backoffice/api/add_notification';
+    const method = 'POST';
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title, content }),
+        });
+        const result = await response.json();
+        if (response.ok) {
+            console.log('Notification added successfully:', result);
+            document.getElementById('addNotificationModal').style.display = 'none';
+            location.reload();  // Reload the page to reflect changes
+        } else {
+            console.error('Error adding notification:', result);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
 
 // Handle form submission for adding car
 document.getElementById('addCarForm').addEventListener('submit', async (event) => {
