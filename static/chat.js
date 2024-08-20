@@ -382,47 +382,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   const handleActiveReports = () => {
-      clearMessageContainer();
-      addMessage("Predtým ako budeš vidieť svoje aktívne reporty, tak vyhľadaj aké chceš vidieť.(Prázdné políčko ukáže všetky reporty)", "received");
+    addMessage("Chcem pozrieť aké sú aktívne reporty.", "sent");
+    clearMessageContainer(); // Clear previous messages or elements
+    addMessage("Predtým ako budeš vidieť svoje aktívne reporty, tak vyhľadaj aké chceš vidieť.(Prázdné políčko ukáže všetky reporty)", "received");
 
-      const messageContainer = document.querySelector(".message-input-container");
+    const messageContainer = document.querySelector(".message-input-container");
 
-      // Create search input
-      const searchInput = document.createElement("input");
-      searchInput.type = "text";
-      searchInput.placeholder = "Vyhľadať meno klienta...";
-      searchInput.classList.add("search-input");
+    // Create search input
+    const searchInput = document.createElement("input");
+    searchInput.type = "text";
+    searchInput.placeholder = "Vyhľadať meno klienta...";
+    searchInput.classList.add("search-input");
 
-      // Create type selector
-      const typeSelect = document.createElement("select");
-      const meetingTypes = ["", "Meeting", "Test Drive", "Order", "Vehicle Handover"];
-      meetingTypes.forEach(type => {
-          const option = document.createElement("option");
-          option.value = type;
-          option.text = type ? type : "Vybrať typ stretnutia";
-          typeSelect.appendChild(option);
-      });
-      typeSelect.classList.add("type-select");
+    // Create type selector
+    const typeSelect = document.createElement("select");
+    const meetingTypes = ["", "Meeting", "Test Drive", "Order", "Vehicle Handover"];
+    meetingTypes.forEach(type => {
+      const option = document.createElement("option");
+      option.value = type;
+      option.text = type ? type : "Vybrať typ stretnutia";
+      typeSelect.appendChild(option);
+    });
+    typeSelect.classList.add("type-select");
 
-      // Create search button
-      const searchButton = createButton("Vyhľadávať", () => {
-          const query = searchInput.value.trim();
-          const type = typeSelect.value.trim();
-          handleSearchReports(query, type);
-      });
-      searchButton.classList.add('visible');
+    // Create search button
+    const searchButton = createButton("Vyhľadávať", () => {
+      const query = searchInput.value.trim();
+      const type = typeSelect.value.trim();
+      handleSearchReports(query, type);
+    });
+    searchButton.classList.add('visible');
 
-      // Create the cancel button
-      const cancelButton = createButton("Zrušiť", () => {
-          window.location.href = "/"; // Redirect to the root route
-      }, "action-button cancel-button visible");
+    // Create the cancel button
+    const cancelButton = createButton("Zrušiť", () => {
+      window.location.href = "/"; // Redirect to the root route
+    }, "action-button cancel-button visible");
 
-      // Append all elements to the message container
-      messageContainer.appendChild(searchInput);
-      messageContainer.appendChild(typeSelect);
-      messageContainer.appendChild(searchButton);
-      messageContainer.appendChild(cancelButton);
+    // Append all elements to the message container
+    messageContainer.appendChild(searchInput);
+    messageContainer.appendChild(typeSelect);
+    messageContainer.appendChild(searchButton);
+    messageContainer.appendChild(cancelButton);
   };
+
+  
 
   const handleAddNotification = () => {
     addMessage("Pridať oznámenie handling is not implemented yet.", "received");
