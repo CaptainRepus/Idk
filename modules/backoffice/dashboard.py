@@ -140,3 +140,25 @@ def add_notification():
     replit_db['notifications'] = notifications
 
     return jsonify({"message": "Notification added successfully"}), 200
+
+@bp.route('/api/delete_notification', methods=['DELETE'])
+def delete_notification():
+    notification_title = request.json.get('title')
+
+    if not notification_title:
+        return jsonify({"error": "Missing notification title"}), 400
+
+    try:
+        # Fetch the current notifications list
+        notifications = replit_db.get('notifications', [])
+
+        # Filter out the notification with the matching title
+        updated_notifications = [n for n in notifications if n['title'] != notification_title]
+
+        # Update the database with the new list
+        replit_db['notifications'] = updated_notifications
+
+        return jsonify({"message": "Notification deleted successfully"}), 200
+    except Exception as e:
+        logging.error(f"Error deleting notification: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500

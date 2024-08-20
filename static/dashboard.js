@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const notificationDiv = document.createElement('div');
             notificationDiv.classList.add('notification-container');
-            notificationDiv.dataset.key = notification.key;
+            notificationDiv.dataset.key = notification.title; // Use title as the key
 
             const notificationTitle = document.createElement('div');
             notificationTitle.classList.add('notification-title');
@@ -224,6 +224,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             notificationContainer.appendChild(notificationDiv);
         });
+
 
         console.log('Finished processing all data.');  // Debug final step
     } catch (error) {
@@ -273,14 +274,25 @@ function openConfirmModal(item) {
 document.getElementById('confirmDeleteButton').addEventListener('click', async () => {
     if (userToDelete) {
         if (userToDelete.role) {
+            // User deletion
             await removeUser(userToDelete.key);
-        } else {
+        } else if (userToDelete.brand) {
+            // Car deletion
             await removeCar(userToDelete.key);
+        } else if (userToDelete.title) {
+            // Notification deletion
+            await removeNotification(userToDelete.title);
         }
+
+        // Close the confirm modal
         document.getElementById('confirmModal').style.display = 'none';
-        document.querySelector(`div[data-key="${userToDelete.key}"]`).remove();  // Remove user from DOM
+
+        // Remove the corresponding element from the DOM
+        document.querySelector(`div[data-key="${userToDelete.key}"]`).remove();
+        location.reload();
     }
 });
+
 
 document.getElementById('cancelDeleteButton').addEventListener('click', () => {
     document.getElementById('confirmModal').style.display = 'none';
@@ -464,3 +476,25 @@ document.getElementById('addCarForm').addEventListener('submit', async (event) =
         console.error('Error:', error);
     }
 });
+
+// Function to remove a notification
+async function removeNotification(notificationTitle) {
+    try {
+        const response = await fetch('/backoffice/api/delete_notification', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title: notificationTitle }),
+        });
+        const result = await response.json();
+        if (response.ok) {
+            console.log('Notification deleted successfully:', result);
+        } else {
+            console.error('Error deleting notification:', result);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
