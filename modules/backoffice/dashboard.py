@@ -36,8 +36,9 @@ def get_data():
         if key.isdigit():
             if isinstance(serializable_data, dict) and 'role' in serializable_data:
                 users_with_role.append({"key": key, **serializable_data})
-        elif key.startswith("notification_"):
-            notifications.append({"key": key, **(serializable_data if isinstance(serializable_data, dict) else {})})
+        elif key == "notifications":
+            if isinstance(serializable_data, list):
+                notifications.extend(serializable_data)
         else:
             if isinstance(serializable_data, dict) and 'brand' in serializable_data and 'model' in serializable_data:
                 cars.append({"key": key, **serializable_data})
@@ -47,6 +48,7 @@ def get_data():
     print(f"Notifications: {notifications}")  # Debugging
 
     return jsonify({"users": users_with_role, "cars": cars, "notifications": notifications})
+
 
 
 @bp.route('/api/delete_user', methods=['POST'])
@@ -116,6 +118,7 @@ def get_car_models(brand):
             car_models.append(car_data['model'])
     return jsonify({"models": car_models}), 200
 
+# dashboard.py
 @bp.route('/api/add_notification', methods=['POST'])
 def add_notification():
     title = request.json.get('title')
@@ -124,9 +127,16 @@ def add_notification():
     if not (title and content):
         return jsonify({"error": "Missing required fields"}), 400
 
-    notification_key = f"notification_{title.replace(' ', '_')}"
-    replit_db[notification_key] = {
+    # Fetch existing notifications, or start with an empty list
+    notifications = replit_db.get('notifications', [])
+
+    # Append the new notification
+    notifications.append({
         'title': title,
         'content': content
-    }
+    })
+
+    # Save the updated list back to the database
+    replit_db['notifications'] = notifications
+
     return jsonify({"message": "Notification added successfully"}), 200

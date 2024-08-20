@@ -5,10 +5,19 @@ from replit import db as replit_db
 import random
 from datetime import datetime, date
 import logging
+from collections.abc import Mapping, Iterable
 
 chat_blueprint = Blueprint('chat', __name__)
 
 openai.api_key = "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"
+
+def convert_to_standard(obj):
+    if isinstance(obj, Mapping):  # Check if obj is a dictionary-like object
+        return {key: convert_to_standard(value) for key, value in obj.items()}
+    elif isinstance(obj, Iterable) and not isinstance(obj, (str, bytes)):  # Check if obj is a list-like object
+        return [convert_to_standard(item) for item in obj]
+    else:
+        return obj  # Return the object as is if it's neither a dict nor a list
 
 def get_random_fullname():
     user_keys = list(replit_db.keys())
@@ -221,16 +230,20 @@ def get_motivation():
         return jsonify({"error": str(e)}), 500
 
 
+
 @chat_blueprint.route('/get_notifications', methods=['GET'])
 def get_notifications():
     try:
         notifications = replit_db.get('notifications', [])
-        # Convert ObservedList to a regular list
-        notifications = list(notifications)
-        return jsonify({"notifications": notifications})
+
+        # Convert ObservedList and ObservedDict to standard list and dict recursively
+        standard_notifications = convert_to_standard(notifications)
+
+        return jsonify({"notifications": standard_notifications})
     except Exception as e:
         logging.error(f"Error fetching notifications: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
+
 
 @chat_blueprint.route('/get_user_level', methods=['GET'])
 def get_user_level():

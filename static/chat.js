@@ -1124,8 +1124,11 @@ const handleManageValues = () => {
           if (response.ok) {
               if (data.notifications && data.notifications.length > 0) {
                   data.notifications.forEach(notification => {
-                      addMessage(notification, "received");
+                      const notificationMessage = `<strong>${notification.title}</strong>: ${notification.content}`;
+                      addMessage(notificationMessage, "received");
+                    
                   });
+                  addMessage("Toto sú tvoje nové notifikácie.", "received");
               } else {
                   addMessage("Nemáš žiadné nové upozornenia.", "received");
               }
@@ -1136,6 +1139,7 @@ const handleManageValues = () => {
           addMessage(`Problém s načítaním upozornení: ${error.message}`, "received");
       }
   };
+
 
   const clearCustomerButtons = () => {
       const customerButtons = document.querySelectorAll(".action-button.customer-button");
