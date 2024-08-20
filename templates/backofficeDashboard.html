@@ -330,34 +330,32 @@
 
 
     <!-- The Edit/Add User Modal -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Pridanie puživateľa</h2>
-            <form id="editForm">
-                <label for="fullname">Meno:</label>
-                <input type="text" id="fullname" name="fullname" required>
-                <br>
-                <label for="role">Rola:</label>
-                <select id="role" name="role" required>
-                    <option value="sales">sales</option>
-                    <option value="manager">manager</option>
-                    <option value="leader">leader</option>
-                </select>
-                <br>
-                <label for="pin">PIN kód:</label>
-                <div class="pin-inputs">
-                    <input id="pin1" class="pin-input" type="text" maxlength="1" required>
-                    <input id="pin2" class="pin-input" type="text" maxlength="1" required>
-                    <input id="pin3" class="pin-input" type="text" maxlength="1" required>
-                    <input id="pin4" class="pin-input" type="text" maxlength="1" required>
-                    <input id="pin5" class="pin-input" type="text" maxlength="1" required>
-                </div>
-                <input type="hidden" id="userKey" name="userKey">
-                <button type="submit">Uložiť</button>
-            </form>
-        </div>
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Pridanie puživateľa</h2>
+        <form id="editForm">
+            <label for="fullname">Meno:</label>
+            <input type="text" id="fullname" name="fullname" required>
+            <br>
+            <label for="role">Rola:</label>
+            <select id="role" name="role" required>
+                <option value="sales">sales</option>
+                <option value="manager">manager</option>
+                <option value="leader">leader</option>
+            </select>
+            <br>
+            <label for="level">Úroveň:</label>
+            <input type="number" id="level" name="level" required value="1">
+            <br>
+            <label for="pin">PIN kód:</label>
+            <input type="text" id="pin" name="pin" maxlength="5" required>
+            <br>
+            <input type="hidden" id="userKey" name="userKey">
+            <button type="submit">Uložiť</button>
+        </form>
     </div>
+</div>
 
     <!-- The Add Car Modal -->
     <div id="addCarModal" class="modal">

@@ -1120,6 +1120,7 @@ const handleManageValues = () => {
   };
 
   const handleNotifications = async () => {
+    addMessage("Mám nejaké nové upozornenia?", "sent");
       try {
           const response = await fetch("/chat/get_notifications");
           const data = await response.json();

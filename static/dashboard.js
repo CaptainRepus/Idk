@@ -81,12 +81,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
 
-        addUserButton.onclick = function() {
-            console.log('Add User Button clicked');
-            openEditModal({fullname: '', role: '', pin: ''});
-        };
-
-
+    // Open the modal for adding a new user
+    addUserButton.onclick = function() {
+        openEditModal({fullname: '', role: '', level: '', key: '', pin: ''});
+    }
 
     // Open the modal for adding a new car
     addCarButton.onclick = function() {
@@ -342,39 +340,13 @@ async function removeCar(carKey) {
 
 function openEditModal(user) {
     const editModal = document.getElementById('editModal');
-    console.log('Opening Edit Modal:', editModal);
-
-    const fullnameInput = document.getElementById('fullname');
-    const roleInput = document.getElementById('role');
-    const pinInputs = [
-        document.getElementById('pin1'),
-        document.getElementById('pin2'),
-        document.getElementById('pin3'),
-        document.getElementById('pin4'),
-        document.getElementById('pin5')
-    ];
-
-    console.log('Full Name Input:', fullnameInput);
-    console.log('Role Input:', roleInput);
-    console.log('PIN Inputs:', pinInputs);
-
-    if (editModal && fullnameInput && roleInput && pinInputs.every(input => input !== null)) {
-        fullnameInput.value = user.fullname || '';
-        roleInput.value = user.role || '';
-
-        pinInputs.forEach((input, index) => {
-            input.value = user.pin ? user.pin.charAt(index) : '';
-        });
-
-        editModal.style.display = 'block';
-        console.log('Edit Modal should now be visible');
-    } else {
-        console.error('Some elements are missing in the DOM.');
-    }
+    document.getElementById('fullname').value = user.fullname;
+    document.getElementById('role').value = user.role;
+    document.getElementById('level').value = user.level;
+    document.getElementById('userKey').value = user.key;
+    document.getElementById('pin').value = user.pin;  // Set the PIN field for adding/editing
+    editModal.style.display = 'block';
 }
-
-
-
 
 function openAddCarModal() {
     const addCarModal = document.getElementById('addCarModal');
@@ -526,44 +498,3 @@ async function removeNotification(notificationTitle) {
     }
 }
 
-// Handle form submission for adding user
-document.getElementById('editForm').addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const fullname = document.getElementById('fullname').value;
-    const role = document.getElementById('role').value;
-    const pin = document.getElementById('pin1').value + 
-                document.getElementById('pin2').value + 
-                document.getElementById('pin3').value + 
-                document.getElementById('pin4').value + 
-                document.getElementById('pin5').value;
-
-    // PIN validation
-    if (pin.length !== 5 || isNaN(pin)) {
-        alert('PIN must be a 5-digit number');
-        return;
-    }
-
-    const url = '/backoffice/api/add_user';
-    const method = 'POST';
-
-    try {
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ fullname, role, pin }),
-        });
-        const result = await response.json();
-        if (response.ok) {
-            console.log('User added successfully:', result);
-            document.getElementById('editModal').style.display = 'none';
-            location.reload();  // Reload the page to reflect changes
-        } else {
-            console.error('Error adding user:', result);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-});

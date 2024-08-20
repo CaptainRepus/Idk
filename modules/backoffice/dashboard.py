@@ -62,10 +62,11 @@ def delete_user():
 @bp.route('/api/add_user', methods=['POST'])
 def add_user():
     fullname = request.json.get('fullname')
-    pin = request.json.get('pin')  # PIN will be provided as a single string
     role = request.json.get('role')
+    level = request.json.get('level')
+    pin = request.json.get('pin')
 
-    if not (fullname and role and pin):
+    if not (fullname and role and level and pin):
         return jsonify({"error": "Missing required fields"}), 400
 
     if len(pin) != 5 or not pin.isdigit():
@@ -79,10 +80,11 @@ def add_user():
     replit_db[pin] = {
         'fullname': fullname,
         'pin': hashed_pin,
-        'level': 1,  # Default level
+        'level': level,
         'role': role
     }
     return jsonify({"message": "User added successfully"}), 200
+
 
 @bp.route('/api/add_car', methods=['POST'])
 def add_car():
