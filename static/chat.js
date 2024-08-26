@@ -1128,7 +1128,7 @@ const handleManageValues = () => {
           if (response.ok) {
               if (data.notifications && data.notifications.length > 0) {
                   data.notifications.forEach(notification => {
-                      const notificationMessage = `<strong>${notification.title}</strong>: ${notification.content}`;
+                      const notificationMessage = `<strong>${notification.title}</strong>:<br> ${notification.content}`;
                       addMessage(notificationMessage, "received");
                     
                   });
