@@ -21,7 +21,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const addNotificationSpan = addNotificationModal.getElementsByClassName('close')[0];
     const addNotificationButton = document.getElementById('addNotificationButton');
     const notificationContainer = document.getElementById('notification-container'); // Ensure this line is present and defined here
-
+    const statisticsModal = document.getElementById('statisticsModal');
+    const statisticsSpan = statisticsModal.getElementsByClassName('close')[0];
     loadingSpinner.style.display = 'block';  // Show the spinner
 
     // Close the modals
@@ -138,7 +139,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Create buttons container
             const userButtons = document.createElement('div');
             userButtons.classList.add('user-buttons');
-
+            
+            // Create Statistics Button
+            const statisticsButton = document.createElement('button');
+            statisticsButton.classList.add('statistics-button');
+            statisticsButton.textContent = 'Statistics';
+            statisticsButton.addEventListener('click', () => {
+                openStatisticsModal(user);
+            });
+            
             // Create remove button
             const removeButton = document.createElement('button');
             removeButton.classList.add('remove-button');
@@ -148,6 +157,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
 
             userButtons.appendChild(removeButton);
+            userDiv.appendChild(userButtons);
+            userButtons.appendChild(statisticsButton);
             userDiv.appendChild(userButtons);
 
             userContainer.appendChild(userDiv);
@@ -342,6 +353,24 @@ async function removeCar(carKey) {
         console.error('Error:', error);
     }
 }
+
+// Function to open Statistics Modal
+function openStatisticsModal(user) {
+    const statisticsContent = document.getElementById('userStatisticsContent');
+    statisticsContent.textContent = `User ${user.fullname} has uploaded ${user.report_count} reports.`;
+    statisticsModal.style.display = 'block';
+}
+
+// Close the Statistics Modal
+statisticsSpan.onclick = function() {
+    statisticsModal.style.display = 'none';
+}
+window.onclick = function(event) {
+    if (event.target == statisticsModal) {
+        statisticsModal.style.display = 'none';
+    }
+}
+
 
 function openEditModal(user) {
     const editModal = document.getElementById('editModal');
