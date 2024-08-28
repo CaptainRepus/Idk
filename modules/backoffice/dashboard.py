@@ -29,26 +29,48 @@ def get_data():
     cars = []
     notifications = []
 
+    user_report_count = {}
+
     for key in replit_db.keys():
         data = replit_db[key]
         serializable_data = convert_to_serializable(data)
 
         if key.isdigit():
             if isinstance(serializable_data, dict) and 'role' in serializable_data:
-                users_with_role.append({"key": key, **serializable_data})
+                user_data = {"key": key, **serializable_data}
+                author_name = serializable_data.get('fullname')
+
+                # Inicializujeme počet reportov pre daného autora na nulu, ak ešte neexistuje
+                if author_name:
+                    user_report_count[author_name] = user_report_count.get(author_name, 0)
+                    user_data['report_count'] = user_report_count[author_name]
+                    users_with_role.append(user_data)
+
         elif key == "notifications":
             if isinstance(serializable_data, list):
                 notifications.extend(serializable_data)
         else:
+            # Skontrolujeme, či sa jedná o záznam auta
             if isinstance(serializable_data, dict) and 'brand' in serializable_data and 'model' in serializable_data:
                 cars.append({"key": key, **serializable_data})
+
+            # Skontrolujeme, či sa jedná o zoznam reportov pre zákazníka
+            elif isinstance(serializable_data, list):
+                for report in serializable_data:
+                    author = report.get('author')
+                    if author:
+                        user_report_count[author] = user_report_count.get(author, 0) + 1
+
+    # Priradenie počtu reportov používateľom
+    for user_data in users_with_role:
+        fullname = user_data.get('fullname')
+        user_data['report_count'] = user_report_count.get(fullname, 0)
 
     print(f"Users with role: {users_with_role}")  # Debugging
     print(f"Cars: {cars}")  # Debugging
     print(f"Notifications: {notifications}")  # Debugging
 
     return jsonify({"users": users_with_role, "cars": cars, "notifications": notifications})
-
 
 
 @bp.route('/api/delete_user', methods=['POST'])
@@ -84,7 +106,6 @@ def add_user():
         'role': role
     }
     return jsonify({"message": "User added successfully"}), 200
-
 
 @bp.route('/api/add_car', methods=['POST'])
 def add_car():

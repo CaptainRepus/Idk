@@ -114,7 +114,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Hide the spinner once the data is loaded
         loadingSpinner.style.display = 'none';
 
-        // Process users
         data.users.forEach(user => {
             console.log('Processing user:', user);  // Debug user processing
             // Create user box
@@ -124,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const userName = document.createElement('div');
             userName.classList.add('user-name');
-            userName.textContent = user.fullname;
+            userName.textContent = `${user.fullname} (Reports: ${user.report_count})`; // Display the report count
             userDiv.appendChild(userName);
 
             const userData = document.createElement('div');
@@ -132,6 +131,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             userData.innerHTML = `
                 <p><strong>Role:</strong> ${user.role}</p>
                 <p><strong>PIN:</strong> ${user.key}</p>
+                <p><strong>Reporty:</strong> ${user.report_count}</p>
             `;
             userDiv.appendChild(userData);
 
@@ -152,6 +152,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             userContainer.appendChild(userDiv);
         });
+
 
         
         // Process cars
