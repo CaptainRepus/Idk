@@ -396,7 +396,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Create type selector
     const typeSelect = document.createElement("select");
-    const meetingTypes = ["", "Meeting", "Test Drive", "Order", "Vehicle Handover"];
+    const meetingTypes = ["", "Stretnutie", "Testovacia jazda", "Objednávka", "Prebratie vozidla"];
     meetingTypes.forEach(type => {
       const option = document.createElement("option");
       option.value = type;
@@ -448,6 +448,7 @@ const handleManageValues = () => {
           { text: "Oznámenia" }, // Add this button to the action buttons list
           { text: "Aké sú naše hodnoty?" },
           { text: "Osobný rozvoj" },
+          { text: "Aká je moja úroveň?" },
       ];
 
       // Add role-specific action buttons
@@ -738,7 +739,7 @@ const handleManageValues = () => {
     // Ask for meeting type
     addMessage("O aký druh strenutia sa jednalo?", "received");
     // Define meeting types
-    const meetingTypes = ["Meeting", "Test Drive", "Order", "Vehicle Handover"];
+    const meetingTypes = ["Stretnutie", "Testovacia jazda", "Objednávka", "Prebratie vozidla"];
     // Create meeting type buttons
     meetingTypes.forEach(meetingType => {
       const button = createButton(meetingType, () => {
@@ -753,7 +754,7 @@ const handleManageValues = () => {
     const messageContainer = document.querySelector(".message-input-container");
     // Clear existing content
     messageContainer.innerHTML = "";
-    if (meetingType === "Meeting") {
+    if (meetingType === "Stretnutie") {
       addMessage("Bolo to stretnutie online alebo osobne?", "received");
       const onlineButton = createButton("Online stretnutie", () => {
         addMessage("Bolo to online stretnutie", "sent");
@@ -767,7 +768,7 @@ const handleManageValues = () => {
       }, "meeting-option-button");
       messageContainer.appendChild(onlineButton);
       messageContainer.appendChild(offlineButton);
-    } else if (meetingType === "Order") {
+    } else if (meetingType === "Objednávka") {
       addMessage("V akej predajni bolo auto objednané?", "received");
       const presovButton = createButton("V predajni PK Auto Prešov", () => {
         addMessage("Auto bolo objednané v predajni PK Auto Prešov", "sent");
@@ -781,10 +782,10 @@ const handleManageValues = () => {
       }, "order-option-button");
       messageContainer.appendChild(presovButton);
       messageContainer.appendChild(popradButton);
-    } else if (meetingType === "Test Drive") {
+    } else if (meetingType === "Testovacia jazda") {
       addMessage("Vyberte značku a model auta pre skúšobnú jazdu.", "received");
       askForCarBrand();
-    } else if (meetingType === "Vehicle Handover") {
+    } else if (meetingType === "Prebratie vozidla") {
       addMessage("Ako bolo alebo bude vozidlo financované?", "received");
       const fullAmountButton = createButton("Celá suma", () => {
         addMessage("Klient vyplatil celú sumu", "sent");
@@ -1132,7 +1133,7 @@ const handleManageValues = () => {
                       addMessage(notificationMessage, "received");
                     
                   });
-                  addMessage("Toto sú tvoje nové notifikácie.", "received");
+                  addMessage("Toto sú tvoje nové Upozornenia.", "received");
               } else {
                   addMessage("Nemáš žiadné nové upozornenia.", "received");
               }

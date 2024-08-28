@@ -83,8 +83,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Open the modal for adding a new user
     addUserButton.onclick = function() {
-        openEditModal({fullname: '', role: '', level: '', key: '', pin: ''});
+        const editModal = document.getElementById('editModal');
+        document.getElementById('fullname').value = '';
+        // Clear other form fields here if needed
+        editModal.style.display = 'block';
     }
+
 
     // Open the modal for adding a new car
     addCarButton.onclick = function() {
@@ -498,3 +502,7 @@ async function removeNotification(notificationTitle) {
     }
 }
 
+// Optionally, close the modal after form submission
+document.getElementById('registerForm').addEventListener('submit', function() {
+    editModal.style.display = 'none';
+});

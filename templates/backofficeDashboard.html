@@ -330,32 +330,36 @@
 
 
     <!-- The Edit/Add User Modal -->
-<div id="editModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Pridanie puživateľa</h2>
-        <form id="editForm">
-            <label for="fullname">Meno:</label>
-            <input type="text" id="fullname" name="fullname" required>
-            <br>
-            <label for="role">Rola:</label>
-            <select id="role" name="role" required>
-                <option value="sales">sales</option>
-                <option value="manager">manager</option>
-                <option value="leader">leader</option>
-            </select>
-            <br>
-            <label for="level">Úroveň:</label>
-            <input type="number" id="level" name="level" required value="1">
-            <br>
-            <label for="pin">PIN kód:</label>
-            <input type="text" id="pin" name="pin" maxlength="5" required>
-            <br>
-            <input type="hidden" id="userKey" name="userKey">
-            <button type="submit">Uložiť</button>
-        </form>
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Register User</h2>
+            <form id="registerForm" action="{{ url_for('auth.auth_register') }}" method="post">
+                <div class="form-group">
+                    <label for="fullname">Full Name:</label>
+                    <input id="fullname" class="form-control" type="text" name="fullname" required>
+                </div>
+                <div class="form-group">
+                    <label for="pin1">PIN:</label>
+                    <div class="pin-inputs">
+                        {% for i in range(1, 6) %}
+                        <input id="pin{{ i }}" class="pin-input" type="text" maxlength="1" name="pin{{ i }}" required>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role:</label>
+                    <select id="role" class="form-control" name="role" required>
+                        <option value="sales">Sales</option>
+                        <option value="manager">Manager</option>
+                        <option value="leader">Leader</option>
+                    </select>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+        </div>
     </div>
-</div>
+
 
     <!-- The Add Car Modal -->
     <div id="addCarModal" class="modal">
