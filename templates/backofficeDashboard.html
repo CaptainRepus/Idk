@@ -47,7 +47,7 @@
             background-color: #555;
         }
         #tabContentContainer {
-            padding: 0px 20px 20px; /* Add padding to avoid overlap with the fixed tab bar */
+            padding: 0px 30px 20px; /* Add padding to avoid overlap with the fixed tab bar */
         }
         .tab-content {
             display: none;
@@ -59,7 +59,7 @@
         .user-container, .car-container, .notification-container {
             background-color: #ffffff;
             padding: 40px;
-            border-radius: 8px;
+            border-radius: 3rem;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
@@ -69,7 +69,7 @@
             margin-bottom: 1rem;
         }
         .user-name, .car-name, .notification-title {
-            font-size: 3rem;
+            font-size: 4.25rem;
             margin-bottom: 25px;
             color: #555;
             font-weight: 700;
@@ -82,7 +82,13 @@
             width: 100%;
         }
         .user-data, .car-data {
-            font-size: 16px;
+            font-size: 2.8rem;
+            color: #777;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .user-data p, .car-data p{
+            font-size: 2.3rem;
             color: #777;
             margin-bottom: 10px;
             text-align: center;
@@ -96,7 +102,7 @@
             padding: 21px 15px;
             font-size: 30px;
             border: none;
-            border-radius: 5px;
+            border-radius: 2rem;
             cursor: pointer;
             flex: 1;
             margin: 5px;
@@ -110,7 +116,11 @@
             color: white;
             margin-top: 3rem;
             width: 100%;
-            font-size: 2rem;
+            font-size: 2.3rem;
+            border-radius: 2rem;
+        }
+        #searchInput{
+            margin-bottom: 2rem;
         }
         .settings-button {
             position: fixed;
@@ -277,7 +287,7 @@
             height: 5rem;
             font-size: 2rem;
             padding-inline-start: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
         }
         .loading-spinner {
             position: fixed;
