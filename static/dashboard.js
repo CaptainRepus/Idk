@@ -1,3 +1,6 @@
+const statisticsModal = document.getElementById('statisticsModal');
+const statisticsSpan = statisticsModal.getElementsByClassName('close')[0];
+loadingSpinner.style.display = 'block';  // Show the spinner
 const notificationContainer = document.getElementById('notification-container');
 document.addEventListener("DOMContentLoaded", async () => {
     const userContainer = document.getElementById('user-container');
@@ -21,9 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const addNotificationSpan = addNotificationModal.getElementsByClassName('close')[0];
     const addNotificationButton = document.getElementById('addNotificationButton');
     const notificationContainer = document.getElementById('notification-container'); // Ensure this line is present and defined here
-    const statisticsModal = document.getElementById('statisticsModal');
-    const statisticsSpan = statisticsModal.getElementsByClassName('close')[0];
-    loadingSpinner.style.display = 'block';  // Show the spinner
+
 
     // Close the modals
     addCarSpan.onclick = function() {

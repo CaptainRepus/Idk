@@ -73,6 +73,9 @@ def submit_report():
         if not isinstance(existing_reports, list):
             existing_reports = list(observed_to_dict(existing_reports))
 
+        # Add the current date to the report data
+        report_data['created_at'] = datetime.now().strftime('%Y-%m-%d')
+
         existing_reports.append(report_data)
         replit_db[customer_name] = existing_reports
 
@@ -90,8 +93,6 @@ def submit_report():
         return jsonify({"message": "Report bol úspešne odoslaný!", "new_level": new_level}), 200
 
     return jsonify({"error": "Chýba meno klienta"}), 400
-
-
 
 def observed_to_dict(obj):
     """
