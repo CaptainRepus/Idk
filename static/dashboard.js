@@ -379,14 +379,29 @@ function openStatisticsModal(user) {
     const labels = Object.keys(statistics);
     const data = Object.values(statistics);
 
+    // Calculate averages
+    const totalReportsLastWeek = data.reduce((sum, value) => sum + value, 0);
+    const averageReportsLastWeek = totalReportsLastWeek / data.length;
+
+    const lastFullMonth = new Date();
+    lastFullMonth.setMonth(lastFullMonth.getMonth() - 1);
+    const daysInLastMonth = new Date(lastFullMonth.getFullYear(), lastFullMonth.getMonth() + 1, 0).getDate();
+
+    const averageReportsLastMonth = totalReportsLastWeek / daysInLastMonth;
+
+    // Update average information in the modal
+    document.getElementById('averageReportsWeek').textContent = `Average reports in the last week: ${averageReportsLastWeek.toFixed(2)}`;
+    document.getElementById('averageReportsMonth').textContent = `Average reports per day last month: ${averageReportsLastMonth.toFixed(2)}`;
+
+    // Get the canvas context
     const ctx = document.getElementById('statisticsChart').getContext('2d');
 
-    // Check if the chart already exists and destroy it if necessary
+    // Destroy the existing chart instance if it exists
     if (statisticsChart) {
         statisticsChart.destroy();
     }
 
-    // Create a new chart instance
+    // Create a new chart instance with increased font sizes
     statisticsChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -400,9 +415,56 @@ function openStatisticsModal(user) {
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false, // Allow the chart to grow beyond its default aspect ratio
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                        font: {
+                            size: 16 // Increase font size for Y-axis labels
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Number of Reports',
+                        font: {
+                            size: 18 // Increase font size for Y-axis title
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 16 // Increase font size for X-axis labels
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Date',
+                        font: {
+                            size: 18 // Increase font size for X-axis title
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        font: {
+                            size: 18 // Increase font size for legend labels
+                        }
+                    }
+                },
+                tooltip: {
+                    titleFont: {
+                        size: 16 // Increase font size for tooltip title
+                    },
+                    bodyFont: {
+                        size: 14 // Increase font size for tooltip body
+                    }
                 }
             }
         }
