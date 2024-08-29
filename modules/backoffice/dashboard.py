@@ -3,6 +3,7 @@ from . import backoffice_blueprint as bp
 from replit import db as replit_db
 from collections.abc import Iterable
 from werkzeug.security import generate_password_hash
+from datetime import datetime, timedelta
 
 def convert_to_serializable(data):
     """Convert non-serializable objects to serializable."""
@@ -30,6 +31,9 @@ def get_data():
     notifications = []
 
     user_report_count = {}
+    today = datetime.today().date()
+    last_7_days = [today - timedelta(days=i) for i in range(7)]
+    report_statistics = {str(day): {} for day in last_7_days}
 
     for key in replit_db.keys():
         data = replit_db[key]
@@ -40,7 +44,7 @@ def get_data():
                 user_data = {"key": key, **serializable_data}
                 author_name = serializable_data.get('fullname')
 
-                # Inicializujeme počet reportov pre daného autora na nulu, ak ešte neexistuje
+                # Initialize report count and statistics for the author
                 if author_name:
                     user_report_count[author_name] = user_report_count.get(author_name, 0)
                     user_data['report_count'] = user_report_count[author_name]
@@ -50,25 +54,27 @@ def get_data():
             if isinstance(serializable_data, list):
                 notifications.extend(serializable_data)
         else:
-            # Skontrolujeme, či sa jedná o záznam auta
             if isinstance(serializable_data, dict) and 'brand' in serializable_data and 'model' in serializable_data:
                 cars.append({"key": key, **serializable_data})
 
-            # Skontrolujeme, či sa jedná o zoznam reportov pre zákazníka
             elif isinstance(serializable_data, list):
                 for report in serializable_data:
                     author = report.get('author')
-                    if author:
+                    created_at_str = report.get('created_at')
+                    if author and created_at_str:
+                        created_at = datetime.strptime(created_at_str, '%Y-%m-%d').date()
+                        if created_at in last_7_days:
+                            date_str = str(created_at)
+                            report_statistics[date_str][author] = report_statistics[date_str].get(author, 0) + 1
                         user_report_count[author] = user_report_count.get(author, 0) + 1
 
-    # Priradenie počtu reportov používateľom
+    # Assign report statistics to users
     for user_data in users_with_role:
         fullname = user_data.get('fullname')
         user_data['report_count'] = user_report_count.get(fullname, 0)
-
-    print(f"Users with role: {users_with_role}")  # Debugging
-    print(f"Cars: {cars}")  # Debugging
-    print(f"Notifications: {notifications}")  # Debugging
+        user_data['report_statistics'] = {
+            day: report_statistics[day].get(fullname, 0) for day in report_statistics
+        }
 
     return jsonify({"users": users_with_role, "cars": cars, "notifications": notifications})
 

@@ -373,15 +373,26 @@ window.onclick = function(event) {
 }
 
 
-function openEditModal(user) {
-    const editModal = document.getElementById('editModal');
-    document.getElementById('fullname').value = user.fullname;
-    document.getElementById('role').value = user.role;
-    document.getElementById('level').value = user.level;
-    document.getElementById('userKey').value = user.key;
-    document.getElementById('pin').value = user.pin;  // Set the PIN field for adding/editing
-    editModal.style.display = 'block';
+function openStatisticsModal(user) {
+    const statisticsContent = document.getElementById('userStatisticsContent');
+    const statistics = user.report_statistics;
+
+    const userStatistics = [];
+    for (const [date, count] of Object.entries(statistics)) {
+        if (count > 0) {
+            userStatistics.push(`${date}: ${count} report(s)`);
+        }
+    }
+
+    if (userStatistics.length === 0) {
+        statisticsContent.textContent = `${user.fullname} has not submitted any reports in the last 7 days.`;
+    } else {
+        statisticsContent.innerHTML = `<strong>${user.fullname}</strong> has submitted the following reports in the last 7 days:<br>` + userStatistics.join('<br>');
+    }
+
+    statisticsModal.style.display = 'block';
 }
+
 
 function openAddCarModal() {
     const addCarModal = document.getElementById('addCarModal');
