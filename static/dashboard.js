@@ -1,3 +1,5 @@
+// Define the statisticsChart globally
+let statisticsChart;
 const statisticsModal = document.getElementById('statisticsModal');
 const statisticsSpan = statisticsModal.getElementsByClassName('close')[0];
 loadingSpinner.style.display = 'block';  // Show the spinner
@@ -125,15 +127,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const userName = document.createElement('div');
             userName.classList.add('user-name');
-            userName.textContent = `${user.fullname} (Reports: ${user.report_count})`; // Display the report count
+            userName.textContent = `${user.fullname}`; // Display the report count
             userDiv.appendChild(userName);
 
             const userData = document.createElement('div');
             userData.classList.add('user-data');
             userData.innerHTML = `
-                <p><strong>Role:</strong> ${user.role}</p>
+                <p><strong>Rola:</strong> ${user.role}</p>
                 <p><strong>PIN:</strong> ${user.key}</p>
-                <p><strong>Reporty:</strong> ${user.report_count}</p>
             `;
             userDiv.appendChild(userData);
 
@@ -144,7 +145,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Create Statistics Button
             const statisticsButton = document.createElement('button');
             statisticsButton.classList.add('statistics-button');
-            statisticsButton.textContent = 'Statistics';
+            statisticsButton.textContent = 'Štatistika reportov';
             statisticsButton.addEventListener('click', () => {
                 openStatisticsModal(user);
             });
@@ -152,7 +153,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Create remove button
             const removeButton = document.createElement('button');
             removeButton.classList.add('remove-button');
-            removeButton.textContent = 'Remove';
+            removeButton.textContent = 'Odstrániť';
             removeButton.addEventListener('click', () => {
                 openConfirmModal(user);
             });
@@ -374,24 +375,67 @@ window.onclick = function(event) {
 
 
 function openStatisticsModal(user) {
-    const statisticsContent = document.getElementById('userStatisticsContent');
     const statistics = user.report_statistics;
+    const labels = Object.keys(statistics);
+    const data = Object.values(statistics);
 
-    const userStatistics = [];
-    for (const [date, count] of Object.entries(statistics)) {
-        if (count > 0) {
-            userStatistics.push(`${date}: ${count} report(s)`);
+    const ctx = document.getElementById('statisticsChart').getContext('2d');
+
+    // Check if the chart already exists and destroy it if necessary
+    if (statisticsChart) {
+        statisticsChart.destroy();
+    }
+
+    // Create a new chart instance
+    statisticsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `Reports submitted by ${user.fullname}`,
+                data: data,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
-    }
+    });
 
-    if (userStatistics.length === 0) {
-        statisticsContent.textContent = `${user.fullname} has not submitted any reports in the last 7 days.`;
-    } else {
-        statisticsContent.innerHTML = `<strong>${user.fullname}</strong> has submitted the following reports in the last 7 days:<br>` + userStatistics.join('<br>');
-    }
-
+    // Display the modal
     statisticsModal.style.display = 'block';
 }
+
+// Close the Statistics Modal
+statisticsSpan.onclick = function() {
+    statisticsModal.style.display = 'none';
+}
+
+// Close the modal when clicking outside of it
+window.onclick = function(event) {
+    if (event.target == statisticsModal) {
+        statisticsModal.style.display = 'none';
+    }
+}
+
+// Close the Statistics Modal
+statisticsSpan.onclick = function() {
+    statisticsModal.style.display = 'none';
+}
+
+// Close the modal when clicking outside of it
+window.onclick = function(event) {
+    if (event.target == statisticsModal) {
+        statisticsModal.style.display = 'none';
+    }
+}
+
 
 
 function openAddCarModal() {

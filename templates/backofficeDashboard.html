@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Administrácia</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -400,10 +401,11 @@
     <div id="statisticsModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>User Statistics</h2>
-            <p id="userStatisticsContent">Loading...</p>
+            <h2>Štatistika</h2>
+            <canvas id="statisticsChart"></canvas>
         </div>
     </div>
+
 
 
     <!-- The Confirm Modal -->
