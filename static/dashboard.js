@@ -407,7 +407,7 @@ function openStatisticsModal(user) {
         data: {
             labels: labels,
             datasets: [{
-                label: `Reports submitted by ${user.fullname}`,
+                label: `Reporty pridané použivateľom ${user.fullname}`,
                 data: data,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
@@ -454,7 +454,7 @@ function openStatisticsModal(user) {
                     display: true,
                     labels: {
                         font: {
-                            size: 18 // Increase font size for legend labels
+                            size: 30 // Increase font size for legend labels
                         }
                     }
                 },
@@ -463,7 +463,7 @@ function openStatisticsModal(user) {
                         size: 16 // Increase font size for tooltip title
                     },
                     bodyFont: {
-                        size: 14 // Increase font size for tooltip body
+                        size: 16 // Increase font size for tooltip body
                     }
                 }
             }
