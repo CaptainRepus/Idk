@@ -374,7 +374,8 @@ window.onclick = function(event) {
 }
 
 
-function openStatisticsModal(user) {
+
+async function openStatisticsModal(user) {
     const statistics = user.report_statistics;
     const labels = Object.keys(statistics);
     const data = Object.values(statistics);
@@ -407,7 +408,7 @@ function openStatisticsModal(user) {
         data: {
             labels: labels,
             datasets: [{
-                label: `Reporty pridané použivateľom ${user.fullname}`,
+                label: `Reports submitted by ${user.fullname}`,
                 data: data,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
@@ -454,7 +455,7 @@ function openStatisticsModal(user) {
                     display: true,
                     labels: {
                         font: {
-                            size: 30 // Increase font size for legend labels
+                            size: 18 // Increase font size for legend labels
                         }
                     }
                 },
@@ -463,16 +464,32 @@ function openStatisticsModal(user) {
                         size: 16 // Increase font size for tooltip title
                     },
                     bodyFont: {
-                        size: 16 // Increase font size for tooltip body
+                        size: 14 // Increase font size for tooltip body
                     }
                 }
             }
         }
     });
 
+    // Fetch and calculate most added car brand and model
+    try {
+        const carData = await fetchCarStatistics();  // Await the asynchronous fetch
+        const mostAddedCarBrand = getMostFrequentItem(carData.brands);
+        const mostAddedCarModel = getMostFrequentItem(carData.models);
+
+        // Update car statistics information in the modal
+        document.getElementById('mostAddedCarBrand').textContent = `Najobľubenejšia značka: ${mostAddedCarBrand}`;
+        document.getElementById('mostAddedCarModel').textContent = `Najobľubenejší model: ${mostAddedCarModel}`;
+    } catch (error) {
+        console.error("Error processing car statistics:", error);
+        document.getElementById('mostAddedCarBrand').textContent = `Error fetching car brand data.`;
+        document.getElementById('mostAddedCarModel').textContent = `Error fetching car model data.`;
+    }
+
     // Display the modal
     statisticsModal.style.display = 'block';
 }
+
 
 // Close the Statistics Modal
 statisticsSpan.onclick = function() {
@@ -483,6 +500,44 @@ statisticsSpan.onclick = function() {
 window.onclick = function(event) {
     if (event.target == statisticsModal) {
         statisticsModal.style.display = 'none';
+    }
+}
+// Function to find the most frequent item in an array
+function getMostFrequentItem(arr) {
+    if (arr.length === 0) return 'N/A';
+
+    const frequency = {};
+    let maxCount = 0;
+    let mostFrequentItem = arr[0];
+
+    arr.forEach(item => {
+        frequency[item] = (frequency[item] || 0) + 1;
+        if (frequency[item] > maxCount) {
+            maxCount = frequency[item];
+            mostFrequentItem = item;
+        }
+    });
+
+    return mostFrequentItem;
+}
+// Fetch car data from the backend
+async function fetchCarStatistics() {
+    try {
+        const response = await fetch('/backoffice/api/data');
+        const data = await response.json();
+
+        const carBrands = [];
+        const carModels = [];
+
+        data.cars.forEach(car => {
+            carBrands.push(car.brand);
+            carModels.push(`${car.brand} ${car.model}`);
+        });
+
+        return { brands: carBrands, models: carModels };
+    } catch (error) {
+        console.error("Error fetching car statistics:", error);
+        return { brands: [], models: [] };
     }
 }
 
