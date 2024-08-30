@@ -402,7 +402,26 @@ async function openStatisticsModal(user) {
         statisticsChart.destroy();
     }
 
-    // Create a new chart instance with increased font sizes
+    // Custom colors similar to the uploaded image
+    const backgroundColors = [
+        'rgba(255, 99, 132, 0.6)', // Pink
+        'rgba(255, 206, 86, 0.6)', // Yellow
+        'rgba(75, 192, 192, 0.6)', // Teal
+        'rgba(255, 159, 64, 0.6)', // Orange
+        'rgba(153, 102, 255, 0.6)', // Purple
+        'rgba(54, 162, 235, 0.6)' // Blue
+    ];
+
+    const borderColors = [
+        'rgba(255, 99, 132, 1)', // Pink
+        'rgba(255, 206, 86, 1)', // Yellow
+        'rgba(75, 192, 192, 1)', // Teal
+        'rgba(255, 159, 64, 1)', // Orange
+        'rgba(153, 102, 255, 1)', // Purple
+        'rgba(54, 162, 235, 1)' // Blue
+    ];
+
+    // Create a new chart instance with custom column styles
     statisticsChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -410,76 +429,82 @@ async function openStatisticsModal(user) {
             datasets: [{
                 label: `Reports submitted by ${user.fullname}`,
                 data: data,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 1 // Thinner border
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false, // Allow the chart to grow beyond its default aspect ratio
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        precision: 0,
                         font: {
-                            size: 16 // Increase font size for Y-axis labels
-                        }
+                            size: 26, // Increase font size for Y-axis labels (number of reports)
+                            color: 'rgba(255, 99, 132, 1)' // Pink like the chart
+                        },
+                        stepSize: 20 // Optional: Adjust according to your data
                     },
                     title: {
                         display: true,
                         text: 'Number of Reports',
                         font: {
-                            size: 18 // Increase font size for Y-axis title
+                            size: 20 // Increase font size for Y-axis title
                         }
+                    },
+                    grid: {
+                        display: false // Remove gridlines for a cleaner look
                     }
                 },
                 x: {
                     ticks: {
                         font: {
-                            size: 16 // Increase font size for X-axis labels
+                            size: 22, // Increase font size for X-axis labels (dates)
+                            color: 'rgba(255, 99, 132, 1)' // Pink like the chart
                         }
                     },
                     title: {
                         display: true,
                         text: 'Date',
                         font: {
-                            size: 18 // Increase font size for X-axis title
+                            size: 20 // Increase font size for X-axis title
                         }
+                    },
+                    grid: {
+                        display: false // Remove gridlines for a cleaner look
                     }
                 }
             },
             plugins: {
                 legend: {
-                    display: true,
-                    labels: {
-                        font: {
-                            size: 18 // Increase font size for legend labels
-                        }
-                    }
+                    display: false // Hide the legend for a cleaner look
                 },
                 tooltip: {
                     titleFont: {
-                        size: 16 // Increase font size for tooltip title
+                        size: 16
                     },
                     bodyFont: {
-                        size: 14 // Increase font size for tooltip body
-                    }
+                        size: 14
+                    },
+                    backgroundColor: 'rgba(0,0,0,0.7)', // Dark background for tooltip
+                    borderColor: 'rgba(255, 99, 132, 1)', // Border color similar to pink
+                    borderWidth: 1
                 }
             }
         }
     });
 
-    // Fetch and calculate most added car brand and model
+    // Fetch and calculate most added car brand and model for the last 7 days
     try {
         const carData = await fetchCarStatistics();  // Await the asynchronous fetch
         const mostAddedCarBrand = getMostFrequentItem(carData.brands);
         const mostAddedCarModel = getMostFrequentItem(carData.models);
 
         // Update car statistics information in the modal
-        document.getElementById('mostAddedCarBrand').textContent = `Najobľubenejšia značka: ${mostAddedCarBrand}`;
-        document.getElementById('mostAddedCarModel').textContent = `Najobľubenejší model: ${mostAddedCarModel}`;
+        document.getElementById('mostAddedCarBrand').textContent = `Most added car brand (last 7 days): ${mostAddedCarBrand}`;
+        document.getElementById('mostAddedCarModel').textContent = `Most added car model (last 7 days): ${mostAddedCarModel}`;
     } catch (error) {
         console.error("Error processing car statistics:", error);
         document.getElementById('mostAddedCarBrand').textContent = `Error fetching car brand data.`;
@@ -489,6 +514,8 @@ async function openStatisticsModal(user) {
     // Display the modal
     statisticsModal.style.display = 'block';
 }
+
+
 
 
 // Close the Statistics Modal
