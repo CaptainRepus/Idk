@@ -1,5 +1,4 @@
 // Define the statisticsChart globally
-let statisticsChart;
 const statisticsModal = document.getElementById('statisticsModal');
 const statisticsSpan = statisticsModal.getElementsByClassName('close')[0];
 loadingSpinner.style.display = 'block';  // Show the spinner
@@ -375,145 +374,170 @@ window.onclick = function(event) {
 
 
 
+// Function to open Statistics Modal
+// Define the statisticsChart globally
+let statisticsChart = null;
+
 async function openStatisticsModal(user) {
-    const statistics = user.report_statistics;
-    const labels = Object.keys(statistics);
-    const data = Object.values(statistics);
+    const statisticsModal = document.getElementById('statisticsModal');
+    const statisticsLoadingSpinner = document.getElementById('statisticsLoadingSpinner');
+    const statisticsSummary = document.getElementById('statisticsSummary');
+    const statisticsChartElement = document.getElementById('statisticsChart');
+    const carStatistics = document.getElementById('carStatistics');
 
-    // Calculate averages
-    const totalReportsLastWeek = data.reduce((sum, value) => sum + value, 0);
-    const averageReportsLastWeek = totalReportsLastWeek / data.length;
+    // Show the modal and the loading spinner
+    statisticsModal.style.display = 'block';
+    statisticsLoadingSpinner.style.display = 'block';
+    statisticsSummary.style.display = 'none';
+    statisticsChartElement.style.display = 'none';
+    carStatistics.style.display = 'none';
 
-    const lastFullMonth = new Date();
-    lastFullMonth.setMonth(lastFullMonth.getMonth() - 1);
-    const daysInLastMonth = new Date(lastFullMonth.getFullYear(), lastFullMonth.getMonth() + 1, 0).getDate();
+    try {
+        // Simulate network latency with a timeout (optional)
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-    const averageReportsLastMonth = totalReportsLastWeek / daysInLastMonth;
+        const statistics = user.report_statistics;
+        const labels = Object.keys(statistics);
+        const data = Object.values(statistics);
 
-    // Update average information in the modal
-    document.getElementById('averageReportsWeek').textContent = `Average reports in the last week: ${averageReportsLastWeek.toFixed(2)}`;
-    document.getElementById('averageReportsMonth').textContent = `Average reports per day last month: ${averageReportsLastMonth.toFixed(2)}`;
+        // Calculate averages
+        const totalReportsLastWeek = data.reduce((sum, value) => sum + value, 0);
+        const averageReportsLastWeek = totalReportsLastWeek / data.length;
 
-    // Get the canvas context
-    const ctx = document.getElementById('statisticsChart').getContext('2d');
+        const lastFullMonth = new Date();
+        lastFullMonth.setMonth(lastFullMonth.getMonth() - 1);
+        const daysInLastMonth = new Date(lastFullMonth.getFullYear(), lastFullMonth.getMonth() + 1, 0).getDate();
 
-    // Destroy the existing chart instance if it exists
-    if (statisticsChart) {
-        statisticsChart.destroy();
-    }
+        const averageReportsLastMonth = totalReportsLastWeek / daysInLastMonth;
 
-    // Custom colors similar to the uploaded image
-    const backgroundColors = [
-        'rgba(255, 99, 132, 0.6)', // Pink
-        'rgba(255, 206, 86, 0.6)', // Yellow
-        'rgba(75, 192, 192, 0.6)', // Teal
-        'rgba(255, 159, 64, 0.6)', // Orange
-        'rgba(153, 102, 255, 0.6)', // Purple
-        'rgba(54, 162, 235, 0.6)' // Blue
-    ];
+        // Update average information in the modal
+        document.getElementById('averageReportsWeek').textContent = `Average reports in the last week: ${averageReportsLastWeek.toFixed(2)}`;
+        document.getElementById('averageReportsMonth').textContent = `Average reports per day last month: ${averageReportsLastMonth.toFixed(2)}`;
 
-    const borderColors = [
-        'rgba(255, 99, 132, 1)', // Pink
-        'rgba(255, 206, 86, 1)', // Yellow
-        'rgba(75, 192, 192, 1)', // Teal
-        'rgba(255, 159, 64, 1)', // Orange
-        'rgba(153, 102, 255, 1)', // Purple
-        'rgba(54, 162, 235, 1)' // Blue
-    ];
+        // Get the canvas context
+        const ctx = statisticsChartElement.getContext('2d');
 
-    // Create a new chart instance with custom column styles
-    statisticsChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: `Reports submitted by ${user.fullname}`,
-                data: data,
-                backgroundColor: backgroundColors,
-                borderColor: borderColors,
-                borderWidth: 1 // Thinner border
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        font: {
-                            size: 26, // Increase font size for Y-axis labels (number of reports)
-                            color: 'rgba(255, 99, 132, 1)' // Pink like the chart
-                        },
-                        stepSize: 20 // Optional: Adjust according to your data
-                    },
-                    title: {
-                        display: true,
-                        text: 'Number of Reports',
-                        font: {
-                            size: 20 // Increase font size for Y-axis title
-                        }
-                    },
-                    grid: {
-                        display: false // Remove gridlines for a cleaner look
-                    }
-                },
-                x: {
-                    ticks: {
-                        font: {
-                            size: 22, // Increase font size for X-axis labels (dates)
-                            color: 'rgba(255, 99, 132, 1)' // Pink like the chart
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Date',
-                        font: {
-                            size: 20 // Increase font size for X-axis title
-                        }
-                    },
-                    grid: {
-                        display: false // Remove gridlines for a cleaner look
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false // Hide the legend for a cleaner look
-                },
-                tooltip: {
-                    titleFont: {
-                        size: 16
-                    },
-                    bodyFont: {
-                        size: 14
-                    },
-                    backgroundColor: 'rgba(0,0,0,0.7)', // Dark background for tooltip
-                    borderColor: 'rgba(255, 99, 132, 1)', // Border color similar to pink
+        // Destroy the existing chart instance if it exists and is a Chart instance
+        if (statisticsChart instanceof Chart) {
+            statisticsChart.destroy();
+        }
+
+        // Custom colors similar to the uploaded image
+        const backgroundColors = [
+            'rgba(255, 99, 132, 0.6)', // Pink
+            'rgba(255, 206, 86, 0.6)', // Yellow
+            'rgba(75, 192, 192, 0.6)', // Teal
+            'rgba(255, 159, 64, 0.6)', // Orange
+            'rgba(153, 102, 255, 0.6)', // Purple
+            'rgba(54, 162, 235, 0.6)'  // Blue
+        ];
+
+        const borderColors = [
+            'rgba(255, 99, 132, 1)', // Pink
+            'rgba(255, 206, 86, 1)', // Yellow
+            'rgba(75, 192, 192, 1)', // Teal
+            'rgba(255, 159, 64, 1)', // Orange
+            'rgba(153, 102, 255, 1)', // Purple
+            'rgba(54, 162, 235, 1)'  // Blue
+        ];
+
+        // Create a new chart instance with custom column styles
+        statisticsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Reports submitted by ${user.fullname}`,
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
                     borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                size: 26,
+                                color: 'rgba(255, 99, 132, 1)'
+                            },
+                            stepSize: 20
+                        },
+                        title: {
+                            display: true,
+                            text: 'Number of Reports',
+                            font: {
+                                size: 20
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 22,
+                                color: 'rgba(255, 99, 132, 1)'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date',
+                            font: {
+                                size: 20
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        titleFont: {
+                            size: 16
+                        },
+                        bodyFont: {
+                            size: 14
+                        },
+                        backgroundColor: 'rgba(0,0,0,0.7)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
                 }
             }
-        }
-    });
+        });
 
-    // Fetch and calculate most added car brand and model for the last 7 days
-    try {
-        const carData = await fetchCarStatistics();  // Await the asynchronous fetch
+        // Fetch and calculate most added car brand and model for the last 7 days
+        const carData = await fetchCarStatistics();
         const mostAddedCarBrand = getMostFrequentItem(carData.brands);
         const mostAddedCarModel = getMostFrequentItem(carData.models);
 
-        // Update car statistics information in the modal
         document.getElementById('mostAddedCarBrand').textContent = `Most added car brand (last 7 days): ${mostAddedCarBrand}`;
         document.getElementById('mostAddedCarModel').textContent = `Most added car model (last 7 days): ${mostAddedCarModel}`;
-    } catch (error) {
-        console.error("Error processing car statistics:", error);
-        document.getElementById('mostAddedCarBrand').textContent = `Error fetching car brand data.`;
-        document.getElementById('mostAddedCarModel').textContent = `Error fetching car model data.`;
-    }
 
-    // Display the modal
-    statisticsModal.style.display = 'block';
+        // Hide the loading spinner and show the content
+        statisticsLoadingSpinner.style.display = 'none';
+        statisticsSummary.style.display = 'block';
+        statisticsChartElement.style.display = 'block';
+        carStatistics.style.display = 'block';
+
+    } catch (error) {
+        console.error("Error fetching statistics:", error);
+        statisticsLoadingSpinner.style.display = 'none';
+        // Optionally show an error message to the user here
+    }
 }
+
+
 
 
 

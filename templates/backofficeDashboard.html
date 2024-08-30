@@ -419,17 +419,22 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Statistics</h2>
-            <div id="statisticsSummary">
+            <!-- Loading Spinner -->
+            <div id="statisticsLoadingSpinner" class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+            <div id="statisticsSummary" style="display: none;">
                 <p id="averageReportsWeek"></p>
                 <p id="averageReportsMonth"></p>
             </div>
-            <canvas id="statisticsChart"></canvas>
-            <div id="carStatistics">
+            <canvas id="statisticsChart" style="display: none;"></canvas>
+            <div id="carStatistics" style="display: none;">
                 <p id="mostAddedCarBrand"></p>
                 <p id="mostAddedCarModel"></p>
             </div>
         </div>
     </div>
+
 
     <!-- The Confirm Modal -->
     <div id="confirmModal" class="modal">
