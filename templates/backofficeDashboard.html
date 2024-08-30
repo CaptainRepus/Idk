@@ -6,7 +6,73 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5); /* Darker background for better contrast */
+        }
+
+        .modal-content {
+            border: 1px solid #888;
+            border-radius: 8px;
+            background-color: #1f1f1f;
+            height: 96.8%;
+        }
+
+        .modal-content h1 {
+            font-size: 3rem; /* Slightly smaller font size for better readability */
+            margin-bottom: 20px; /* Spacing between title and content */
+            color: #f44336; /* Red color for warning emphasis */
+        }
+
+        .modal-content p {
+            font-size: 1.8rem; /* Adjust font size for readability */
+            margin-bottom: 30px; /* Space below the warning message */
+            color: #333; /* Darker text for better contrast */
+        }
+
+        .confirm-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 3rem;
+            padding: 20px 15px;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 15px; /* Spacing between buttons */
+            transition: background-color 0.3s ease; /* Smooth hover transition */
+        }
+
+        .confirm-button:hover {
+            background-color: #d32f2f; /* Slightly darker red on hover */
+        }
+
+        .cancel-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3rem;
+            padding: 20px 15px;
+            font-size: 3rem;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+            cursor: pointer;
+            width: 97%;
+            transition: background-color 0.3s ease;
+        }
+
+        .cancel-button:hover {
+            background-color: #388e3c; /* Slightly darker green on hover */
+        }
+
         body {
             font-family: Arial, sans-serif;
             color: #333;
@@ -34,6 +100,41 @@
             width: 100%;
             top: 0;
             z-index: 1;
+        }
+        #carStatistics {
+            display: flex;
+            width: 100%;
+            gap: 2rem;
+            color: white;
+        }
+        #mostAddedCarBrand {
+            width: 50%;
+            /* height: 5rem; */
+            padding: 3rem;
+            background: red;
+            border-radius: 2rem;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: left;
+            flex-direction: column;
+        }
+        #mostAddedCarModel{
+            width: 50%;
+            /* height: 5rem; */
+            padding: 3rem;
+            background: red;
+            border-radius: 2rem;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: left;
+            flex-direction: column;
+        }
+        #mostAddedCarModel h2, #mostAddedCarBrand h2{
+            color:white;
+            text-align: left;
+            font-size: 3.5rem;
         }
         .tab {
             padding: 15px;
@@ -179,8 +280,9 @@
             border-radius: 8px;
             padding-top: 50px;
         }
-        .modal-content h2 {
-            font-size: 3rem;
+        .modal-content h1 {
+            font-size: 4rem;
+            margin-bottom: 0rem;
         }
         .close {
             color: #aaa;
@@ -199,11 +301,12 @@
             background-color: #f44336;
             color: white;
             border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
-            font-size: 25px;
+            border-radius: 3rem;
+            padding: 30px 15px;
+            font-size: 3rem;
             cursor: pointer;
-            margin: 10px;
+            /* margin: 10px; */
+            width: 97%;
         }
         form {
             display: flex;
@@ -281,7 +384,7 @@
         /* Adjust buttons to fit inside the container */
         #addUserButton, #addCarButton, #backButton, #addNotificationButton {
             margin: 5px 0;
-            width: 100%;
+            width: 95%;
         }
         .search {
             width: 97.8%;
@@ -311,6 +414,9 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        h3{
+            font-size: 3rem;
         }
     </style>
 </head>
@@ -418,16 +524,18 @@
     <div id="statisticsModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Statistics</h2>
+            <h1>Štatistika</h1>
             <!-- Loading Spinner -->
             <div id="statisticsLoadingSpinner" class="loading-spinner">
                 <div class="spinner"></div>
             </div>
+            <h3>Reporty:</h3>
             <div id="statisticsSummary" style="display: none;">
                 <p id="averageReportsWeek"></p>
                 <p id="averageReportsMonth"></p>
             </div>
             <canvas id="statisticsChart" style="display: none;"></canvas>
+            <h3>Autá:</h3>
             <div id="carStatistics" style="display: none;">
                 <p id="mostAddedCarBrand"></p>
                 <p id="mostAddedCarModel"></p>
@@ -441,11 +549,12 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Potvrdenie odstránenia</h2>
-            <p>Naozaj chcete odstrániť tohto použivateľa?</p>
+            <p>POZOR! Odstránenie je nenavratná funkcia!</p>
             <button id="confirmDeleteButton" class="confirm-button">Áno, odstrániť</button>
-            <button id="cancelDeleteButton" class="confirm-button">Zrušiť</button>
+            <button id="cancelDeleteButton" class="cancel-button">Zrušiť</button>
         </div>
     </div>
+
 
     <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 </body>

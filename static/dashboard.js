@@ -411,8 +411,8 @@ async function openStatisticsModal(user) {
         const averageReportsLastMonth = totalReportsLastWeek / daysInLastMonth;
 
         // Update average information in the modal
-        document.getElementById('averageReportsWeek').textContent = `Average reports in the last week: ${averageReportsLastWeek.toFixed(2)}`;
-        document.getElementById('averageReportsMonth').textContent = `Average reports per day last month: ${averageReportsLastMonth.toFixed(2)}`;
+        document.getElementById('averageReportsWeek').textContent = `Priemerný počet reportov za posledný týždeň: ${averageReportsLastWeek.toFixed(2)}`;
+        document.getElementById('averageReportsMonth').textContent = `Priemerný počet reportov za posledný mesiac: ${averageReportsLastMonth.toFixed(2)}`;
 
         // Get the canvas context
         const ctx = statisticsChartElement.getContext('2d');
@@ -521,14 +521,15 @@ async function openStatisticsModal(user) {
         const mostAddedCarBrand = getMostFrequentItem(carData.brands);
         const mostAddedCarModel = getMostFrequentItem(carData.models);
 
-        document.getElementById('mostAddedCarBrand').textContent = `Most added car brand (last 7 days): ${mostAddedCarBrand}`;
-        document.getElementById('mostAddedCarModel').textContent = `Most added car model (last 7 days): ${mostAddedCarModel}`;
+        document.getElementById('mostAddedCarBrand').innerHTML = `Najobľúbenejšia značka auta (posledných 7 dní):<br><h2>${mostAddedCarBrand}</h2>`;
+        document.getElementById('mostAddedCarModel').innerHTML = `Najobľúbenejší model auta (posledných 7 dní):<br><h2>${mostAddedCarModel}</h2>`;
+
 
         // Hide the loading spinner and show the content
         statisticsLoadingSpinner.style.display = 'none';
         statisticsSummary.style.display = 'block';
         statisticsChartElement.style.display = 'block';
-        carStatistics.style.display = 'block';
+        carStatistics.style.display = 'flex';
 
     } catch (error) {
         console.error("Error fetching statistics:", error);
