@@ -76,8 +76,12 @@ def get_data():
             day: report_statistics[day].get(fullname, 0) for day in report_statistics
         }
 
-    return jsonify({"users": users_with_role, "cars": cars, "notifications": notifications})
+    # Sort users by report_count in descending order and assign ranks
+    users_with_role.sort(key=lambda x: x['report_count'], reverse=True)
+    for index, user_data in enumerate(users_with_role):
+        user_data['rank'] = index + 1
 
+    return jsonify({"users": users_with_role, "cars": cars, "notifications": notifications})
 
 
 @bp.route('/api/delete_user', methods=['POST'])

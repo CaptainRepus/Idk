@@ -414,15 +414,12 @@ async function openStatisticsModal(user) {
         document.getElementById('averageReportsWeek').textContent = `Priemerný počet reportov za posledný týždeň: ${averageReportsLastWeek.toFixed(2)}`;
         document.getElementById('averageReportsMonth').textContent = `Priemerný počet reportov za posledný mesiac: ${averageReportsLastMonth.toFixed(2)}`;
 
-        // Get the canvas context
-        const ctx = statisticsChartElement.getContext('2d');
+        // Display user rank
+        const userRank = user.rank;
+        const totalUsers = await fetchTotalUsers();
+        document.getElementById('userRank').textContent = `Užívateľ je na ${userRank}. mieste`;
 
-        // Destroy the existing chart instance if it exists and is a Chart instance
-        if (statisticsChart instanceof Chart) {
-            statisticsChart.destroy();
-        }
-
-        // Custom colors similar to the uploaded image
+        // Define the colors for the chart bars
         const backgroundColors = [
             'rgba(255, 99, 132, 0.6)', // Pink
             'rgba(255, 206, 86, 0.6)', // Yellow
@@ -440,6 +437,14 @@ async function openStatisticsModal(user) {
             'rgba(153, 102, 255, 1)', // Purple
             'rgba(54, 162, 235, 1)'  // Blue
         ];
+
+        // Get the canvas context
+        const ctx = statisticsChartElement.getContext('2d');
+
+        // Destroy the existing chart instance if it exists and is a Chart instance
+        if (statisticsChart instanceof Chart) {
+            statisticsChart.destroy();
+        }
 
         // Create a new chart instance with custom column styles
         statisticsChart = new Chart(ctx, {
@@ -539,8 +544,16 @@ async function openStatisticsModal(user) {
 }
 
 
-
-
+async function fetchTotalUsers() {
+    try {
+        const response = await fetch('/backoffice/api/data');
+        const data = await response.json();
+        return data.users.length;
+    } catch (error) {
+        console.error("Error fetching total users:", error);
+        return 0;
+    }
+}
 
 
 // Close the Statistics Modal

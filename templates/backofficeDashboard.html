@@ -23,7 +23,6 @@
             border: 1px solid #888;
             border-radius: 8px;
             background-color: #1f1f1f;
-            height: 96.8%;
         }
 
         .modal-content h1 {
@@ -418,8 +417,17 @@
             100% { transform: rotate(360deg); }
         }
         h3{
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 0.2rem;
+        }
+        #userRank{
+            background: red;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            border-radius: 2rem;
         }
     </style>
 </head>
@@ -532,6 +540,7 @@
             <div id="statisticsLoadingSpinner" class="loading-spinner">
                 <div class="spinner"></div>
             </div>
+            <h3 id="userRank"></h3>
             <h3>Reporty:</h3>
             <div id="statisticsSummary" style="display: none;">
                 <p id="averageReportsWeek"></p>
