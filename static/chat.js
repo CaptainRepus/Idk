@@ -469,7 +469,7 @@ const handleManageValues = () => {
                   handleNewReportAction(chatBox);
               } else if (btn.text === "Aktívne reporty") {
                   handleActiveReports();
-              } else if (btn.text === "Pridať oznámenie" || btn.text === "Oznámenia") {
+              } else if (btn.text === "Oznámenia") {
                   handleNotifications(); // Placeholder, to be implemented
               } else if (btn.text === "Spravovať hodnoty") {
                   handleManageValues(); // Placeholder, to be implemented
@@ -477,12 +477,23 @@ const handleManageValues = () => {
                   console.error(`Handler for ${btn.text} not implemented`);
               }
           }, `action-button ${themeClass}`);
+
+          if (btn.text === "Oznámenia") {
+              const badge = document.createElement("span");
+              badge.id = "notification-badge";
+              badge.classList.add("badge");
+              badge.style.display = "none"; // Initially hidden
+              actionButton.appendChild(badge);
+          }
+
           messageContainer.appendChild(actionButton);
           setTimeout(() => {
               actionButton.classList.add('visible');
           }, index * 100); // Animate buttons in order
       });
   };
+
+
 
   // Ensure this function is called after DOMContentLoaded
   document.addEventListener("DOMContentLoaded", () => {
@@ -1270,4 +1281,61 @@ const handleManageValues = () => {
     }
   };
 });
+document.addEventListener("DOMContentLoaded", async () => {
+    const notificationBadge = document.getElementById('notification-badge');
+    const LAST_SEEN_NOTIFICATION_KEY = 'lastSeenNotificationTime';
 
+    const fetchNotifications = async () => {
+        try {
+            const response = await fetch('/chat/get_notifications');
+            const data = await response.json();
+
+            if (response.ok && data.notifications && data.notifications.length > 0) {
+                const lastSeenTime = localStorage.getItem(LAST_SEEN_NOTIFICATION_KEY);
+                const newNotifications = data.notifications.filter(notification => {
+                    return !lastSeenTime || new Date(notification.timestamp) > new Date(lastSeenTime);
+                });
+
+                if (newNotifications.length > 0) {
+                    notificationBadge.style.display = 'inline'; // Show the badge
+                    notificationBadge.textContent = newNotifications.length; // Show the number of new notifications
+                } else {
+                    notificationBadge.style.display = 'none'; // Hide the badge if no new notifications
+                }
+            } else {
+                notificationBadge.style.display = 'none'; // Hide the badge if no notifications
+            }
+        } catch (error) {
+            console.error("Error fetching notifications:", error);
+        }
+    };
+
+    await fetchNotifications(); // Fetch notifications when the page loads
+
+    // Add event listener to hide the badge when the "Oznámenia" button is clicked
+    const oznameniaButton = document.querySelector('.action-button:contains("Oznámenia")');
+    oznameniaButton.addEventListener('click', () => {
+        notificationBadge.style.display = 'none';
+        localStorage.setItem(LAST_SEEN_NOTIFICATION_KEY, new Date().toISOString()); // Update last seen time
+    });
+
+    // Periodically check for new notifications, if needed
+    setInterval(fetchNotifications, 60000); // Check every minute
+});
+
+const fetchNotifications = async () => {
+    try {
+        const response = await fetch('/chat/get_notifications');
+        const data = await response.json();
+        const notificationBadge = document.querySelector("#notification-badge");
+
+        if (response.ok && data.notifications && data.notifications.length > 0) {
+            notificationBadge.style.display = 'inline'; // Show the badge
+            notificationBadge.textContent = data.notifications.length; // Show the number of notifications
+        } else {
+            notificationBadge.style.display = 'none'; // Hide the badge if no notifications
+        }
+    } catch (error) {
+        console.error("Error fetching notifications:", error);
+    }
+};

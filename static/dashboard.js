@@ -695,7 +695,6 @@ document.getElementById('addNotificationForm').addEventListener('submit', async 
         if (response.ok) {
             console.log('Notification added successfully:', result);
             document.getElementById('addNotificationModal').style.display = 'none';
-            location.reload();  // Reload the page to reflect changes
         } else {
             console.error('Error adding notification:', result);
         }

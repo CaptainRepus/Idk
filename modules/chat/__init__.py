@@ -237,6 +237,11 @@ def get_notifications():
     try:
         notifications = replit_db.get('notifications', [])
 
+        # Ensure each notification has a timestamp
+        for notification in notifications:
+            if 'timestamp' not in notification:
+                notification['timestamp'] = datetime.now().isoformat()
+
         # Convert ObservedList and ObservedDict to standard list and dict recursively
         standard_notifications = convert_to_standard(notifications)
 
@@ -244,6 +249,7 @@ def get_notifications():
     except Exception as e:
         logging.error(f"Error fetching notifications: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
+
 
 
 @chat_blueprint.route('/get_user_level', methods=['GET'])

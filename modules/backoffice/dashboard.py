@@ -79,6 +79,7 @@ def get_data():
     return jsonify({"users": users_with_role, "cars": cars, "notifications": notifications})
 
 
+
 @bp.route('/api/delete_user', methods=['POST'])
 def delete_user():
     user_key = request.json.get('key')
@@ -145,7 +146,6 @@ def get_car_models(brand):
             car_models.append(car_data['model'])
     return jsonify({"models": car_models}), 200
 
-# dashboard.py
 @bp.route('/api/add_notification', methods=['POST'])
 def add_notification():
     title = request.json.get('title')
@@ -157,16 +157,19 @@ def add_notification():
     # Fetch existing notifications, or start with an empty list
     notifications = replit_db.get('notifications', [])
 
-    # Append the new notification
+    # Append the new notification with a timestamp
     notifications.append({
         'title': title,
-        'content': content
+        'content': content,
+        'timestamp': datetime.now().isoformat()  # Add timestamp
     })
 
     # Save the updated list back to the database
     replit_db['notifications'] = notifications
 
     return jsonify({"message": "Notification added successfully"}), 200
+
+
 
 @bp.route('/api/delete_notification', methods=['DELETE'])
 def delete_notification():
