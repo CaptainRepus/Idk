@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const chatBox = document.getElementById("chat-box");
   const userInput = document.getElementById("user-input");
@@ -436,64 +437,75 @@ const handleManageValues = () => {
 };
   
   const displayActionButtons = () => {
-      const currentDay = new Date().toISOString().split("T")[0];
-      const reportsSubmittedToday = localStorage.getItem('reportsSubmittedToday');
+    const currentDay = new Date().toISOString().split("T")[0];
+    const reportsSubmittedToday = localStorage.getItem('reportsSubmittedToday');
 
-      const messageContainer = document.querySelector(".message-input-container");
-      messageContainer.innerHTML = ""; // Clear existing buttons
+    const messageContainer = document.querySelector(".message-input-container");
+    messageContainer.innerHTML = ""; // Clear existing buttons
 
-      const buttonsData = [
-          { text: "Nový report" },
-          { text: "Aktívne reporty" },
-          { text: "Oznámenia" }, // Add this button to the action buttons list
-          { text: "Aké sú naše hodnoty?" },
-          { text: "Osobný rozvoj" },
-          { text: "Aká je moja úroveň?" },
-      ];
+    const buttonsData = [
+        { text: "Nový report" },
+        { text: "Aktívne reporty" },
+        { text: "Oznámenia" }, 
+        { text: "Aké sú naše hodnoty?" },
+        { text: "Osobný rozvoj" },
+        { text: "Aká je moja úroveň?" }, // Add the handler for this button
+    ];
 
-      // Add role-specific action buttons
-      const role = "{{ role }}"; // Make sure the role is being passed to the front-end
-      if (role === "manager" || role === "leader") {
-          buttonsData.push({ text: "Pridať oznámenie" });
-          buttonsData.push({ text: "Spravovať hodnoty" });
-      }
+    const role = "{{ role }}";
+    if (role === "manager" || role === "leader") {
+        buttonsData.push({ text: "Pridať oznámenie" });
+        buttonsData.push({ text: "Spravovať hodnoty" });
+    }
 
-      const themeClass = localStorage.getItem('themeClass') || "theme-orange";
+    const themeClass = localStorage.getItem('themeClass') || "theme-orange";
 
-      if (reportsSubmittedToday === currentDay) {
-          buttonsData.splice(0, 1); // Remove "Nový report" if reports submitted today
-      }
-      buttonsData.forEach((btn, index) => {
-          const actionButton = createButton(btn.text, () => {
-              if (btn.text === "Nový report") {
-                  handleNewReportAction(chatBox);
-              } else if (btn.text === "Aktívne reporty") {
-                  handleActiveReports();
-              } else if (btn.text === "Oznámenia") {
-                  handleNotifications(); // Placeholder, to be implemented
-              } else if (btn.text === "Spravovať hodnoty") {
-                  handleManageValues(); // Placeholder, to be implemented
-              } else {
-                  console.error(`Handler for ${btn.text} not implemented`);
-              }
-          }, `action-button ${themeClass}`);
+    if (reportsSubmittedToday === currentDay) {
+        buttonsData.splice(0, 1); // Remove "Nový report" if reports submitted today
+    }
 
-          if (btn.text === "Oznámenia") {
-              const badge = document.createElement("span");
-              badge.id = "notification-badge";
-              badge.classList.add("badge");
-              badge.style.display = "none"; // Initially hidden
-              actionButton.appendChild(badge);
-          }
+    buttonsData.forEach((btn, index) => {
+        const actionButton = createButton(btn.text, () => {
+            if (btn.text === "Aká je moja úroveň?") {
+                handleUserLevel();
+            } else if (btn.text === "Nový report") {
+                handleNewReportAction(chatBox);
+            } else if (btn.text === "Aktívne reporty") {
+                handleActiveReports();
+            } else if (btn.text === "Oznámenia") {
+                handleNotifications();
+            } else if (btn.text === "Spravovať hodnoty") {
+                handleManageValues();
+            } else {
+                console.error(`Handler for ${btn.text} not implemented`);
+            }
+        }, `action-button ${themeClass}`);
 
-          messageContainer.appendChild(actionButton);
-          setTimeout(() => {
-              actionButton.classList.add('visible');
-          }, index * 100); // Animate buttons in order
-      });
+        messageContainer.appendChild(actionButton);
+        setTimeout(() => {
+            actionButton.classList.add('visible');
+        }, index * 100); 
+    });
   };
 
+  // Add a new function to handle the user's level display
+  const handleUserLevel = async () => {
+    addMessage(`Aká je moja úroveň?`,"sent");
+    try {
+        const response = await fetch('/chat/get_user_level');
+        const data = await response.json();
 
+        if (response.ok) {
+            const level = data.level || 1;
+            addMessage(`Tvoja úroveň je: ${level}.`,"received");
+            addMessage(`Info: Každé 3 reporty je tvoja úroveň zvýšená a vďaka tomu môžeš využívať výhody v kategórií "Osobný rozvoj".`,"received");
+        } else {
+            addMessage("Nepodarilo sa získať tvoju úroveň.", "received");
+        }
+    } catch (error) {
+        addMessage("Chyba pri získavaní úrovne: " + error.message, "received");
+    }
+  };
 
   // Ensure this function is called after DOMContentLoaded
   document.addEventListener("DOMContentLoaded", () => {
@@ -1297,31 +1309,34 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
 
                 if (newNotifications.length > 0) {
-                    notificationBadge.style.display = 'inline'; // Show the badge
-                    notificationBadge.textContent = newNotifications.length; // Show the number of new notifications
+                    notificationBadge.style.display = 'inline';
+                    notificationBadge.textContent = newNotifications.length;
                 } else {
-                    notificationBadge.style.display = 'none'; // Hide the badge if no new notifications
+                    notificationBadge.style.display = 'none';
                 }
             } else {
-                notificationBadge.style.display = 'none'; // Hide the badge if no notifications
+                notificationBadge.style.display = 'none';
             }
         } catch (error) {
             console.error("Error fetching notifications:", error);
         }
     };
 
-    await fetchNotifications(); // Fetch notifications when the page loads
+    await fetchNotifications();
 
-    // Add event listener to hide the badge when the "Oznámenia" button is clicked
-    const oznameniaButton = document.querySelector('.action-button:contains("Oznámenia")');
-    oznameniaButton.addEventListener('click', () => {
-        notificationBadge.style.display = 'none';
-        localStorage.setItem(LAST_SEEN_NOTIFICATION_KEY, new Date().toISOString()); // Update last seen time
-    });
+    // Use a more appropriate way to find the "Oznámenia" button by its text content
+    const oznameniaButton = Array.from(document.querySelectorAll('.action-button')).find(button => button.textContent.includes("Oznámenia"));
 
-    // Periodically check for new notifications, if needed
-    setInterval(fetchNotifications, 60000); // Check every minute
+    if (oznameniaButton) {
+        oznameniaButton.addEventListener('click', () => {
+            notificationBadge.style.display = 'none';
+            localStorage.setItem(LAST_SEEN_NOTIFICATION_KEY, new Date().toISOString());
+        });
+    }
+
+    setInterval(fetchNotifications, 60000);
 });
+
 
 const fetchNotifications = async () => {
     try {
