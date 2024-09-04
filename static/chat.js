@@ -437,56 +437,93 @@ const handleManageValues = () => {
 };
   
   const displayActionButtons = () => {
-    const currentDay = new Date().toISOString().split("T")[0];
-    const reportsSubmittedToday = localStorage.getItem('reportsSubmittedToday');
+      const currentDay = new Date().toISOString().split("T")[0];
+      const reportsSubmittedToday = localStorage.getItem('reportsSubmittedToday');
 
-    const messageContainer = document.querySelector(".message-input-container");
-    messageContainer.innerHTML = ""; // Clear existing buttons
+      const messageContainer = document.querySelector(".message-input-container");
+      messageContainer.innerHTML = ""; // Clear existing buttons
 
-    const buttonsData = [
-        { text: "Nový report" },
-        { text: "Aktívne reporty" },
-        { text: "Oznámenia" }, 
-        { text: "Aké sú naše hodnoty?" },
-        { text: "Osobný rozvoj" },
-        { text: "Aká je moja úroveň?" }, // Add the handler for this button
-    ];
+      const buttonsData = [
+          { text: "Nový report" },
+          { text: "Aktívne reporty" },
+          { text: "Oznámenia" }, 
+          { text: "Aké sú naše hodnoty?" },  // <-- The values button
+          { text: "Osobný rozvoj" },
+          { text: "Aká je moja úroveň?" },
+      ];
 
-    const role = "{{ role }}";
-    if (role === "manager" || role === "leader") {
-        buttonsData.push({ text: "Pridať oznámenie" });
-        buttonsData.push({ text: "Spravovať hodnoty" });
-    }
+      const role = "{{ role }}";
+      if (role === "manager" || role === "leader") {
+          buttonsData.push({ text: "Pridať oznámenie" });
+          buttonsData.push({ text: "Spravovať hodnoty" });
+      }
 
-    const themeClass = localStorage.getItem('themeClass') || "theme-orange";
+      const themeClass = localStorage.getItem('themeClass') || "theme-orange";
 
-    if (reportsSubmittedToday === currentDay) {
-        buttonsData.splice(0, 1); // Remove "Nový report" if reports submitted today
-    }
+      if (reportsSubmittedToday === currentDay) {
+          buttonsData.splice(0, 1); // Remove "Nový report" if reports submitted today
+      }
 
-    buttonsData.forEach((btn, index) => {
-        const actionButton = createButton(btn.text, () => {
-            if (btn.text === "Aká je moja úroveň?") {
-                handleUserLevel();
-            } else if (btn.text === "Nový report") {
-                handleNewReportAction(chatBox);
-            } else if (btn.text === "Aktívne reporty") {
-                handleActiveReports();
-            } else if (btn.text === "Oznámenia") {
-                handleNotifications();
-            } else if (btn.text === "Spravovať hodnoty") {
-                handleManageValues();
-            } else {
-                console.error(`Handler for ${btn.text} not implemented`);
-            }
-        }, `action-button ${themeClass}`);
+      buttonsData.forEach((btn, index) => {
+          const actionButton = createButton(btn.text, () => {
+              if (btn.text === "Aká je moja úroveň?") {
+                  handleUserLevel();
+              } else if (btn.text === "Nový report") {
+                  handleNewReportAction(chatBox);
+              } else if (btn.text === "Aktívne reporty") {
+                  handleActiveReports();
+              } else if (btn.text === "Oznámenia") {
+                  handleNotifications();
+              } else if (btn.text === "Aké sú naše hodnoty?") {
+                addMessage("Aké sú hodnoty našej spoločnosti?", "sent");
+                  // Clear existing buttons and display the two new ones
+                  clearMessageContainer(); // Clear all previous action buttons
 
-        messageContainer.appendChild(actionButton);
-        setTimeout(() => {
-            actionButton.classList.add('visible');
-        }, index * 100); 
-    });
+                  // Add the two specific buttons for "Komu sme pomohli?" and "Hodnoty spoločnosti"
+                  addMessage("Vyberte možnosť, o ktorej vám porozprávam.", "received");
+
+                  const helpedButton = createButton("Komu sme pomohli?", () => {
+                      addMessage("Komu sme pomohli?", "sent");
+                      displayWhoWeHelped();  // Display who the company helped
+                  }, "action-button");
+
+                  const valuesButton = createButton("Hodnoty spoločnosti", () => {
+                      addMessage("Hodnoty spoločnosti", "sent");
+                      displayCompanyValues();  // Display company values
+                  }, "action-button");
+
+                  messageContainer.appendChild(helpedButton);
+                  messageContainer.appendChild(valuesButton);
+
+                  // Add the .visible class to the buttons after a short delay
+                  setTimeout(() => {
+                      helpedButton.classList.add('visible');
+                      valuesButton.classList.add('visible');
+                  }, 100); // Adjust delay as needed for a smoother transition
+              } else if (btn.text === "Spravovať hodnoty") {
+                  handleManageValues();
+              } else {
+                  console.error(`Handler for ${btn.text} not implemented`);
+              }
+          }, `action-button ${themeClass}`);
+
+          messageContainer.appendChild(actionButton);
+          setTimeout(() => {
+              actionButton.classList.add('visible');
+          }, index * 100); 
+      });
   };
+
+  const displayCompanyValues = () => {
+      // This will show the company values in the chat
+      addMessage("Naše hodnoty sú: Inovácia, Spoľahlivosť, Zákaznícky servis...", "received");
+  };
+
+  const displayWhoWeHelped = () => {
+      // This will show the list of people the company has helped in the chat
+      addMessage("Zoznam ľudí, ktorým sme pomohli: Ján, Peter, Eva...", "received");
+  };
+
 
   // Add a new function to handle the user's level display
   const handleUserLevel = async () => {
@@ -1297,30 +1334,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     const notificationBadge = document.getElementById('notification-badge');
     const LAST_SEEN_NOTIFICATION_KEY = 'lastSeenNotificationTime';
 
-    const fetchNotifications = async () => {
-        try {
-            const response = await fetch('/chat/get_notifications');
-            const data = await response.json();
+  const fetchNotifications = async () => {
+      try {
+          const notificationBadge = document.querySelector("#notification-badge");
 
-            if (response.ok && data.notifications && data.notifications.length > 0) {
-                const lastSeenTime = localStorage.getItem(LAST_SEEN_NOTIFICATION_KEY);
-                const newNotifications = data.notifications.filter(notification => {
-                    return !lastSeenTime || new Date(notification.timestamp) > new Date(lastSeenTime);
-                });
+          // Check if the badge exists before attempting to modify it
+          if (!notificationBadge) {
+              console.warn("Notification badge element not found in the DOM.");
+              return;
+          }
 
-                if (newNotifications.length > 0) {
-                    notificationBadge.style.display = 'inline';
-                    notificationBadge.textContent = newNotifications.length;
-                } else {
-                    notificationBadge.style.display = 'none';
-                }
-            } else {
-                notificationBadge.style.display = 'none';
-            }
-        } catch (error) {
-            console.error("Error fetching notifications:", error);
-        }
-    };
+          const response = await fetch('/chat/get_notifications');
+          const data = await response.json();
+
+          if (response.ok && data.notifications && data.notifications.length > 0) {
+              notificationBadge.style.display = 'inline'; // Show the badge
+              notificationBadge.textContent = data.notifications.length; // Show the number of notifications
+          } else {
+              notificationBadge.style.display = 'none'; // Hide the badge if no notifications
+          }
+      } catch (error) {
+          console.error("Error fetching notifications:", error);
+      }
+  };
+
 
     await fetchNotifications();
 

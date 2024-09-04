@@ -269,7 +269,7 @@ button {
   color: white;
   margin-left: 40%; /* Align sent messages to the right */
   text-align: left;
-  padding-left: 10px;
+  padding-left: 20px;
 }
 .message.received {
   background-color: var(--ai-bg-color, #f1f0f0);
