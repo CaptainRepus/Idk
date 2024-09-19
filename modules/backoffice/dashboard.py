@@ -4,6 +4,9 @@ from replit import db as replit_db
 from collections.abc import Iterable
 from werkzeug.security import generate_password_hash
 from datetime import datetime, timedelta
+from requests.exceptions import InvalidHeader
+import time
+
 
 def convert_to_serializable(data):
     """Convert non-serializable objects to serializable."""
@@ -35,38 +38,47 @@ def get_data():
     last_7_days = [today - timedelta(days=i) for i in range(7)]
     report_statistics = {str(day): {} for day in last_7_days}
 
-    for key in replit_db.keys():
-        data = replit_db[key]
-        serializable_data = convert_to_serializable(data)
+    try:
+        for key in replit_db.keys():
+            data = replit_db[key]
+            serializable_data = convert_to_serializable(data)
 
-        if key.isdigit():
-            if isinstance(serializable_data, dict) and 'role' in serializable_data:
-                user_data = {"key": key, **serializable_data}
-                author_name = serializable_data.get('fullname')
+            if key.isdigit():
+                if isinstance(serializable_data, dict) and 'role' in serializable_data:
+                    user_data = {"key": key, **serializable_data}
+                    author_name = serializable_data.get('fullname')
 
-                # Initialize report count and statistics for the author
-                if author_name:
-                    user_report_count[author_name] = user_report_count.get(author_name, 0)
-                    user_data['report_count'] = user_report_count[author_name]
-                    users_with_role.append(user_data)
+                    if author_name:
+                        user_report_count[author_name] = user_report_count.get(author_name, 0)
+                        user_data['report_count'] = user_report_count[author_name]
+                        users_with_role.append(user_data)
 
-        elif key == "notifications":
-            if isinstance(serializable_data, list):
-                notifications.extend(serializable_data)
+            elif key == "notifications":
+                if isinstance(serializable_data, list):
+                    notifications.extend(serializable_data)
+
+            else:
+                if isinstance(serializable_data, dict) and 'brand' in serializable_data and 'model' in serializable_data:
+                    cars.append({"key": key, **serializable_data})
+
+                elif isinstance(serializable_data, list):
+                    for report in serializable_data:
+                        author = report.get('author')
+                        created_at_str = report.get('created_at')
+                        if author and created_at_str:
+                            created_at = datetime.strptime(created_at_str, '%Y-%m-%d').date()
+                            if created_at in last_7_days:
+                                date_str = str(created_at)
+                                report_statistics[date_str][author] = report_statistics[date_str].get(author, 0) + 1
+                            user_report_count[author] = user_report_count.get(author, 0) + 1
+
+    except InvalidHeader as e:
+        if "Invalid Retry-After header" in str(e):
+            print("Invalid Retry-After header detected, retrying after a default delay...")
+            time.sleep(5)  # Wait for 5 seconds before retrying
+            # Optionally, you can try to re-run the request logic here after the delay
         else:
-            if isinstance(serializable_data, dict) and 'brand' in serializable_data and 'model' in serializable_data:
-                cars.append({"key": key, **serializable_data})
-
-            elif isinstance(serializable_data, list):
-                for report in serializable_data:
-                    author = report.get('author')
-                    created_at_str = report.get('created_at')
-                    if author and created_at_str:
-                        created_at = datetime.strptime(created_at_str, '%Y-%m-%d').date()
-                        if created_at in last_7_days:
-                            date_str = str(created_at)
-                            report_statistics[date_str][author] = report_statistics[date_str].get(author, 0) + 1
-                        user_report_count[author] = user_report_count.get(author, 0) + 1
+            raise e  # Raise other exceptions
 
     # Assign report statistics to users
     for user_data in users_with_role:
@@ -82,6 +94,7 @@ def get_data():
         user_data['rank'] = index + 1
 
     return jsonify({"users": users_with_role, "cars": cars, "notifications": notifications})
+
 
 
 @bp.route('/api/delete_user', methods=['POST'])

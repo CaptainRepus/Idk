@@ -717,7 +717,6 @@ document.getElementById('addNotificationForm').addEventListener('submit', async 
 });
 
 
-// Handle form submission for adding car
 document.getElementById('addCarForm').addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -738,8 +737,48 @@ document.getElementById('addCarForm').addEventListener('submit', async (event) =
         const result = await response.json();
         if (response.ok) {
             console.log('Car added successfully:', result);
+
+            // Close the modal
             document.getElementById('addCarModal').style.display = 'none';
-            location.reload();  // Reload the page to reflect changes
+
+            // Update the car list dynamically
+            const carContainer = document.getElementById('car-container');
+            const carDiv = document.createElement('div');
+            carDiv.classList.add('car-container');
+            carDiv.dataset.key = `${carBrand}_${carModel}`;
+
+            const carName = document.createElement('div');
+            carName.classList.add('car-name');
+            carName.textContent = `${carBrand} ${carModel}`;
+            carDiv.appendChild(carName);
+
+            const carData = document.createElement('div');
+            carData.classList.add('car-data');
+            carData.innerHTML = `
+                <p><strong>Brand:</strong> ${carBrand}</p>
+                <p><strong>Model:</strong> ${carModel}</p>
+            `;
+            carDiv.appendChild(carData);
+
+            // Add delete button
+            const carButtons = document.createElement('div');
+            carButtons.classList.add('car-buttons');
+
+            const removeButton = document.createElement('button');
+            removeButton.classList.add('remove-button');
+            removeButton.textContent = 'Remove';
+            removeButton.addEventListener('click', () => {
+                openConfirmModal({ key: `${carBrand}_${carModel}`, brand: carBrand });
+            });
+
+            carButtons.appendChild(removeButton);
+            carDiv.appendChild(carButtons);
+
+            carContainer.appendChild(carDiv);
+
+            // Optionally, reset the form inputs
+            document.getElementById('carBrand').value = '';
+            document.getElementById('carModel').value = '';
         } else {
             console.error('Error adding car:', result);
         }
@@ -747,6 +786,7 @@ document.getElementById('addCarForm').addEventListener('submit', async (event) =
         console.error('Error:', error);
     }
 });
+
 
 // Function to remove a notification
 async function removeNotification(notificationTitle) {
